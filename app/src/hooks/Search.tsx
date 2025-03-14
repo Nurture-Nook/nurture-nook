@@ -9,14 +9,15 @@ export const Search: React.FC<SearchProps> = ({ setSearchTerm }) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!searchInput) return;
         setSearchTerm(searchInput);
         setSearchInput('');
     }
 
     return (
-        <form onSubmit={ handleSubmit }>
-            <label htmlFor="searchInput">Enter a Search Term</label>
-            <input type="text" id="searchInput" />
+        <form onSubmit={handleSubmit}>
+            <label htmlFor="searchInput" aria-labelledby="search input">Enter a Search Term</label>
+            <input type="text" id="searchInput" value={searchInput} onChange={e => setSearchInput(e.target.value)} />
             <button type="submit">Search</button>
         </form>
     )

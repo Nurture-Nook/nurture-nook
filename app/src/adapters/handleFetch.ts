@@ -5,7 +5,7 @@ export const handleFetch = async (url: string, options = {}) => {
 
         if (!ok) throw new Error(`Fetch failed with status — ${status}, ${statusText}`);
 
-        return [(headers.get('content-type') || '').includes('application/json') ? response.json : response.text, null];
+        return [(headers.get('content-type') || '').includes('application/json') ? await response.json() : await response.text(), null];
     } catch (error) {
         console.error(error);
 
