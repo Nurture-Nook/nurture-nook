@@ -1,6 +1,5 @@
 import { handleFetch } from './handleFetch.ts';
-
-const baseUrl = '';
+import { baseUrl } from './config.ts';
 
 export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {
     let url = baseUrl + `/search?query=${encodeURIComponent(searchTerm)}`;
