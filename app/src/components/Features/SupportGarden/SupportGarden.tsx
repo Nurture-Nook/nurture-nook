@@ -7,6 +7,8 @@ import { Post } from './Post';
 export const SupportGarden = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
 
+    const [categories, setCategory] = useState<string>([]);
+
     return (
         <div>
             <Search setSearchTerm={ setSearchTerm } />
