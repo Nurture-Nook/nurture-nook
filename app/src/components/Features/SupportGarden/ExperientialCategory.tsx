@@ -29,6 +29,7 @@ export const ExperientialCategory = () => {
     return (
         <>
         <h3>{ experientialCategory.name }</h3>
+        <h5>{ experientialCategory.description }</h5>
         <ul>
             { experientialCategory.posts.map(c => <li>{ c }</li>) }
         </ul>

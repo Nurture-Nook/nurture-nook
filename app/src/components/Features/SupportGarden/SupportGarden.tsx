@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Search } from '../../../hooks/Search';
-import { ExperientialCategory } from './ExperientialCategory';
+import { ExperientialCategories } from './ExperientialCategories';
 import { ContentFilter } from './ContentFilter';
 import { Post } from './Post';
 
 export const SupportGarden = () => {
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const [categories, setCategory] = useState<string>([]);
-
     return (
         <div>
-            <Search setSearchTerm={ setSearchTerm } />
+            <h1>Garden of Support</h1>
+            <Search setSearchTerm={ setSearchTerm }/>
+            <ExperientialCategories/>
         </div>
     )
 }
