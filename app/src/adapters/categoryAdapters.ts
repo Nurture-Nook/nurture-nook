@@ -17,7 +17,7 @@ export const getCategoryByName = async (name: string) => {
         return [null, error];
     }
 
-    return [getCategoryData(data), null];
+    return [getCategoryData(data.category), null];
 }
 
 export const getCategoryById = async (id: number) => {

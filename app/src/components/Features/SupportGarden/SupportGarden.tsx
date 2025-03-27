@@ -10,7 +10,10 @@ export const SupportGarden = () => {
     return (
         <div>
             <h1>Garden of Support</h1>
+            <div>
             <Search setSearchTerm={ setSearchTerm }/>
+
+            </div>
             <ExperientialCategories/>
         </div>
     )
