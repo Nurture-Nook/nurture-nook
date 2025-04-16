@@ -1,3 +1,4 @@
+from enum import Enum
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 from db import Base
@@ -20,6 +21,15 @@ comment_warnings = Table(
 	Column('warning_id', ForeignKey('content_warnings.id'), primary_key = True)
 )
 
+class SenderType(Enum):
+	USER = 'user'
+	BOT = 'bot'
+
+class Approval(Enum):
+	APPROVED = 'approved'
+	PENDING = 'pending'
+	REJECTED = 'rejected'
+
 class User(Base):
 	__tablename__ = 'users'
 
@@ -32,13 +42,15 @@ class User(Base):
 	posts = relationship('Post', back_populates = 'user')
 	comments = relationship('Comment', back_populates = 'user')
 
+# Filters
+
 class Category(Base):
 	__tablename__ = 'categories'
 
 	id = Column(Integer, primary_key = True, index = True)
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
-	stat = Column(Boolean, default = False)
+	stat = Column(Enum(Approval), default = Approval.PENDING)
 
 	posts = relationship('Post', secondary = post_categories, back_populates = 'categories')
 
@@ -48,10 +60,12 @@ class ContentWarning(Base):
 	id = Column(Integer, primary_key = True, index = True)
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
-	stat = Column(Boolean, default = False)
+	stat = Column(Enum(Approval), default = Approval.PENDING)
 
 	posts = relationship('Post', secondary = post_warnings, back_populates = 'warnings')
 	comments = relationship('Comment', secondary = comment_warnings, back_populates = 'warnings')
+
+# Garden of Support
 
 class Post(Base):
 	__tablename__ = 'posts'
@@ -92,3 +106,29 @@ class Comment(Base):
 	parent = relationship('Comment', back_populates = 'replies', remote_side = Comment.id)
 	replies = relationship('Comment', back_populates = 'parent')
 	warnings = relationship('Comment', secondary = comment_warnings, back_populates = 'comments')
+
+# Nurture Guide
+
+class Chat:
+	__tablename__ = 'chats'
+
+	id = Column(Integer, primary_key = True, index = True)
+
+	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
+	started_at = Column(DateTime(timezone = True), server_default = func.now(), nullable = False)
+	ended_at = Column(DateTime(timezone = True), nullable = True)
+
+	messages = relationship('Message', back_populates = 'chats')
+
+class Message:
+	__tablename__ = 'messages'
+
+	id = Column(Integer, primary_key = True, index = True)
+	sender_type = Column(Enum(SenderType), nullable = False)
+	content = Column(String, nullable = False)
+	created_at = Column(DateTime(timezone = True), server_default = func.now())
+
+	chat_id = Column(Integer, ForeignKey('chats.id'), nullable = False)
+	user_id = Column(Integer, ForeignKey('users.id'), nullable = True)
+	
+	chats = relationship('Chat', back_populates = 'messages')
