@@ -37,10 +37,16 @@ class User(Base):
 	username = Column(String, unique = True, nullable = False, index = True)
 	email = Column(String, unique = True, nullable = False)
 	hashed_pass = Column(String, nullable = False)
+	email_verified = Column(Boolean, default = False)
+	email_verification_token = Column(String, nullable = True)
+	verification_token_expiry = Column(DateTime, nullable = True)
+	password_reset_token = Column(String, nullable = True)
+	reset_token_expiry = Column(DateTime, nullable = True)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', back_populates = 'user')
 	comments = relationship('Comment', back_populates = 'user')
+	temps = relationship('TemporaryUsername', back_populates = 'user')
 
 # Filters
 
@@ -82,6 +88,7 @@ class Post(Base):
 	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
 
 	user = relationship('User', back_populates = 'posts')
+	temps = relationship('TemporaryUsername', back_populates = 'posts')
 	categories = relationship('Category', secondary = post_categories, back_populates = 'posts')
 	warnings = relationship('ContentWarning', secondary = post_warnings, back_populates = 'posts')
 	comments = relationship('Comment', back_populates = 'post')
@@ -106,6 +113,16 @@ class Comment(Base):
 	parent = relationship('Comment', back_populates = 'replies', remote_side = Comment.id)
 	replies = relationship('Comment', back_populates = 'parent')
 	warnings = relationship('Comment', secondary = comment_warnings, back_populates = 'comments')
+
+class TemporaryUsername(Base):
+	id = Column(Integer, primary_key = True, index = True)
+	alias = Column(String, unique = True, nullable = False)
+
+	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
+	post_id = Column(Integer, ForeignKey('posts.id'), nullable = False)
+
+	user = relationship('User', back_populates = 'temps')
+	post = relationship('Post', back_populates = 'temps')
 
 # Nurture Guide
 

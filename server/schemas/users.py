@@ -1,0 +1,44 @@
+from .base import OrmBase
+from .posts import PostOut
+from datetime import datetime
+from typing import List
+
+class UserCreate(OrmBase):
+    username: str
+    email: str
+    password: str
+
+class UserLogin(OrmBase):
+    username: str
+    password: str
+
+class UserOut(OrmBase):
+    id: int
+    role: str
+    created_at: datetime
+
+class UserPrivateOut(OrmBase):
+    id: int
+    username: str
+    email: str
+
+class UserWithPosts(OrmBase):
+    id: int
+    role: str
+    posts: List['PostOut']
+    created_at: datetime
+
+class EmailVerificationRequest(OrmBase):
+    email: str
+
+class EmailVerify(OrmBase):
+    token: str
+
+class PasswordResetRequest(OrmBase):
+    email: str
+
+class PasswordResetVerify(OrmBase):
+    token: str
+    new_password: str
+
+UserWithPosts.update_forward_refs()
