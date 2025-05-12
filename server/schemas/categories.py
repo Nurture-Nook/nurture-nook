@@ -18,6 +18,7 @@ class CategoryOut(OrmBase):
 class CategoryPatch(OrmBase):
     title: Optional[str]
     description: Optional[str]
+    stat: Optional[Approval]
 
 class CategoryWithPosts(OrmBase):
     id: int
@@ -31,4 +32,4 @@ class CategoryModView(OrmBase):
     description: str
     stat: Approval
 
-CategoryOut.update_forward_refs()
+CategoryWithPosts.update_forward_refs()

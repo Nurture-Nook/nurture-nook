@@ -1,13 +1,14 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import User
-from schemas import UserCreate, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
+from schemas import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
 from utils.email import send_verification
 from utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
+from typing import List
 from datetime import datetime, timedelta
 
-# Create
-def create_user(db: Session, user: UserCreate):
+# CREATE
+def create_user(db: Session, user: UserCreate) -> UserPrivateOut:
     original_email = user.email
 
     db_user = User(
@@ -23,17 +24,20 @@ def create_user(db: Session, user: UserCreate):
 
     set_token(db, db_user, original_email, "email")
 
-    return db_user
+    return UserPrivateOut.from_orm(db_user)
 
 
-# Read
-def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+# READ
+def get_user(db: Session, user_id: int) -> User:
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not Found")
+    return UserOut.from_orm(db_user)
 
-def get_all_users(db: Session):
-    return db.query(User).all()
+def get_all_users(db: Session) -> List[UserOut]:
+    return [UserOut.from_orm(user) for user in db.query(User).all()]
 
-# Update
+# UPDATE
 def update_username(db: Session, user_id: int, username_update: UsernameUpdateRequest):
     db_user = db.query(User).filter(User.id == user_id).first()
 
@@ -56,26 +60,26 @@ def update_email(db: Session, current_user: User, email_verify: EmailVerificatio
     db.commit()
     db.refresh(current_user)
 
-# Delete
-def delete_user(db: Session, user_id: int):
+# DELETE
+def delete_user(db: Session, user_id: int) -> UserOut:
     db_user = db.query(User).filter(User.id == user_id).first()
 
     if db_user:
         db.delete(db_user)
         db.commit()
-    return db_user
+    return UserOut.from_orm(db_user)
 
-def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteRequest):
+def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteRequest) -> UserPrivateOut:
     if not verify_password(user_delete.password, current_user.hashed_pass):
         raise HTTPException(status_code = 403, detail = "Incorrect Password")
 
     validate_token(db, current_user, user_delete.token)
     db.delete(current_user)
     db.commit()
-    return current_user
+    return UserPrivateOut.from_orm(current_user)
 
 # Validate
-def set_token(db: Session, user: User, email: str, purpose: str):
+def set_token(db: Session, user: User, email: str, purpose: str) -> str:
     token = generate_token()
     send_verification(user.username, email, purpose, token)
     user.hashed_token = hash_token(token)
@@ -83,12 +87,12 @@ def set_token(db: Session, user: User, email: str, purpose: str):
     db.commit()
     return token
 
-def validate_token(db: Session, user: User, submitted_token: str):
+def validate_token(db: Session, user: User, submitted_token: str) -> bool:
     if not user.token_expiry or user.token_expiry < datetime.now():
-        raise HTTPException(status_code = 403, detail = "Token expired")
+        raise HTTPException(status_code = 403, detail = "Token Expired")
 
     if not compare_tokens(submitted_token, user.hashed_token):
-        raise HTTPException(status_code = 403, detail = "Invalid token")
+        raise HTTPException(status_code = 403, detail = "Invalid Token")
 
     user.hashed_token = None
     user.token_expiry = None
