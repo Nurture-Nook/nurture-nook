@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 class PostCreate(OrmBase):
     title: str
     description: str
+    categories: Optional[List[int]] = None
+    warnings: Optional[List[int]] = None
 
 class PostOut(OrmBase):
     id: int
@@ -21,6 +23,13 @@ class PostPatch(OrmBase):
     description: Optional[str] = None
     categories: Optional[List[int]] = None
     warnings: Optional[List[int]] = None
+
+class PostModPatch(OrmBase):
+    categories: Optional[List[int]] = None
+    warnings: Optional[List[int]] = None
+    flags: List[int]
+    is_flagged: bool
+    is_deleted: bool
 
 class PostDetailedOut(OrmBase):
     id: int
