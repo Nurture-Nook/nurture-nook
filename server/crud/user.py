@@ -28,10 +28,10 @@ def create_user(db: Session, user: UserCreate) -> UserPrivateOut:
 
 
 # READ
-def get_user(db: Session, user_id: int) -> User:
+def get_user(db: Session, user_id: int) -> UserOut:
     db_user = db.query(User).filter(User.id == user_id).first()
     if not db_user:
-        raise HTTPException(status_code=404, detail="User not Found")
+        raise HTTPException(status_code = 404, detail="User not Found")
     return UserOut.from_orm(db_user)
 
 def get_all_users(db: Session) -> List[UserOut]:

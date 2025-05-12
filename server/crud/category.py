@@ -18,10 +18,10 @@ def create_category(db: Session, category: CategoryCreate) -> CategoryOut:
     return CategoryOut.from_orm(db_category)
 
 # READ
-def get_category(db: Session, category_id: int) -> Category:
+def get_category(db: Session, category_id: int) -> CategoryOut:
     db_category = db.query(Category).filter(Category.id == category_id).first()
     if not db_category:
-        raise HTTPException(status_code=404, detail="Category not Found")
+        raise HTTPException(status_code = 404, detail="Category not Found")
     return CategoryOut.from_orm(db_category)
 
 def get_all_categories(db: Session) -> List[CategoryOut]:
@@ -30,9 +30,6 @@ def get_all_categories(db: Session) -> List[CategoryOut]:
 # UPDATE
 def update_category(db: Session, category_id: int, category_patch: CategoryPatch) -> CategoryModView:
     category = get_category(db, category_id)
-
-    if not category:
-        raise HTTPException(status_code=404, detail="Category not Found")
 
     if category_patch.title is not None:
         category.title = category_patch.title
@@ -48,9 +45,6 @@ def update_category(db: Session, category_id: int, category_patch: CategoryPatch
 # DELETE
 def delete_category(db: Session, category_id: int) -> CategoryOut:
     category = get_category(db, category_id)
-
-    if not category:
-        raise HTTPException(status_code=404, detail="Category not Found")
 
     db.delete(category)
     db.commit()
