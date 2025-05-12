@@ -38,15 +38,15 @@ class User(Base):
 	email = Column(String, unique = True, nullable = False)
 	hashed_pass = Column(String, nullable = False)
 	email_verified = Column(Boolean, default = False)
-	email_verification_token = Column(String, nullable = True)
-	verification_token_expiry = Column(DateTime, nullable = True)
-	password_reset_token = Column(String, nullable = True)
-	reset_token_expiry = Column(DateTime, nullable = True)
+	hashed_token = Column(String, nullable = True)
+	token_expiry = Column(DateTime, nullable = True)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', back_populates = 'user')
 	comments = relationship('Comment', back_populates = 'user')
 	temps = relationship('TemporaryUsername', back_populates = 'user')
+	chats = relationship('Chat', back_populates = 'user')
+	messages = relationship('Message', back_populates = 'user')
 
 # Filters
 
@@ -77,7 +77,7 @@ class Post(Base):
 	__tablename__ = 'posts'
 
 	id = Column(Integer, primary_key = True, index = True)
-	title = Column(String, unique = True, nullable = False, index = True)
+	title = Column(String, nullable = False, index = True)
 	description = Column(String, nullable = False)
 	temporary_username = Column(String, nullable = False)
 	flag_reason = Column(String, nullable = False)
@@ -88,7 +88,7 @@ class Post(Base):
 	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
 
 	user = relationship('User', back_populates = 'posts')
-	temps = relationship('TemporaryUsername', back_populates = 'posts')
+	temps = relationship('TemporaryUsername', back_populates = 'post')
 	categories = relationship('Category', secondary = post_categories, back_populates = 'posts')
 	warnings = relationship('ContentWarning', secondary = post_warnings, back_populates = 'posts')
 	comments = relationship('Comment', back_populates = 'post')
@@ -135,7 +135,8 @@ class Chat:
 	started_at = Column(DateTime(timezone = True), server_default = func.now(), nullable = False)
 	ended_at = Column(DateTime(timezone = True), nullable = True)
 
-	messages = relationship('Message', back_populates = 'chats')
+	user = relationship('User', back_populates = 'chats')
+	messages = relationship('Message', back_populates = 'chat')
 
 class Message:
 	__tablename__ = 'messages'
@@ -148,4 +149,5 @@ class Message:
 	chat_id = Column(Integer, ForeignKey('chats.id'), nullable = False)
 	user_id = Column(Integer, ForeignKey('users.id'), nullable = True)
 	
-	chats = relationship('Chat', back_populates = 'messages')
+	user = relationship('User', back_populates = 'messages')
+	chat = relationship('Chat', back_populates = 'messages')

@@ -5,10 +5,13 @@ from pathlibs.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 
-def generate_token():
-    return hashlib.sha256(uuid.uuid4()).hexdigest()
+def generate_token() -> str:
+    return uuid.uuid4().hex
 
-def verify_token(plain_token: str, hashed_token: str) => bool:
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+def compare_tokens(plain_token: str, hashed_token: str) -> bool:
     return pwd_context.verify(plain_token, hashed_token)
 
 def hash_password(password: str):

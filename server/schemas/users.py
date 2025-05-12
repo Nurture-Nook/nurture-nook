@@ -1,7 +1,7 @@
 from .base import OrmBase
 from .posts import PostOut
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 class UserCreate(OrmBase):
     username: str
@@ -29,16 +29,18 @@ class UserWithPosts(OrmBase):
     created_at: datetime
 
 class EmailVerificationRequest(OrmBase):
-    email: str
-
-class EmailVerify(OrmBase):
+    new_email: str
     token: str
 
-class PasswordResetRequest(OrmBase):
-    email: str
+class UsernameUpdateRequest(OrmBase):
+    new_username: str
 
-class PasswordResetVerify(OrmBase):
-    token: str
+class PasswordUpdateRequest(OrmBase):
+    current_password: str
     new_password: str
+
+class UserDeleteRequest:
+    token: str
+    password: str
 
 UserWithPosts.update_forward_refs()
