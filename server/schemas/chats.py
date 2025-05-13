@@ -4,12 +4,12 @@ from datetime import datetime
 from typing import List
 
 class ChatCreate(OrmBase):
-    message: 'MessageOut'
+    message: MessageOut
 
 class ChatOpen(OrmBase):
     started_at: datetime
 
-    messages: List['MessageOut']
+    messages: List[MessageOut]
 
 ChatCreate.update_forward_refs()
 ChatOpen.update_forward_refs()

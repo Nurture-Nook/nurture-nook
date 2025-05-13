@@ -5,11 +5,11 @@ class OrmBase(BaseModel):
     class Config:
         orm_mode: True
 
-class Approval(Enum):
+class Approval(str, Enum):
 	APPROVED = 'approved'
 	PENDING = 'pending'
 	REJECTED = 'rejected'
 
-class SenderType(Enum):
+class SenderType(str, Enum):
 	USER = 'user'
 	BOT = 'bot'
