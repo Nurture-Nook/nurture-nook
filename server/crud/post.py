@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Post
-from schemas import PostCreate, PostOut, PostPatch, PostModPatch, PostModView
+from schemas.posts import PostCreate, PostOut, PostPatch, PostModPatch, PostModView
+from crud.temporary_username import create_alias
 from typing import List
 
 # CREATE
@@ -10,13 +11,18 @@ def create_post(db: Session, post: PostCreate) -> PostOut:
         title=post.title,
         description=post.description,
         categories=post.categories,
-        warnings=post.warnings
+        warnings=post.warnings,
+        user_id=post.user_id
     )
 
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
     
+    db_post.temporary_username=create_alias(db, db_post.user_id, db_post.id)
+    db.commit()
+    db.refresh(db_post)
+
     return PostOut.from_orm(db_post)
 
 # READ

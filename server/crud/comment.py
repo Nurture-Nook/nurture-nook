@@ -1,14 +1,18 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Comment
-from schemas import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
+from schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
+from crud.temporary_username import create_alias
 from typing import List
 
 # CREATE
 def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
     db_comment = Comment(
         content=comment.content,
-        warnings=comment.warnings
+        warnings=comment.warnings,
+        user_id=comment.user_id,
+        post_id=comment.post_id,
+        temporary_username=create_alias(db, comment.user_id, comment.post_id)
     )
 
     db.add(db_comment)

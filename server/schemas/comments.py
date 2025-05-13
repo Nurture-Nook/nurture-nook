@@ -1,3 +1,4 @@
+from server.crud import temporary_username
 from .base import OrmBase
 from datetime import datetime
 from typing import List, TYPE_CHECKING, Optional
@@ -6,8 +7,11 @@ if TYPE_CHECKING:
     from .warnings import ContentWarningOut
 
 class CommentCreate(OrmBase):
+    temporary_username: str
     content: str
     warnings: List[int] = None
+    user_id: int
+    post_id: int
 
 class CommentOut(OrmBase):
     id: int
@@ -32,7 +36,7 @@ class CommentModPatch(OrmBase):
     is_flagged: bool = None
     is_deleted: bool = None
 
-class ModView(OrmBase):
+class CommentModView(OrmBase):
     id: int
     user_id: int
     flags: List[int]

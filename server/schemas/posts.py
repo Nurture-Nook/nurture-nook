@@ -1,3 +1,4 @@
+from server.crud import temporary_username
 from .base import OrmBase
 from .comments import CommentOut
 from datetime import datetime
@@ -8,10 +9,13 @@ if TYPE_CHECKING:
     from .warnings import ContentWarningOut
 
 class PostCreate(OrmBase):
+    temporary_username: str
     title: str
     description: str
     categories: Optional[List[int]] = None
     warnings: Optional[List[int]] = None
+    user_id: int
+    post_id: int
 
 class PostOut(OrmBase):
     id: int
