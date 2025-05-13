@@ -8,7 +8,6 @@ class ChatCreate(OrmBase):
 
 class ChatOpen(OrmBase):
     started_at: datetime
-    ended_at: datetime
 
     messages: List['MessageOut']
 

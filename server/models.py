@@ -37,7 +37,6 @@ class User(Base):
 	username = Column(String, unique = True, nullable = False, index = True)
 	email = Column(String, unique = True, nullable = False)
 	hashed_pass = Column(String, nullable = False)
-	email_verified = Column(Boolean, default = False)
 	hashed_token = Column(String, nullable = True)
 	token_expiry = Column(DateTime, nullable = True)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
@@ -133,7 +132,6 @@ class Chat:
 
 	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
 	started_at = Column(DateTime(timezone = True), server_default = func.now(), nullable = False)
-	ended_at = Column(DateTime(timezone = True), nullable = True)
 
 	user = relationship('User', back_populates = 'chats')
 	messages = relationship('Message', back_populates = 'chat')

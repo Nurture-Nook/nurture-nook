@@ -29,16 +29,14 @@ def create_post(db: Session, post: PostCreate) -> PostOut:
 def get_post_model(db: Session, post_id: int) -> Post:
     db_post = db.query(Post).filter(Post.id == post_id).first()
     if not db_post:
-        raise HTTPException(status_code = 404, detail="Post not Found")
+        raise HTTPException(status_code = 404, detail = "Post not Found")
     return db_post
 
 def get_post(db: Session, post_id: int) -> PostOut:
-    post = get_post_model(db, post_id)
-    return PostOut.from_orm(post)
+    return PostOut.from_orm(get_post_model(db, post_id))
 
 def get_post_as_mod(db: Session, post_id: int) -> PostModView:
-    post = get_post_model(db, post_id)
-    return PostModView.from_orm(post)
+    return PostModView.from_orm(get_post_model(db, post_id))
 
 def get_all_posts(db: Session) -> List[PostOut]:
     return [PostOut.from_orm(post) for post in db.query(Post).all()]

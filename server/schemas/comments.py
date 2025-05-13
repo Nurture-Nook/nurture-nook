@@ -1,4 +1,3 @@
-from server.crud import temporary_username
 from .base import OrmBase
 from datetime import datetime
 from typing import List, TYPE_CHECKING, Optional
