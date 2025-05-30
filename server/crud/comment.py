@@ -5,8 +5,14 @@ from schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentMod
 from crud.temporary_username import create_alias
 from typing import List
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 # CREATE
 def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
+    if not comment.content:
+        raise HTTPException(status_code = 400, detail = "Empty Comment Content")
+
     db_comment = Comment(
         content=comment.content,
         warnings=comment.warnings,
@@ -18,6 +24,8 @@ def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
+
+    logger.info(f"User {db_comment.temporary_username} successfully added comment {db_comment.id}.")
     
     return CommentOut.from_orm(db_comment)
 
@@ -36,44 +44,47 @@ def get_comment_as_mod(db: Session, comment_id: int) -> CommentModView:
     comment = get_comment_model(db, comment_id)
     return CommentModView.from_orm(comment)
 
-def get_all_comments(db: Session) -> List[CommentOut]:
-    return [CommentOut.from_orm(comment) for comment in db.query(Comment).all()]
+def get_all_comments(db: Session, skip: int = 0, limit: int = 100) -> List[CommentOut]:
+    return [CommentOut.from_orm(comment) for comment in db.query(Comment).offset(skip).limit(limit).all()]
 
 # UPDATE
 def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch) -> CommentOut:
-    comment = get_comment_model(db, comment_id)
+    db_comment = get_comment_model(db, comment_id)
 
-    if comment_patch.title is not None:
-        comment.title = comment_patch.title
-    if comment_patch.description is not None:
-        comment.description = comment_patch.description
-    if comment_patch.warnings is not None:
-        comment.warnings = comment_patch.warnings
+    updates = { key: value for key, value in comment_patch.dict(exclude_unset=True, exclude_none=True).items() }
+    for attr, value in updates.items():
+        setattr(db_comment, attr, value)
 
     db.commit()
-    db.refresh(comment)
-    return CommentOut.from_orm(comment)
+    db.refresh(db_comment)
+
+    logger.info(f"User {db_comment.temporary_username} successfully updated comment {db_comment.id} with changes: {updates}")
+
+    return CommentOut.from_orm(db_comment)
 
 def update_comment_as_mod(db: Session, comment_id: int, comment_patch: CommentModPatch) -> CommentModView:
-    comment = get_comment_model(db, comment_id)
+    db_comment = get_comment_model(db, comment_id)
 
-    if comment_patch.warnings is not None:
-        comment.warnings = comment_patch.warnings
-    if comment_patch.flags is not None:
-        comment.flags = comment_patch.flags
-    if comment_patch.is_flagged is not None:
-        comment.is_flagged = comment_patch.is_flagged
-    if comment_patch.is_deleted is not None:
-        comment.is_deleted = comment_patch.is_deleted
+    updates = { key: value for key, value in comment_patch.dict(exclude_unset=True, exclude_none=True).items() }
+    for attr, value in updates.items():
+        setattr(db_comment, attr, value)
 
     db.commit()
-    db.refresh(comment)
-    return CommentModView.from_orm(comment)
+    db.refresh(db_comment)
+
+    logger.info(f"Moderator successfully updated comment {db_comment.id} with changes: {updates}")
+
+    return CommentModView.from_orm(db_comment)
 
 # DELETE
 def delete_comment(db: Session, comment_id: int) -> CommentOut:
     comment = get_comment_model(db, comment_id)
 
+    comment_out = CommentOut.from_orm(comment)
+
     db.delete(comment)
     db.commit()
-    return CommentOut.from_orm(comment)
+
+    logger.info(f"Comment {comment_id} deleted")
+
+    return comment_out

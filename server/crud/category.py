@@ -4,8 +4,14 @@ from models import Category
 from schemas import CategoryCreate, CategoryOut, CategoryPatch, CategoryModView
 from typing import List
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 # CREATE
 def create_category(db: Session, category: CategoryCreate) -> CategoryOut:
+    if not category.title:
+        raise HTTPException(status_code = 400, detail = "Empty Category Title")
+
     db_category = Category(
         title=category.title,
         description=category.description
@@ -14,6 +20,8 @@ def create_category(db: Session, category: CategoryCreate) -> CategoryOut:
     db.add(db_category)
     db.commit()
     db.refresh(db_category)
+
+    logger.info(f"Category {db_category.id} created")
     
     return CategoryOut.from_orm(db_category)
 
@@ -28,28 +36,33 @@ def get_category(db: Session, category_id: int) -> CategoryOut:
     category = get_category_model(db, category_id)
     return CategoryOut.from_orm(category)
 
-def get_all_categories(db: Session) -> List[CategoryOut]:
-    return [CategoryOut.from_orm(category) for category in db.query(Category).all()]
+def get_all_categories(db: Session, skip: int = 0, limit: int = 100) -> List[CategoryOut]:
+    return [CategoryOut.from_orm(category) for category in db.query(Category).offset(skip).limit(limit).all()]
 
 # UPDATE
 def update_category(db: Session, category_id: int, category_patch: CategoryPatch) -> CategoryModView:
-    category = get_category_model(db, category_id)
+    db_category = get_category_model(db, category_id)
 
-    if category_patch.title is not None:
-        category.title = category_patch.title
-    if category_patch.description is not None:
-        category.description = category_patch.description
-    if category_patch.stat is not None:
-        category.stat = category_patch.stat
+    updates = { key: value for key, value in category_patch.dict(exclude_unset=True, exclude_none=True).items() }
+    for attr, value in updates.items():
+        setattr(db_category, attr, value)
 
     db.commit()
-    db.refresh(category)
-    return CategoryModView.from_orm(category)
+    db.refresh(db_category)
+
+    logger.info(f"Category {db_category.id} updated with changes: {updates}")
+
+    return CategoryModView.from_orm(db_category)
 
 # DELETE
 def delete_category(db: Session, category_id: int) -> CategoryOut:
     category = get_category_model(db, category_id)
 
+    category_out = CategoryOut.from_orm(category)
+
     db.delete(category)
     db.commit()
-    return CategoryOut.from_orm(category)
+
+    logger.info(f"Category {category_out.id} deleted")
+
+    return category_out

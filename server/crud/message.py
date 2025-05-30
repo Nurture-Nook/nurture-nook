@@ -1,11 +1,12 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from models import Chat, Message
-from schemas.chats import ChatCreate, ChatOpen
-from schemas.messages import MessageCreate, MessageOut, MessagePatch
-from crud.chat import add_message_to_chat
+from models import Message
+from schemas.messages import MessageOut, MessagePatch
 from typing import List
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # READ
 def get_message_model(db: Session, message_id: int) -> Message:
@@ -17,14 +18,24 @@ def get_message_model(db: Session, message_id: int) -> Message:
 def get_message(db: Session, message_id: int) -> MessageOut:
     return MessageOut.from_orm(get_message_model(db, message_id))
 
-def get_messages_of_chat(db: Session, chat_id: int) -> List[MessageOut]:
-    messages = db.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at).all()
+def get_messages_of_chat(db: Session, chat_id: int, skip: int = 0, limit: int = 100) -> List[MessageOut]:
+    messages = db.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at.desc()).offset(skip).limit(limit).all()
     return [MessageOut.from_orm(msg) for msg in messages]
 
 # UPDATE
 def edit_message(db: Session, message_id: int, message_update: MessagePatch) -> MessageOut:
     db_message = get_message_model(db, message_id)
-    db_message.content = message_update.content
+
+    if not message_update.content.strip():
+        raise HTTPException(status_code=400, detail="Empty Message Content")
+
+    if db_message.content.strip() == message_update.content.strip():
+        raise HTTPException(status_code=400, detail="Message Unchanged")
+
+    db_message.content = message_update.content.strip()
     db.commit()
     db.refresh(db_message)
+
+    logger.info(f"Message {db_message.id} edited")
+
     return MessageOut.from_orm(db_message)
