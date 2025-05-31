@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Category
-from schemas import CategoryCreate, CategoryOut, CategoryPatch, CategoryModView
+from schemas.categories import CategoryCreate, CategoryOut, CategoryPatch, CategoryModView
+from schemas.posts import PostOut
 from typing import List
 
 logger = logging.getLogger(__name__)
@@ -36,8 +37,16 @@ def get_category(db: Session, category_id: int) -> CategoryOut:
     category = get_category_model(db, category_id)
     return CategoryOut.from_orm(category)
 
+def get_category_with_posts(db: Session, category_id: int) -> CategoryWithPosts:
+    category = get_category_model(db, category_id)
+    return CategoryWithPosts.from_orm(category)
+
 def get_all_categories(db: Session, skip: int = 0, limit: int = 100) -> List[CategoryOut]:
     return [CategoryOut.from_orm(category) for category in db.query(Category).offset(skip).limit(limit).all()]
+
+def get_posts_of_category(db: Session, category_id: int, skip: int = 0, limit: int = 50) -> List[PostOut]:
+    return [PostOut.from_orm(post) for post in db.query(Post).filter(Post.category_id == category_id).offset(skip).limit(limit).all()]
+
 
 # UPDATE
 def update_category(db: Session, category_id: int, category_patch: CategoryPatch) -> CategoryModView:

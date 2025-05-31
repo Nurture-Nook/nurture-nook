@@ -47,25 +47,12 @@ def get_chat(db: Session, chat_id: int) -> ChatOpen:
 def get_all_chats(db: Session, skip: int = 0, limit: int = 100) -> List[ChatOpen]:
     return [ChatOpen.from_orm(chat) for chat in db.query(Chat).offset(skip).limit(limit).all()]
 
-# UPDATE
-def add_message_to_chat(db: Session, chat_id: int, message_data: MessageCreate) -> MessageOut:
-    chat = get_chat_model(db, chat_id)
-
-    new_message = Message(
-        sender=message_data.sender,
-        content=message_data.content,
-        chat_id=chat.id
-    )
-    db.add(new_message)
-    db.commit()
-    db.refresh(new_message)
-
-    logger.info(f"Message {new_message.id} added to Chat {chat_id}")
-
-    return MessageOut.from_orm(new_message)
+def get_messages_of_chat(db: Session, chat_id: int, skip: int = 0, limit: int = 100) -> List[MessageOut]:
+    messages = db.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at.desc()).offset(skip).limit(limit).all()
+    return [MessageOut.from_orm(msg) for msg in messages]
 
 # DELETE
-def delete_chat(db: Session, chat_id: int) -> ChatOpen:
+def delete_chat(db: Session, chat_id: int, current_user: User) -> ChatOpen:
     chat = get_chat_model(db, chat_id)
 
     chat_out = ChatOpen.from_orm(chat)

@@ -1,12 +1,28 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Message
-from schemas.messages import MessageOut, MessagePatch
+from schemas.messages import MessageCreate, MessageOut, MessagePatch
 from typing import List
 from datetime import datetime
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+# CREATE
+def send_message(db: Session, chat_id: int, message_data: MessageCreate) -> MessageOut:
+    chat = get_chat_model(db, chat_id)
+
+    new_message = Message(
+        sender=message_data.sender,
+        content=message_data.content,
+        chat_id=chat.id
+    )
+    db.add(new_message)
+    db.commit()
+    db.refresh(new_message)
+
+    logger.info(f"Message {new_message.id} added to Chat {chat_id}")
+
+    return MessageOut.from_orm(new_message)
 
 # READ
 def get_message_model(db: Session, message_id: int) -> Message:
@@ -17,10 +33,6 @@ def get_message_model(db: Session, message_id: int) -> Message:
 
 def get_message(db: Session, message_id: int) -> MessageOut:
     return MessageOut.from_orm(get_message_model(db, message_id))
-
-def get_messages_of_chat(db: Session, chat_id: int, skip: int = 0, limit: int = 100) -> List[MessageOut]:
-    messages = db.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at.desc()).offset(skip).limit(limit).all()
-    return [MessageOut.from_orm(msg) for msg in messages]
 
 # UPDATE
 def edit_message(db: Session, message_id: int, message_update: MessagePatch) -> MessageOut:

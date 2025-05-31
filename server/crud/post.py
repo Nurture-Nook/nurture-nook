@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Post
 from schemas.posts import PostCreate, PostOut, PostPatch, PostModPatch, PostModView
+from schemas.comments import CommentDetailedOut
 from crud.temporary_username import create_alias
 from typing import List
 import logging
@@ -47,15 +48,24 @@ def get_post_model(db: Session, post_id: int) -> Post:
 def get_post(db: Session, post_id: int) -> PostOut:
     return PostOut.from_orm(get_post_model(db, post_id))
 
+def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
+    return PostDetailedOut.from_orm(get_post_model(db, post_id))
+
 def get_post_as_mod(db: Session, post_id: int) -> PostModView:
     return PostModView.from_orm(get_post_model(db, post_id))
 
 def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> List[PostOut]:
     return [PostOut.from_orm(post) for post in db.query(Post).offset(skip).limit(limit).all()]
 
+def get_comments_of_post(db: Session, post_id: int, skip: int = 0, limit: int = 100) -> List[CommentDetailedOut]:
+    return [CommentDetailedOut.from_orm(comment) for comment in db.query(Comment).filter(Comment.post_id == post_id).offset(skip).limit(limit).all()]
+
 # UPDATE
-def update_post(db: Session, post_id: int, post_patch: PostPatch) -> PostOut:
+def update_post(db: Session, post_id: int, post_patch: PostPatch, current_user: User) -> PostOut:
     db_post = get_post_model(db, post_id)
+
+    if db_post.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You are not authorized to update this post")
 
     updates = { key: value for key, value in post_patch.dict(exclude_unset=True, exclude_none=True).items() }
     for attr, value in updates.items():
@@ -83,12 +93,15 @@ def update_post_as_mod(db: Session, post_id: int, post_patch: PostModPatch) -> P
     return PostModView.from_orm(db_post)
 
 # DELETE
-def delete_post(db: Session, post_id: int) -> PostOut:
-    post = get_post_model(db, post_id)
+def delete_post(db: Session, post_id: int, current_user: User) -> PostOut:
+    db_post = get_post_model(db, post_id)
 
-    post_out = PostOut.from_orm(post)
+    if db_post.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You are not authorized to delete this post")
 
-    db.delete(post)
+    post_out = PostOut.from_orm(db_post)
+
+    db.delete(db_post)
     db.commit()
 
     logger.info(f"Post {post_id} deleted")

@@ -2,7 +2,9 @@ from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
 from models import User
-from schemas import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
+from schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
+from schemas.posts import PostOut
+from schemas.chats import ChatOpen
 from services.email import send_verification
 from utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
 from typing import List, Optional
@@ -12,7 +14,7 @@ import logging, re
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-username_pattern = re.compile(r'^(?=.*[a-zA-Z].*[a-zA-Z].*[a-zA-Z].*[a-zA-Z].*[a-zA-Z])[a-zA-Z0-9]{1,15}$')
+username_pattern = re.compile(r'^(?=(.*[a-zA-Z]){3,})[a-zA-Z0-9_]{3,15}$')
 password_pattern = re.compile(r'^(?=(.*[a-zA-Z]){5,})(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,15}$')
 email_pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$')
 
@@ -62,6 +64,14 @@ def get_user_by_username(db: Session, username: str) -> Optional[User]:
 
 def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Session = Depends(get_db)):
     return db.query(User).offset(skip).limit(limit).all()
+
+def get_posts_by_user(skip: int = 0, limit: int = 50, user_id: int, db: Session = Depends(get_db)) -> List[PostOut]:
+    posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
+    return [PostOut.from_orm(post) for post in posts]
+
+def get_chats_of_user(skip: int = 0, limit: int = 50, user_id: int, db: Session = Depends(get_db)) -> List[ChatOpen]:
+    chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()
+    return [ChatOpen.from_orm(chat) for chat in chats]
 
 # UPDATE
 def update_username(db: Session, user_id: int, username_update: UsernameUpdateRequest) -> Optional[User]:
@@ -137,15 +147,18 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
         raise HTTPException(status_code = 403, detail = "Incorrect Password")
 
     validate_token(db, current_user, user_delete.token)
+
+    user_private_out = UserPrivateOut.from_orm(current_user)
+
     db.delete(current_user)
     db.commit()
-    return UserPrivateOut.from_orm(current_user)
+    return user_private_out
 
 # Validate
 def validate_username(db: Session, username: str) -> bool:
     if not username_pattern.match(username):
         logger.warning(f"Username Validation Failed: {username}")
-        raise HTTPException(status_code = 400, detail = "Invalid Username: must be alphanumeric, maximum 15 characters, and contain at least five letters")
+        raise HTTPException(status_code = 400, detail = "Invalid Username: must be alphanumeric or with underscores, with at least three letters and between three and 15 characters (inclusive)")
 
     if get_user_by_username(db, username):
         logger.warning(f"Duplicate Username Attempt: {username}")

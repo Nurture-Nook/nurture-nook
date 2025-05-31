@@ -4,6 +4,7 @@ from models import Comment
 from schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
 from crud.temporary_username import create_alias
 from typing import List
+import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -48,8 +49,11 @@ def get_all_comments(db: Session, skip: int = 0, limit: int = 100) -> List[Comme
     return [CommentOut.from_orm(comment) for comment in db.query(Comment).offset(skip).limit(limit).all()]
 
 # UPDATE
-def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch) -> CommentOut:
+def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch, current_user_id: int) -> CommentOut:
     db_comment = get_comment_model(db, comment_id)
+
+    if db_comment.user_id != current_user_id:
+        raise HTTPException(status_code=403, detail="You are not authorized to update this comment")
 
     updates = { key: value for key, value in comment_patch.dict(exclude_unset=True, exclude_none=True).items() }
     for attr, value in updates.items():
@@ -77,12 +81,15 @@ def update_comment_as_mod(db: Session, comment_id: int, comment_patch: CommentMo
     return CommentModView.from_orm(db_comment)
 
 # DELETE
-def delete_comment(db: Session, comment_id: int) -> CommentOut:
-    comment = get_comment_model(db, comment_id)
+def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentOut:
+    db_comment = get_comment_model(db, comment_id)
 
-    comment_out = CommentOut.from_orm(comment)
+    if db_comment.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You are not authorized to delete this comment")
 
-    db.delete(comment)
+    comment_out = CommentOut.from_orm(db_comment)
+
+    db.delete(db_comment)
     db.commit()
 
     logger.info(f"Comment {comment_id} deleted")
