@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export const Login = () => {
 
     return (
         <>
             <h3>Login</h3>
-            <Link to='/nurture_nook'>
+            <Link href='/home'>
                 <button>enter</button>
             </Link>
         </>

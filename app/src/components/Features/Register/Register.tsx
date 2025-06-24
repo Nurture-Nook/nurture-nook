@@ -1,9 +1,12 @@
-import { useState, useContext } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { register } from "../../../adapters/authAdapters";
 import { CurrentUserContext } from "../../../contexts/current_user_context";
 
 export const Register = () => {
+    const router = useRouter();
+
     const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
     const [errorText, setErrorText] = useState("");
     const [email, setEmail] = useState("");
@@ -11,7 +14,11 @@ export const Register = () => {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
 
-    if (currentUser) return <Navigate to={`/me`} />;
+    useEffect(() => {
+        if (currentUser) {
+            router.push('/me');
+        }
+    }, [currentUser, router]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -27,6 +34,7 @@ export const Register = () => {
             email,
             password
         });
+
         if (error) return setErrorText(error.message);
 
         setCurrentUser(user);
@@ -96,7 +104,7 @@ export const Register = () => {
             <p>{errorText}</p>
 
             <p>
-                Already have an account with us? <Link to="/login">Log in</Link>
+                Already have an account with us? <Link href="/login">Log in</Link>
             </p>
         </>
     )
