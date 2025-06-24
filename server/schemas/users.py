@@ -2,7 +2,7 @@ from .base import OrmBase
 from .posts import PostOut
 from datetime import datetime
 from typing import List, Optional
-from pydantic import Field, validator
+from pydantic import validator
 
 class UserCreate(OrmBase):
     username: str

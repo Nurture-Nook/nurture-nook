@@ -12,7 +12,7 @@ def create(message: MessageCreate, chat_id: int, db: Session = Depends(get_db)):
     return send_message(db = db, chat_id = chat_id, message_data = message)
 
 @router.put("/messages/{id}/edit")
-def edit(id: int, update: MessagePatch, db: Session = Depends(get_db))
+def edit(id: int, update: MessagePatch, db: Session = Depends(get_db)):
     try:
         edit_message(db = db, message_id = id, message_update = update)
 
