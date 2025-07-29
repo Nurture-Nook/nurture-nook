@@ -4,7 +4,6 @@ from models import Category
 from schemas.categories import CategoryOut, CategoryWithPosts
 from schemas.posts import PostOut
 from crud.category import get_category_with_posts, get_all_categories, get_posts_of_category
-from utils.user import get_current_user
 from typing import List
 from pydantic import BaseModel
 from db import get_db

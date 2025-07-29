@@ -1,7 +1,8 @@
 from fastapi import HTTPException
+from server.middleware import logging
 from sqlalchemy.orm import Session
-from models import Category
-from schemas.categories import CategoryCreate, CategoryOut, CategoryPatch, CategoryModView
+from models import Category, Post
+from schemas.categories import CategoryCreate, CategoryOut, CategoryWithPosts, CategoryPatch, CategoryModView
 from schemas.posts import PostOut
 from typing import List
 

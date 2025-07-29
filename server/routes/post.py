@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Post
+from models import User
 from schemas.posts import PostCreate, PostOut, PostDetailedOut, PostPatch
 from schema.comments import CommentDetailedOut
-from crud.post import create_post, get_post, get_all_posts, update_post, delete_post
+from crud.post import create_post, get_detailed_post, get_comments_of_post, get_all_posts, update_post, delete_post
 from utils.user import get_current_user
 from typing import List
 from pydantic import BaseModel

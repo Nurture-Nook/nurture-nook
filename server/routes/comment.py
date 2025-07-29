@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Comment
+from models import Comment, User
 from schemas.posts import CommentCreate, CommentOut, CommentDetailedOut, CommentPatch
 from crud.post import create_comment, get_comment, get_all_comments, update_comment, delete_comment
 from utils.user import get_current_user
