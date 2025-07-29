@@ -1,9 +1,9 @@
 from fastapi import HTTPException
+from server.middleware import logging
 from sqlalchemy.orm import Session
 from models import Message
 from schemas.messages import MessageCreate, MessageOut, MessagePatch
-from typing import List
-from datetime import datetime
+from crud.chat import get_chat_model
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 

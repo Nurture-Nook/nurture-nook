@@ -1,6 +1,7 @@
 from fastapi import HTTPException
+from server.middleware import logging
 from sqlalchemy.orm import Session
-from models import ContentWarning
+from models import ContentWarning, Post
 from schemas.warnings import ContentWarningCreate, ContentWarningOut, ContentWarningPatch, ContentWarningModView, ContentWarningWithPosts
 from schemas.posts import PostOut
 from typing import List

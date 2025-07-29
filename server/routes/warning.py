@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import ContentWarning
 from schemas.warnings import ContentWarningOut, ContentWarningWithPosts
 from schemas.posts import PostOut
-from crud.warning import get_warning, get_all_warnings, get_warning_with_posts, get_posts_of_warnings
-from utils.user import get_current_user
+from crud.warning import get_all_warnings, get_warning_with_posts, get_posts_of_warning
 from typing import List
 from pydantic import BaseModel
 from db import get_db

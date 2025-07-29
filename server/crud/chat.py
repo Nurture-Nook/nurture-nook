@@ -1,10 +1,10 @@
 from fastapi import HTTPException
+from server.middleware import logging
 from sqlalchemy.orm import Session
 from models import Chat, Message
 from schemas.chats import ChatCreate, ChatOpen
-from schemas.messages import MessageCreate, MessageOut
+from schemas.messages import MessageOut
 from typing import List
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -52,7 +52,7 @@ def get_messages_of_chat(db: Session, chat_id: int, skip: int = 0, limit: int = 
     return [MessageOut.from_orm(msg) for msg in messages]
 
 # DELETE
-def delete_chat(db: Session, chat_id: int, current_user: User) -> ChatOpen:
+def delete_chat(db: Session, chat_id: int) -> ChatOpen:
     chat = get_chat_model(db, chat_id)
 
     chat_out = ChatOpen.from_orm(chat)

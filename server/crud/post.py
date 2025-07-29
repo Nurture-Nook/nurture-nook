@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from models import Post
-from schemas.posts import PostCreate, PostOut, PostPatch, PostModPatch, PostModView
+from models import Comment, Post, User
+from schemas.posts import PostCreate, PostDetailedOut, PostOut, PostPatch, PostModPatch, PostModView
 from schemas.comments import CommentDetailedOut
 from crud.temporary_username import create_alias
 from typing import List

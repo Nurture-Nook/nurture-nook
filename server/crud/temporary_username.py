@@ -1,3 +1,4 @@
+from server.middleware import logging
 from sqlalchemy.orm import Session
 from models import TemporaryUsername
 from utils.alias import generate_alias

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
-from models import User
+from models import Chat, Post, User
 from schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
 from schemas.posts import PostOut
 from schemas.chats import ChatOpen
@@ -65,11 +65,11 @@ def get_user_by_username(db: Session, username: str) -> Optional[User]:
 def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Session = Depends(get_db)):
     return db.query(User).offset(skip).limit(limit).all()
 
-def get_posts_by_user(skip: int = 0, limit: int = 50, user_id: int, db: Session = Depends(get_db)) -> List[PostOut]:
+def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[PostOut]:
     posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
     return [PostOut.from_orm(post) for post in posts]
 
-def get_chats_of_user(skip: int = 0, limit: int = 50, user_id: int, db: Session = Depends(get_db)) -> List[ChatOpen]:
+def get_chats_of_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[ChatOpen]:
     chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()
     return [ChatOpen.from_orm(chat) for chat in chats]
 

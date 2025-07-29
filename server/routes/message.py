@@ -1,9 +1,12 @@
-from fastapi import HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Message
-from schemas.messages import MessageCreate, MessageOut, MessagePatch
-from typing import List
-from datetime import datetime
+from schemas.messages import MessageCreate, MessagePatch
+from crud.message import send_message, edit_message
+from pydantic import BaseModel
+from db import get_db
+
+class MessageResponse(BaseModel):
+    message: str
 
 router = APIRouter(prefix="/message", tags=["Messages"])
 
