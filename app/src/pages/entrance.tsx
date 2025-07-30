@@ -1,4 +1,4 @@
-import { Entrance } from '../components/Features/Entrance/Entrance.tsx';
+import { Entrance } from '../components/Features/Entrance/Entrance';
 
 export const EntrancePage = () => {
     return (
