@@ -1,12 +1,8 @@
 import { useState } from 'react';
 import { sendMessage } from '@/adapters/messageAdapters';
+import { MessageInput } from '@/types/chat';
 
-type ChatInputProps = {
-    chatId: number;
-    sender: string;
-}
-
-export const ChatInput: React.FC<ChatInputProps> = ({ chatId, sender }) => {
+export const ChatInput: React.FC<MessageInput> = ({ chatId, sender }) => {
     const [errorText, setErrorText] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
