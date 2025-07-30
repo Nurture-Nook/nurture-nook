@@ -1,11 +1,5 @@
-export interface MessageInput {
-    chatId: number;
-    sender: string;
-}
+import { MessageInput } from "./message";
 
-export interface MessageOut {
-    id: number;
-    sender: "user" | "ai";
-    content: string;
-    created_at: string
-};
+export interface ChatCreate {
+    message: MessageInput;
+}

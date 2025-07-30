@@ -7,11 +7,11 @@ import {
 const baseUrl = '/api/message';
 
 export const sendMessage = async ({
-    sender, content, chatId
-}: { sender: string; content: string; chatId: number; }) => {
+    sender, content, chat_id
+}: { sender: string; content: string; chat_id: number | undefined; }) => {
     return fetchHandler(
         `${baseUrl}/create`,
-        getPostOptions({ sender, content, chatId })
+        getPostOptions({ sender, content, chat_id })
     );
 }
 

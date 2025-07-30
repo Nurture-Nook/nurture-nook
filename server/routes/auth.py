@@ -17,6 +17,22 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
     if get_user_by_username(db, user_create.username):
         raise HTTPException(status_code=400, detail="Username Not Available")
 
+    user = create_user(db, user_create)
+    access_token = generate_jwt_token(user.id)
+
+    response = JSONResponse({"message": "Registration successful"})
+    response.set_cookie(
+        key="access_token", 
+        value=access_token, 
+        httponly=True, 
+        secure=True, 
+        samesite="Lax",
+        max_age=3600
+    )
+    
+    return response
+
+
     return create_user(db, user_create)
 
 @router.post("/login")

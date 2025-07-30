@@ -1,4 +1,4 @@
-import { MessageOut } from '@/types/chat';
+import { MessageOut } from '@/types/message';
 
 interface ChatMessageProps {
     message: MessageOut;

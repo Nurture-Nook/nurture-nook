@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { sendMessage } from '@/adapters/messageAdapters';
-import { MessageInput } from '@/types/chat';
+import { MessageInput } from '@/types/message';
 
-export const ChatInput: React.FC<MessageInput> = ({ chatId, sender }) => {
+export const ChatInput: React.FC<MessageInput> = ({ chat_id, sender }) => {
     const [errorText, setErrorText] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export const ChatInput: React.FC<MessageInput> = ({ chatId, sender }) => {
         setLoading(true);
 
         try {
-            await sendMessage({sender, content, chatId});
+            await sendMessage({sender, content, chat_id});
         } catch (error) {
             setErrorText("Failed to Send Message");
             console.error("Failed to send message: ", error);
