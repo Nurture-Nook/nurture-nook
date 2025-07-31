@@ -7,7 +7,7 @@ import { CurrentUserContext } from "../../../contexts/current_user_context";
 export const Login = () => {
     const router = useRouter();
 
-    const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
+    const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const [errorText, setErrorText] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -21,7 +21,7 @@ export const Login = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setErrorText('');
+        setErrorText("");
 
         if (!username || !password) return setErrorText("All Fields are Required");
 
