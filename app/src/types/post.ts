@@ -1,5 +1,11 @@
+export interface PostOut {
+    id: number
+    title: string
+    created_at: string
+}
+
 export interface PostDetailedOut {
-    id: Number;
+    id: number;
     title: string;
     description: string;
     temporary_username: string;

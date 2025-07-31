@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models import User
 from schemas.posts import PostCreate, PostOut, PostDetailedOut, PostPatch
 from schema.comments import CommentDetailedOut
-from crud.post import create_post, get_detailed_post, get_comments_of_post, get_all_posts, update_post, delete_post
+from crud.post import create_post, get_post, get_detailed_post, get_comments_of_post, get_all_posts, update_post, delete_post
 from utils.user import get_current_user
 from typing import List
 from pydantic import BaseModel
@@ -26,6 +26,10 @@ def get_posts(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) -> 
 @router.get("/posts/{id}")
 def get(id: int, db: Session = Depends(get_db)) -> PostDetailedOut:
     return get_detailed_post(db = db, post_id = id)
+
+@router.get("/posts/{id}/preview")
+def get_post_preview(id: int, db: Session = Depends(get_db)) -> PostOut:
+    return get_post(db = db, post_id = id)
 
 @router.get("/posts/{id}/comments", response_model=List[CommentDetailedOut])
 def get_comments(id: int, count: int = 50, skip: int = 0, db: Session = Depends(get_db)) -> List[CommentDetailedOut]:

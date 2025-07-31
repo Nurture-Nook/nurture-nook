@@ -1,8 +1,19 @@
-import { fetchHandler } from '../utils/fetch';
+import { fetchHandler, basicFetchOptions } from '../utils/fetch';
 import { baseUrl } from './config';
 
+export const getPostPreviewById = async (postId: number) => {
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}/preview`, basicFetchOptions);
+
+    if (error) {
+        console.error(error);
+        return [null, error];
+    }
+
+    return [data.post, null];
+}
+
 export const getPostById = async (postId: number) => {
-    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`);
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, basicFetchOptions);
 
     if (error) {
         console.error(error);
