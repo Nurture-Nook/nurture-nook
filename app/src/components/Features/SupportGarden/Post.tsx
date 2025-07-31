@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { PostDetailedOut } from '@/types/post';
 import { getPostById } from '../../../adapters/postAdapters';
 
 export const Post = () => {
-    const [post, setPost] = useState(null);
+    const router = useRouter();
+
+    const [post, setPost] = useState<PostDetailedOut | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
+    const postId = router.query;
 
     useEffect(() => {
+        if (!postId) return;
+
         const fetchPost = async () => {
-            const [d, e] = await getPostById();
+            const [d, e] = await getPostById(Number(postId));
 
             if (e) setError(e);
             else setPost(d);
@@ -19,16 +26,19 @@ export const Post = () => {
         fetchPost();
     }, [])
 
-    if (loading) return <div>Loading post...</div>
+    if (loading) return <div>Loading post...</div>;
 
-    if (error) return <div>Error loading post.</div>
+    if (error) return <div>Error Loading Post</div>;
+
+    if (post === null) return;
 
     return (
         <>
             <h3>{ post.title }</h3>
             <h5>Categories: { post.categories }</h5>
-            <h4>Content Warnings: {post.contentWarnings}</h4>
-            <p>{ post.content }</p>
+            <h4>Content Warnings: {post.content_warnings}</h4>
+            <p>{ post.description }</p>
+            <h5>Comments:</h5>
             <ul></ul>
         </>
     )

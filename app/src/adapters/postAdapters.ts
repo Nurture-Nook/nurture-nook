@@ -2,7 +2,7 @@ import { fetchHandler } from '../utils/fetch';
 import { baseUrl } from './config';
 
 export const getPostById = async (postId: number) => {
-    const [data, error] = await fetchHandler(baseUrl + `/posts/${postId}`);
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`);
 
     if (error) {
         console.error(error);
