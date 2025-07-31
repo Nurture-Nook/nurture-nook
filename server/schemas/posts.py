@@ -14,7 +14,6 @@ class PostCreate(OrmBase):
     categories: Optional[List[int]] = None
     warnings: Optional[List[int]] = None
     user_id: int
-    post_id: int
 
 class PostOut(OrmBase):
     id: int
