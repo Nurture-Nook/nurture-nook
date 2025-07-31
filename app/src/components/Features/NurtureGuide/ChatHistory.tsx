@@ -52,7 +52,7 @@ export const ChatHistory = () => {
         <>
             <ChatDeleteButton />
             <div className="chat-history">
-                <div ref={scrollRef}>
+                <div ref={scrollRef} className="chat-messages">
                     
                     {messages.length === 0 && <p></p>};
                     {messages.map((msg) => (

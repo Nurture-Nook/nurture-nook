@@ -10,3 +10,9 @@ export interface MessageOut {
     content: string;
     created_at: string
 };
+
+export interface MessageCreate {
+  chat_id: number;
+  sender: string;
+  content: string;
+}
