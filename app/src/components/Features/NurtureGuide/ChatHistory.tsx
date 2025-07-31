@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { getChat } from "@/adapters/chatAdapters";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
+import { ScrollToBottomButton } from "./ScrollToBottomButton";
 import { MessageOut } from "@/types/message";
 
 export const ChatHistory = () => {
@@ -11,6 +12,13 @@ export const ChatHistory = () => {
     const [messages, setMessages] = useState<MessageOut[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages])
 
     useEffect(() => {
         if (!chatId) return;
@@ -30,7 +38,7 @@ export const ChatHistory = () => {
         fetchChatData();
 
         
-    })
+    }, [])
     
     const handleNewMessage = (newMessage: MessageOut) => {
         setMessages((prev) => [...prev, newMessage]);
@@ -42,12 +50,16 @@ export const ChatHistory = () => {
     return (
         <>
             <div className="chat-history">
-                {messages.length === 0 && <p></p>};
-                {messages.map((msg) => (
-                    <ChatMessage key={msg.id} message={msg}/>
-                ))};
-                
-                <ChatInput chat_id={Number(chatId)} sender="user" onNewMessage={handleNewMessage}/>
+                <div ref={scrollRef}>
+                    {messages.length === 0 && <p></p>};
+                    {messages.map((msg) => (
+                        <ChatMessage key={msg.id} message={msg}/>
+                    ))};
+                    
+                    <ScrollToBottomButton scrollRef={scrollRef}/>
+
+                    <ChatInput chat_id={Number(chatId)} sender="user" onNewMessage={handleNewMessage}/>
+                </div>
             </div>
         </>
     )
