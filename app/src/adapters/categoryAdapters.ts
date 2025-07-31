@@ -1,15 +1,8 @@
 import {
+    basicFetchOptions,
     fetchHandler,
 } from '../utils/fetch';
 import { baseUrl } from './config';
-
-export const getCategoryData = (category: object) => {
-    return {
-        name: category.title,
-        description: category.categoryDescription,
-        posts: category.posts
-    }
-}
 
 export const getCategoryByName = async (name: string) => {
     const [data, error] = await fetchHandler(baseUrl + `/categories?name=${encodeURIComponent(name)}`);
@@ -19,7 +12,7 @@ export const getCategoryByName = async (name: string) => {
         return [null, error];
     }
 
-    return [getCategoryData(data.category), null];
+    return [data, null];
 }
 
 export const getCategoryById = async (id: number) => {
@@ -30,11 +23,11 @@ export const getCategoryById = async (id: number) => {
         return [null, error];
     }
 
-    return [getCategoryData(data.category), null];
+    return [data, null];
 }
 
-export const fetchCategories = () => {
-    const [data, error] = fetchHandler(baseUrl + `/categories`);
+export const fetchCategories = async () => {
+    const [data, error] = await fetchHandler(baseUrl + `/categories`, basicFetchOptions);
 
     if (error) {
         console.error(error);

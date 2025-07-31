@@ -45,4 +45,3 @@ def delete(id: int, current_user: User = Depends(get_current_user), db: Session 
     delete_post(db = db, post_id = id, current_user = current_user)
 
     return MessageResponse(message="Post deleted successfully")
-
