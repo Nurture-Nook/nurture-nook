@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getCategoryByName } from '../../../../adapters/categoryAdapters.ts';
+import { useState, useEffect } from 'react';
+import { getCategoryByName } from '../../../adapters/categoryAdapters';
 
 export const ExperientialCategory = () => {
     const [experientialCategory, setExperientialCategory] = useState({});

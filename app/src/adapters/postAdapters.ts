@@ -12,19 +12,19 @@ export const getPostById = async (postId: number) => {
     return [data.post, null];
 }
 
-export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {
-    let url = baseUrl + `/search?query=${encodeURIComponent(searchTerm)}`;
+// export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {
+//     let url = baseUrl + `/search?query=${encodeURIComponent(searchTerm)}`;
 
-    if (category !== null) url += `&category=${encodeURIComponent(category)}`;
+//     if (category !== null) url += `&category=${encodeURIComponent(category)}`;
 
-    if (exclude.length > 0) url += `&exclude=${exclude.map(encodeURIComponent).join(',')}`;
+//     if (exclude.length > 0) url += `&exclude=${exclude.map(encodeURIComponent).join(',')}`;
 
-    const [data, error] = await fetchHandler(url);
+//     const [data, error] = await fetchHandler(url);
 
-    if (error) {
-        console.error(error);
-        return [null, error];
-    }
+//     if (error) {
+//         console.error(error);
+//         return [null, error];
+//     }
 
-    return [data.posts, null];
-}
+//     return [data.posts, null];
+// }
