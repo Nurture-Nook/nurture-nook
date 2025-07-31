@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getCategoryById } from '../../../adapters/categoryAdapters';
+import { getPostPreviewById } from '@/adapters/postAdapters';
 import { CategoryWithPosts } from '@/types/category';
 
 export const ExperientialCategory = () => {
@@ -37,11 +38,11 @@ export const ExperientialCategory = () => {
 
     return (
         <>
-        <h3>{ experientialCategory.title }</h3>
-        <h5>{ experientialCategory.description }</h5>
-        <ul>
-            { experientialCategory.posts.map(c => <li>{ c }</li>) }
-        </ul>
+            <h3>{ experientialCategory.title }</h3>
+            <h5>{ experientialCategory.description }</h5>
+            <ul>
+                { experientialCategory.posts.map(postId => <li>{ getPostPreviewById(postId) }</li>) }
+            </ul>
         </>
     )
 }
