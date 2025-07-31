@@ -4,6 +4,7 @@ import { getChat } from "@/adapters/chatAdapters";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
+import { ChatDeleteButton } from "./ChatDeleteButton";
 import { MessageOut } from "@/types/message";
 
 export const ChatHistory = () => {
@@ -49,8 +50,10 @@ export const ChatHistory = () => {
     
     return (
         <>
+            <ChatDeleteButton />
             <div className="chat-history">
                 <div ref={scrollRef}>
+                    
                     {messages.length === 0 && <p></p>};
                     {messages.map((msg) => (
                         <ChatMessage key={msg.id} message={msg}/>
