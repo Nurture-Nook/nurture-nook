@@ -1,8 +1,8 @@
-import { handleFetch } from './handleFetch.ts';
-import { baseUrl } from './config.ts';
+import { fetchHandler } from '../utils/fetch';
+import { baseUrl } from './config';
 
-export const getPostById = async (postId) => {
-    const [data, error] = handleFetch(baseUrl + `/posts/${postId}`);
+export const getPostById = async (postId: number) => {
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${postId}`);
 
     if (error) {
         console.error(error);
@@ -19,7 +19,7 @@ export const getPostsBySearch = async (searchTerm: string, category = null, excl
 
     if (exclude.length > 0) url += `&exclude=${exclude.map(encodeURIComponent).join(',')}`;
 
-    const [data, error] = await handleFetch(url);
+    const [data, error] = await fetchHandler(url);
 
     if (error) {
         console.error(error);

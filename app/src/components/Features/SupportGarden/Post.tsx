@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getPostById } from '../../../../adapters/postAdapters.ts';
+import { getPostById } from '../../../adapters/postAdapters';
 
 export const Post = () => {
     const [post, setPost] = useState(null);
