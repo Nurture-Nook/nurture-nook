@@ -4,19 +4,24 @@ import { getCategoryById } from '../../../adapters/categoryAdapters';
 import { getPostPreviewById } from '@/adapters/postAdapters';
 import { CategoryWithPosts } from '@/types/category';
 
-export const ExperientialCategory = () => {
+interface CategoryProps {
+    categoryId?: number;
+}
+
+export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) => {
     const router = useRouter();
 
     const [experientialCategory, setExperientialCategory] = useState<CategoryWithPosts | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const categoryId = router.query;
+    const queryId = router.query;
+    const id = categoryId ?? (typeof queryId === 'string' ? parseInt(queryId) : undefined)
 
     useEffect(() => {
-        if (!categoryId) return;
+        if (!id) return;
 
        const fetchCategory = async () => {
-            const [d, e] = await getCategoryById(Number(categoryId));
+            const [d, e] = await getCategoryById(Number(id));
 
             if (e) setError(e);
             else setExperientialCategory(d);
