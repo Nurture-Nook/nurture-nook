@@ -18,6 +18,7 @@ class PostCreate(OrmBase):
 class PostOut(OrmBase):
     id: int
     title: str
+    warnings: Optional[List[int]] = None
     created_at: datetime
 
 class PostPatch(OrmBase):

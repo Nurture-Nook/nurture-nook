@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { fetchCategories } from '../../../adapters/categoryAdapters';
+import { ExperientialCategory } from './ExperientialCategory';
+import { CategoryWithPosts } from '../../../types/category';
 
 export const ExperientialCategories = () => {
-    const [categories, setCategories] = useState(null);
+    const [categories, setCategories] = useState<CategoryWithPosts[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
@@ -26,17 +28,14 @@ export const ExperientialCategories = () => {
         return <div>Error loading categories.</div>
     }
 
+    if (categories === null) return;
+
     return (
         <>
         <ul>
             { categories.map(c => (
-                <li>
-                    <h3>{ c.title }</h3>
-                    <ul>
-                        { c.posts.map(p => <li>
-                            <h5>{ p.title }</h5>
-                        </li>) }
-                    </ul>
+                <li key={c.id}>
+                    {<ExperientialCategory categoryId={c.id} />}
                 </li>
             )) }
         </ul>

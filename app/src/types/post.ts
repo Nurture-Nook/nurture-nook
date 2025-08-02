@@ -1,7 +1,8 @@
 export interface PostOut {
-    id: number
-    title: string
-    created_at: string
+    id: number;
+    title: string;
+    content_warnings: number[];
+    created_at: string;
 }
 
 export interface PostDetailedOut {
