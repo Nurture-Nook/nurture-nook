@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models import Category
 from schemas.categories import CategoryOut, CategoryWithPosts
 from schemas.posts import PostOut
 from crud.category import get_category_with_posts, get_all_categories, get_posts_of_category

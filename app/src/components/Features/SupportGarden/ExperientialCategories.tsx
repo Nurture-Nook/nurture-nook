@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchCategories } from '../../../../adapters/categoryAdapters.ts';
+import { fetchCategories } from '../../../adapters/categoryAdapters';
 
 export const ExperientialCategories = () => {
     const [categories, setCategories] = useState(null);
