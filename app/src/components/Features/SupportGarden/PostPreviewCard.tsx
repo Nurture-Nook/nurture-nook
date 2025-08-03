@@ -3,14 +3,13 @@ import { PostOut } from '@/types/post';
 import { getPostPreviewById } from '../../../adapters/postAdapters';
 
 interface PostPreviewProps {
-    postPreview: PostOut;
+    postId: number;
 }
 
-export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postPreview }) => {
+export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
     const [post, setPost] = useState<PostOut | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const postId = postPreview.id
     
     useEffect(() => {
         if (!postId) return;
