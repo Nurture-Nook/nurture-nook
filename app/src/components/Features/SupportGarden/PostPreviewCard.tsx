@@ -3,14 +3,13 @@ import { PostOut } from '@/types/post';
 import { getPostPreviewById } from '../../../adapters/postAdapters';
 
 interface PostPreviewProps {
-    postPreview: PostOut;
+    postId: number;
 }
 
-export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postPreview }) => {
+export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
     const [post, setPost] = useState<PostOut | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const postId = postPreview.id
     
     useEffect(() => {
         if (!postId) return;
@@ -25,7 +24,7 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postPreview }) => 
         }
 
         fetchPost();
-    }, [])
+    }, [postId])
 
     if (loading) return <div>Loading post preview...</div>;
 
@@ -37,6 +36,11 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postPreview }) => 
         <>
             <h3>{ post.title }</h3>
             <h5>{ post.created_at }</h5>
+            <br></br>
+            <h4>Content Warnings:</h4>
+            <ul>
+                {post.content_warnings ? post.content_warnings.map(w => w) : <></>}
+            </ul>
         </>
     )
 }

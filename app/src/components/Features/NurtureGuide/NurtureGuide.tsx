@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { ChatHistory } from "./ChatHistory";
 
 export const NurtureGuide = () => {

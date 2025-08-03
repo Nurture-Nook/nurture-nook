@@ -1,6 +1,6 @@
 export interface CategoryWithPosts {
     id: number;
-    title: String;
-    description: String;
+    title: string;
+    description: string;
     posts: number[];
 }

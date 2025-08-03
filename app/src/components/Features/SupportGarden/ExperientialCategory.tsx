@@ -30,7 +30,7 @@ export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) =>
         }
 
         fetchCategory();
-    }, []);
+    }, [id]);
 
     if (loading) return <div>Loading category...</div>
 
@@ -46,7 +46,9 @@ export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) =>
             <h3>{ experientialCategory.title }</h3>
             <h5>{ experientialCategory.description }</h5>
             <ul>
-                { experientialCategory.posts.map(postId => <li>{ getPostPreviewById(postId) }</li>) }
+                {experientialCategory.posts.map(postId =>
+                    <li key={postId}>{getPostPreviewById(postId)}</li>
+                )};
             </ul>
         </>
     )

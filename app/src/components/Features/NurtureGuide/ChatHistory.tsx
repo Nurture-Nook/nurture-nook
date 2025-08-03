@@ -31,6 +31,7 @@ export const ChatHistory = () => {
                 setMessages(chatData);
                 setLoading(false);
             } catch (error) {
+                console.error(error);
                 setError("Failed to Load Chat");
                 setLoading(false);
             }

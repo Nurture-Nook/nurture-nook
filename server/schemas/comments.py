@@ -9,6 +9,7 @@ class CommentCreate(OrmBase):
     temporary_username: str
     content: str
     warnings: List[int] = None
+    parent_comment_id: int = None
     user_id: int
     post_id: int
 
@@ -16,14 +17,9 @@ class CommentOut(OrmBase):
     id: int
     temporary_username: str
     content: str
+    warnings: List[ContentWarningOut] = None
+    parent_comment_id: int = None
     created_at: datetime
-
-class CommentDetailedOut(OrmBase):
-    id: int
-    temporary_username: str
-    content: str
-    created_at: datetime
-    warnings: List[ContentWarningOut]
 
 class CommentPatch(OrmBase):
     content: Optional[str] = None
@@ -43,4 +39,4 @@ class CommentModView(OrmBase):
     is_deleted: bool
     created_at: datetime
 
-CommentDetailedOut.update_forward_refs()
+CommentOut.update_forward_refs()

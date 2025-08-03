@@ -24,7 +24,7 @@ export const Post = () => {
         }
 
         fetchPost();
-    }, [])
+    }, [postId])
 
     if (loading) return <div>Loading post...</div>;
 
@@ -34,12 +34,17 @@ export const Post = () => {
 
     return (
         <>
-            <h3>{ post.title }</h3>
-            <h5>Categories: { post.categories }</h5>
-            <h4>Content Warnings: {post.content_warnings}</h4>
-            <p>{ post.description }</p>
-            <h5>Comments:</h5>
-            <ul></ul>
+            <div id="post-body">
+                <h3>{ post.title }</h3>
+                <h5>Categories: { post.categories }</h5>
+                <h4>Content Warnings: { post.content_warnings }</h4>
+                <h5>User: { post.temporary_username }</h5>
+                <p>{ post.description }</p>
+            </div>
+            <div id="comments">
+                <h5>Comments:</h5>
+                <ul></ul>
+            </div>
         </>
     )
 }
