@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Comment, User
-from schemas.comments import CommentCreate, CommentOut, CommentDetailedOut, CommentPatch, CommentModPatch, CommentModView
+from schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
 from crud.temporary_username import create_alias
 from typing import List
 import logging
@@ -40,11 +40,6 @@ def get_comment_model(db: Session, comment_id: int) -> Comment:
 def get_comment(db: Session, comment_id: int) -> CommentOut:
     comment = get_comment_model(db, comment_id)
     return CommentOut.from_orm(comment)
-
-def get_detailed_comment(db: Session, comment_id: int) -> CommentDetailedOut:
-    comment = get_comment_model(db, comment_id)
-    return CommentDetailedOut.from_orm(comment)
-
 
 def get_comment_as_mod(db: Session, comment_id: int) -> CommentModView:
     comment = get_comment_model(db, comment_id)

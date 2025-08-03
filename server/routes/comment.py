@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models import User
-from schemas.posts import CommentCreate, CommentOut, CommentDetailedOut, CommentPatch
-from crud.post import create_comment, get_comment, get_all_comments, update_comment, delete_comment
+from schemas.posts import CommentCreate, CommentOut, CommentPatch
+from crud.post import create_comment, get_comment, get_detailed_comment, get_all_comments, update_comment, delete_comment
 from utils.user import get_current_user
 from typing import List
 from pydantic import BaseModel
@@ -25,10 +25,6 @@ def get_comments(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) 
 @router.get("/comments/{id}", response_model=CommentOut)
 def get(id: int, db: Session = Depends(get_db)) -> CommentOut:
     return get_comment(db = db, comment_id = id)
-
-@router.get("/comments/{id}/detailed", response_model=CommentDetailedOut)
-def get(id: int, db: Session = Depends(get_db)) -> CommentDetailedOut:
-    return get_comment
 
 @router.put("/comments/{id}")
 def update(id: int, comment_update: CommentPatch, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):

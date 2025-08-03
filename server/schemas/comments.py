@@ -16,14 +16,8 @@ class CommentOut(OrmBase):
     id: int
     temporary_username: str
     content: str
-    created_at: datetime
-
-class CommentDetailedOut(OrmBase):
-    id: int
-    temporary_username: str
-    content: str
-    created_at: datetime
     warnings: List[ContentWarningOut]
+    created_at: datetime
 
 class CommentPatch(OrmBase):
     content: Optional[str] = None
