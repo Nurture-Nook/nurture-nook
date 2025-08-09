@@ -3,10 +3,11 @@ import { CommentOut } from '../../../types/comment';
 import { getCommentById } from '../../../adapters/commentAdapters';
 
 interface CommentProps {
+    postId: number
     commentId: number
 }
 
-export const Comment: React.FC<CommentProps> = ({ commentId }) => {
+export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
     const [comment, setComment] = useState<CommentOut | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ export const Comment: React.FC<CommentProps> = ({ commentId }) => {
         if (!commentId) return;
 
         const fetchComment = async () => {
-            const [d, e] = await getCommentById(commentId);
+            const [d, e] = await getCommentById(postId, commentId);
 
             if (e) setError(e);
             else setComment(d);

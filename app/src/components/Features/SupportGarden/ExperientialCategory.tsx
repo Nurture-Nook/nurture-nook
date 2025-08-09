@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getCategoryById } from '../../../adapters/categoryAdapters';
-import { getPostPreviewById } from '@/adapters/postAdapters';
 import { CategoryWithPosts } from '@/types/category';
+import { PostPreviewCard } from './PostPreviewCard';
 
 interface CategoryProps {
     categoryId?: number;
@@ -36,7 +36,7 @@ export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) =>
 
     if (error) {
         console.error(error);
-        return <div>Error loading category.</div>
+        return <div>Error Loading Category</div>
     }
 
     if (experientialCategory === null) return;
@@ -47,7 +47,7 @@ export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) =>
             <h5>{ experientialCategory.description }</h5>
             <ul>
                 {experientialCategory.posts.map(postId =>
-                    <li key={postId}>{getPostPreviewById(postId)}</li>
+                    <li key={postId}>{ <PostPreviewCard postId={postId}/> }</li>
                 )};
             </ul>
         </>

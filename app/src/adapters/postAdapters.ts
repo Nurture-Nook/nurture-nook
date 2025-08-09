@@ -1,5 +1,6 @@
 import { fetchHandler, basicFetchOptions } from '../utils/fetch';
-import { baseUrl } from './config';
+
+const baseUrl = '/api/post'
 
 export const getPostPreviewById = async (postId: number) => {
     const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}/preview`, basicFetchOptions);

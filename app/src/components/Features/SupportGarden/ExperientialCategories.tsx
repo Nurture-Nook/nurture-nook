@@ -35,7 +35,7 @@ export const ExperientialCategories = () => {
         <ul>
             { categories.map(c => (
                 <li key={c.id}>
-                    {<ExperientialCategory categoryId={c.id} />}
+                    { <ExperientialCategory categoryId={c.id} />}
                 </li>
             )) }
         </ul>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { PostDetailedOut } from '@/types/post';
+import { ExperientialCategoryBadge } from './ExperientialCategoryBadge';
 import { getPostById } from '../../../adapters/postAdapters';
 
 export const Post = () => {
@@ -36,7 +37,7 @@ export const Post = () => {
         <>
             <div id="post-body">
                 <h3>{ post.title }</h3>
-                <h5>Categories: { post.categories }</h5>
+                <h5>Categories: { post.categories.map(c => <ExperientialCategoryBadge categoryId={c}/>) }</h5>
                 <h4>Content Warnings: { post.content_warnings }</h4>
                 <h5>User: { post.temporary_username }</h5>
                 <p>{ post.description }</p>

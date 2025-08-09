@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models import User
 from schemas.users import UserPrivateOut, ProfileUpdateRequest, UsernameUpdateRequest, EmailVerificationRequest, PasswordUpdateRequest, UserDeleteRequest
 from schemas.posts import PostOut
-from schema.chats import ChatOpen
+from schemas.chats import ChatOpen
 from crud.user import update_username, update_password, update_email, delete_own_account, get_posts_by_user, get_chats_of_user
 from utils.user import get_current_user
 from pydantic import BaseModel

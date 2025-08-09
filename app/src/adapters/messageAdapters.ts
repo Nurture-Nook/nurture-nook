@@ -19,7 +19,7 @@ export const editMessage = async ({
     id, content
 }: { id: number; content: string}) => {
     return fetchHandler(
-        `${baseUrl}/${id}/edit`,
+        `${baseUrl}/messages/${id}/edit`,
         getPatchOptions({ content })
     );
 }

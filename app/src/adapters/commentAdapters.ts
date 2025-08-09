@@ -1,8 +1,12 @@
-import { fetchHandler } from '../utils/fetch';
-import { baseUrl } from './config';
+import { 
+    basicFetchOptions,
+    fetchHandler
+} from '../utils/fetch';
 
-export const getCommentById = async (id: number) => {
-    const [data, error] = await fetchHandler(baseUrl + `/posts/postId/comments/${id}`);
+const baseUrl = '/api';
+
+export const getCommentById = async (id: number, comment_id: number) => {
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${id}/comments/${comment_id}`, basicFetchOptions);
 
     if (error) {
         console.error(error);
@@ -12,8 +16,8 @@ export const getCommentById = async (id: number) => {
     return [data.comment, null];
 }
 
-export const getComments = async () => {
-    const [data, error] = await fetchHandler(baseUrl + `/posts/postId/comments`);
+export const getComments = async (id: number) => {
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${id}/comments`, basicFetchOptions);
 
     if (error) {
         console.error(error);

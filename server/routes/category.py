@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from schemas.categories import CategoryOut, CategoryWithPosts
 from schemas.posts import PostOut
@@ -13,8 +13,15 @@ class MessageResponse(BaseModel):
 router = APIRouter(prefix = "/category", tags = [ "Category" ])
 
 @router.get("/categories", response_model=List[CategoryOut])
-def get_categories(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) -> List[CategoryOut]:
+def get_categories(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: str | None = Query(None)) -> List[CategoryOut]:
     categories = get_all_categories(db, skip = skip, limit = count)
+
+    if title:
+        results = [c for c in categories if c["title"].lower() == title.lower()]
+        if not results:
+            raise HTTPException(status_code=404, detail="Category Not Found")
+        return results
+
     return categories
 
 @router.get("/categories/{id}")

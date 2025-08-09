@@ -39,7 +39,7 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
             <br></br>
             <h4>Content Warnings:</h4>
             <ul>
-                {post.content_warnings ? post.content_warnings.map(w => w) : <></>}
+                { post.content_warnings ? post.content_warnings.map(w => w) : <></> }
             </ul>
         </>
     )

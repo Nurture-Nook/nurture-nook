@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from schemas.warnings import ContentWarningOut, ContentWarningWithPosts
 from schemas.posts import PostOut
@@ -13,8 +13,15 @@ class MessageResponse(BaseModel):
 router = APIRouter(prefix = "/warning", tags = [ "Warning" ])
 
 @router.get("/warnings", response_model=List[ContentWarningOut])
-def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) -> List[ContentWarningOut]:
+def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: str | None = Query(None)) -> List[ContentWarningOut]:
     warnings = get_all_warnings(db, skip = skip, limit = count)
+
+    if title:
+        results = [c for c in warnings if c["title"].lower() == title.lower()]
+        if not results:
+            raise HTTPException(status_code=404, detail="Category Not Found")
+        return results
+
     return warnings
 
 @router.get("/warnings/{id}")
