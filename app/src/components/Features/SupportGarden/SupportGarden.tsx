@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import { ExperientialCategories } from './ExperientialCategories';
 
 export const SupportGarden = () => {
 
     return (
-        <div>
-            <h1>Garden of Support</h1>
+        <main className ="support-garden-container">
+            <h2 className="page-heading">Garden of Support</h2>
             <ExperientialCategories/>
-        </div>
+        </main>
     )
 }

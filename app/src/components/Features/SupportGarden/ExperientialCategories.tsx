@@ -25,7 +25,7 @@ export const ExperientialCategories = () => {
 
     if (error) {
         console.error(error);
-        return <div>Error loading categories.</div>
+        return <div>Error Loading Categories</div>
     }
 
     if (categories === null) return;

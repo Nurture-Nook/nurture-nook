@@ -4,8 +4,8 @@ import { ContentWarningBadge } from './ContentWarningBadge';
 import { getCommentById } from '../../../adapters/commentAdapters';
 
 interface CommentProps {
-    postId: number
-    commentId: number
+    postId?: number
+    commentId?: number
 }
 
 export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
@@ -13,11 +13,14 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
 
+    const pId = postId ?? (typeof postId === 'string' ? parseInt(postId) : undefined);
+    const cId = commentId ?? (typeof commentId === 'string' ? parseInt(commentId) : undefined);
+
     useEffect(() => {
-        if (!commentId) return;
+        if (!pId || !cId) return;
 
         const fetchComment = async () => {
-            const [d, e] = await getCommentById(postId, commentId);
+            const [d, e] = await getCommentById(pId, cId);
 
             if (e) setError(e);
             else setComment(d);
