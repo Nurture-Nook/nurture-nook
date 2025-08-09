@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CommentOut } from '../../../types/comment';
+import { ContentWarningBadge } from './ContentWarningBadge';
 import { getCommentById } from '../../../adapters/commentAdapters';
 
 interface CommentProps {
@@ -35,7 +36,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
 
     return (<>
         <h6>{ comment.temporary_username }</h6>
-        <h4>Content Warnings: {comment.content_warnings}</h4>
+        <h4>Content Warnings: { comment.content_warnings.map(w => <ContentWarningBadge warningId={w}/>) }</h4>
         <p>{ comment.content }</p>
     </>)
 }
