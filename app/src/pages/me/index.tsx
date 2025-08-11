@@ -1,26 +1,24 @@
 import { useContext } from 'react';
+import { useRouter } from 'next/router';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 import { MyPosts } from '@/components/Features/Profile/MyPosts';
 import { MyComments } from '@/components/Features/Profile/MyComments';
-import { useRouter } from 'next/router';
 
 export const PersonalProfile = () => {
     const { currentUser } = useContext(CurrentUserContext);
     const router = useRouter();
 
     if (!currentUser) {
-        return <div>Loading user info...</div>;
+        router.push('/entrance')
     }
 
-    const handleEditProfile = () => {
-        router.push('/me/edit');
-    };
+    const handleEditProfile = () => router.push('/me/edit');
 
     const handleDeleteProfile = () => {
-        if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
-        router.push('/enter');
-        }
+        if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) router.push('/enter');
     };
+
+    if (currentUser === null) return;
 
     return (
         <div className="personal-profile-container">
@@ -28,7 +26,7 @@ export const PersonalProfile = () => {
 
             <div className="profile-actions">
                 <button onClick={handleEditProfile}>Edit Profile</button>
-                <button onClick={handleDeleteProfile} style={{ color: 'red' }}>
+                <button onClick={handleDeleteProfile}>
                 Delete Profile
                 </button>
             </div>

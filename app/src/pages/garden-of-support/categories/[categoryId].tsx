@@ -10,7 +10,7 @@ export const categoryPage = () => {
     const currentUser = useContext(CurrentUserContext);
 
     useEffect(() => {
-        if (!currentUser) router.push('/home');
+        if (!currentUser) router.push('/entrance');
     }, [currentUser]);
 
     return (
