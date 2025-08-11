@@ -8,6 +8,7 @@ export interface CommentCreate {
 
 export interface CommentOut {
     id: number;
+    user_id: number;
     temporary_username: string;
     content: string;
     content_warnings: number[];

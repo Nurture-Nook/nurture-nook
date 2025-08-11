@@ -23,6 +23,7 @@ class UserPrivateOut(OrmBase):
     id: int
     username: str
     email: str
+    created_at: datetime
 
 class UserWithContent(OrmBase):
     id: int

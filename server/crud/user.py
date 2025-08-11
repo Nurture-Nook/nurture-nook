@@ -155,9 +155,20 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
 
     user_private_out = UserPrivateOut.model_validate(current_user)
 
+    delete_all_content(db, user_id=current_user.id);
     db.delete(current_user)
     db.commit()
     return user_private_out
+
+def delete_all_content(db: Session, user_id: int):
+    db.query(Comment).filter(Comment.user_id == user_id).delete(synchronize_session=False)
+
+    user_posts = db.query(Post).filter(Post.user_id == user_id).all()
+    for post in user_posts:
+        db.query(Comment).filter(Comment.post_id == post.id).delete(synchronize_session=False)
+        db.delete(post)
+
+    db.commit()
 
 # Validate
 def validate_username(db: Session, username: str) -> bool:

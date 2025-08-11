@@ -5,7 +5,7 @@ from schemas.users import UserPrivateOut, ProfileUpdateRequest, UsernameUpdateRe
 from schemas.posts import PostOut
 from schemas.comments import CommentOut
 from schemas.chats import ChatOpen
-from crud.user import update_username, update_password, update_email, delete_own_account, get_posts_by_user, get_comments_by_user, get_chats_of_user
+from crud.user import update_username, update_password, update_email, delete_own_account, get_user_post, get_posts_by_user, get_user_comment, get_comments_by_user, get_chats_of_user
 from utils.user import get_current_user
 from pydantic import BaseModel
 from typing import List

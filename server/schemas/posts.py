@@ -35,6 +35,7 @@ class PostModPatch(OrmBase):
 
 class PostDetailedOut(OrmBase):
     id: int
+    user_id: int
     title: str
     description: str
     temporary_username: str

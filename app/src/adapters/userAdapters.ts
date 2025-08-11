@@ -1,7 +1,6 @@
 import {
     basicFetchOptions,
     fetchHandler,
-    getPostOptions,
     deleteOptions
 } from '../utils/fetch';
 
@@ -15,7 +14,7 @@ export const getPostsByUser = async () => {
         return [null, error];
     }
 
-    return [data.posts, null];
+    return [data?.posts ?? [], null];
 }
 
 export const getCommentsByUser = async () => {
@@ -26,5 +25,15 @@ export const getCommentsByUser = async () => {
         return [null, error];
     }
 
-    return [data.comments, null];
+    return [data?.comments ?? [], null];
 }
+
+export const deleteProfile = async () => {
+    const [data, error] = await fetchHandler(`${baseUrl}/delete_account`, deleteOptions);
+    
+    if (error) return [null, error];
+    
+    if (!data?.success) return [null, "Account Deletion Failed"];
+    
+    return [data, null];
+};

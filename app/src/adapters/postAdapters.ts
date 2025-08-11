@@ -1,4 +1,4 @@
-import { fetchHandler, basicFetchOptions, getPostOptions } from '../utils/fetch';
+import { fetchHandler, basicFetchOptions, getPostOptions, deleteOptions } from '../utils/fetch';
 
 const baseUrl = '/api/post'
 
@@ -10,7 +10,7 @@ export const createPost = async (title: string, description: string, categories:
         return [null, error];
     }
 
-    return [data.post, null];
+    return [data?.post ?? [], null];
 }
 
 export const getPostPreviewById = async (postId: number) => {
@@ -21,7 +21,7 @@ export const getPostPreviewById = async (postId: number) => {
         return [null, error];
     }
 
-    return [data.post, null];
+    return [data?.post ?? [], null];
 }
 
 export const getPostById = async (postId: number) => {
@@ -32,7 +32,18 @@ export const getPostById = async (postId: number) => {
         return [null, error];
     }
 
-    return [data.post, null];
+    return [data?.post ?? [], null];
+}
+
+export const deletePostById = async (postId: number) => {
+    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, deleteOptions);
+
+    if (error) {
+        console.error(error);
+        return [null, error];
+    }
+
+    return [data?.post ?? [], null];
 }
 
 // export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {
@@ -49,5 +60,5 @@ export const getPostById = async (postId: number) => {
 //         return [null, error];
 //     }
 
-//     return [data.posts, null];
+//     return [data?.posts ?? [], null];
 // }
