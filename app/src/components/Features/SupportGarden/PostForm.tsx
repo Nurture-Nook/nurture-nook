@@ -2,12 +2,11 @@ import { useState, useContext, useEffect } from 'react';
 import { createPost } from '@/adapters/postAdapters';
 import { fetchCategories } from '@/adapters/categoryAdapters';
 import { fetchWarnings } from '@/adapters/warningAdapters';
-import { PostCreate } from '@/types/post';
 import { CategoryBadge } from '@/types/category';
 import { WarningBadge } from '@/types/warning';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 
-export const PostForm: React.FC<PostCreate> = () => {
+export const PostForm  = () => {
     const { currentUser } = useContext(CurrentUserContext);
     const [errorText, setErrorText] = useState("");
     const [categories, setCategories] = useState<CategoryBadge[]>([]);

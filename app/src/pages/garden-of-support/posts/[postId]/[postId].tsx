@@ -12,5 +12,5 @@ export const postPage = () => {
         if (!currentUser) router.push('/home')
     }, [currentUser])
 
-    return <div className='support-garden-page'> <Post/> </div>
+    return <div className='support-garden-pages'> <Post/> </div>
 }
