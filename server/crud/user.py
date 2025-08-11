@@ -155,7 +155,7 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
 
     user_private_out = UserPrivateOut.model_validate(current_user)
 
-    delete_all_content(db, user_id=current_user.id);
+    delete_all_content(db, user_id=current_user.id)
     db.delete(current_user)
     db.commit()
     return user_private_out

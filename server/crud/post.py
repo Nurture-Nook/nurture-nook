@@ -99,7 +99,6 @@ def delete_post(db: Session, post_id: int, current_user: User) -> PostOut:
     if db_post.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this post")
 
-    # Soft delete: mark post as deleted, maybe clear sensitive fields
     db_post.title = "[deleted]"
     db_post.description = "[deleted]"
     db_post.is_deleted = True
@@ -120,10 +119,8 @@ def delete_post_as_mod(db: Session, post_id: int, current_user: User):
     if db_post.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="You Are Not Authorized to Delete This Post")
 
-    # Delete all comments related to the post
     db.query(Comment).filter(Comment.post_id == post_id).delete(synchronize_session=False)
 
-    # Delete the post itself
     db.delete(db_post)
     db.commit()
 
