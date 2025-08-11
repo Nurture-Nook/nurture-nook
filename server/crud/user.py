@@ -1,9 +1,10 @@
 from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
-from models import Chat, Post, User
+from models import User, Post, Comment, Chat
 from schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
 from schemas.posts import PostOut
+from schemas.comments import CommentOut
 from schemas.chats import ChatOpen
 from services.email import send_verification
 from utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
@@ -68,6 +69,10 @@ def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Se
 def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[PostOut]:
     posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
     return [PostOut.from_orm(post) for post in posts]
+
+def get_comments_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[CommentOut]:
+    comments = db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
+    return [CommentOut.from_orm(comment) for comment in comments]
 
 def get_chats_of_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[ChatOpen]:
     chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()

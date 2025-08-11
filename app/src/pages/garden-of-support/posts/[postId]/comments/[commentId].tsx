@@ -1,0 +1,27 @@
+import { useEffect, useContext } from "react";
+import { useRouter } from "next/router";
+import { Comment } from "@/components/Features/SupportGarden/Comment";
+import { CurrentUserContext } from "@/contexts/current_user_context";
+
+const CommentPage = () => {
+    const router = useRouter();
+    const currentUser = useContext(CurrentUserContext);
+
+    const { postId, commentId } = router.query;
+
+    useEffect(() => {
+        if (!currentUser) router.push('/home');
+    }, [currentUser, router]);
+
+    if (!postId || !commentId) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div className="support-garden-pages">
+            <Comment postId={Number(postId)} commentId={Number(commentId)}/>
+        </div>
+    );
+};
+
+export default CommentPage;

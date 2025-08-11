@@ -40,5 +40,5 @@ class ContentWarningModView(OrmBase):
     description: str
     stat: Approval
 
-ContentWarningWithPosts.update_forward_refs()
-ContentWarningWithComments.update_forward_refs()
+ContentWarningWithPosts.model_rebuild()
+ContentWarningWithComments.model_rebuild()

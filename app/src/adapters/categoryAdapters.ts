@@ -2,7 +2,8 @@ import {
     basicFetchOptions,
     fetchHandler,
 } from '../utils/fetch';
-import { baseUrl } from './config';
+
+const baseUrl = '/api/category';
 
 export const getCategoryByName = async (name: string) => {
     const [data, error] = await fetchHandler(baseUrl + `/categories?name=${encodeURIComponent(name)}`);

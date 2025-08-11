@@ -25,7 +25,7 @@ export const ExperientialCategories = () => {
 
     if (error) {
         console.error(error);
-        return <div>Error loading categories.</div>
+        return <div>Error Loading Categories</div>
     }
 
     if (categories === null) return;
@@ -35,7 +35,7 @@ export const ExperientialCategories = () => {
         <ul>
             { categories.map(c => (
                 <li key={c.id}>
-                    {<ExperientialCategory categoryId={c.id} />}
+                    { <ExperientialCategory categoryId={c.id} />}
                 </li>
             )) }
         </ul>

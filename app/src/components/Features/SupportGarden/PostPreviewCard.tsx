@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PostOut } from '@/types/post';
+import { ContentWarningBadge } from './ContentWarningBadge';
 import { getPostPreviewById } from '../../../adapters/postAdapters';
 
 interface PostPreviewProps {
@@ -37,9 +38,9 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
             <h3>{ post.title }</h3>
             <h5>{ post.created_at }</h5>
             <br></br>
-            <h4>Content Warnings:</h4>
+            { post.content_warnings ? <h4>Content Warnings:</h4> : <></> }
             <ul>
-                {post.content_warnings ? post.content_warnings.map(w => w) : <></>}
+                { post.content_warnings.length > 0 ? post.content_warnings.map(w => <ContentWarningBadge warningId={w}/>) : <></> }
             </ul>
         </>
     )

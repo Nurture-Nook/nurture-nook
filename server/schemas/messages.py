@@ -5,6 +5,7 @@ class MessageCreate(OrmBase):
     sender: SenderType
     content: str
     chat_id: int
+    user_id: int
 
 class MessageOut(OrmBase):
     id: int

@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 from models import User
 from schemas.users import UserPrivateOut, ProfileUpdateRequest, UsernameUpdateRequest, EmailVerificationRequest, PasswordUpdateRequest, UserDeleteRequest
 from schemas.posts import PostOut
-from schema.chats import ChatOpen
-from crud.user import update_username, update_password, update_email, delete_own_account, get_posts_by_user, get_chats_of_user
+from schemas.comments import CommentOut
+from schemas.chats import ChatOpen
+from crud.user import update_username, update_password, update_email, delete_own_account, get_posts_by_user, get_comments_by_user, get_chats_of_user
 from utils.user import get_current_user
 from pydantic import BaseModel
 from typing import List
@@ -17,11 +18,15 @@ router = APIRouter(prefix="/user", tags=["User"])
 
 @router.get("/me")
 def get_my_user_data(current_user: User = Depends(get_current_user)) -> UserPrivateOut:
-    return UserPrivateOut.from_orm(current_user)
+    return UserPrivateOut.model_validate(current_user)
 
 @router.get("/me/posts", response_model=List[PostOut])
 def get_my_posts(skip: int = 0, limit: int = 50, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> List[PostOut]:
     return get_posts_by_user(skip = skip, limit = limit, user_id = current_user.id, db = db)
+
+@router.get("/me/comments", response_model=List[CommentOut])
+def get_my_comments(skip: int = 0, limit: int = 50, current_user: User = Depends(get_current_user), db : Session = Depends(get_db)) -> List[CommentOut]:
+    return get_comments_by_user(skip = skip, limit = limit, user_id = current_user.id, db = db)
 
 @router.get("/me/chats", response_model=List[ChatOpen])
 def get_my_chats(skip: int = 0, limit: int = 50, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> List[ChatOpen]:

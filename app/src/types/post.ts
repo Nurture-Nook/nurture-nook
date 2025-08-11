@@ -1,3 +1,11 @@
+export interface PostCreate {
+    title: string;
+    description: string;
+    categories: number[];
+    warnings: number[];
+    user_id: number;
+}
+
 export interface PostOut {
     id: number;
     title: string;

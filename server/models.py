@@ -1,6 +1,7 @@
 from enum import Enum
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from db import Base
 
 post_categories = Table(
@@ -109,7 +110,7 @@ class Comment(Base):
 
 	user = relationship('User', back_populates = 'comments')
 	post = relationship('Post', back_populates = 'comments')
-	parent = relationship('Comment', back_populates = 'replies', remote_side = Comment.id)
+	parent = relationship('Comment', back_populates = 'replies', remote_side = "Comment.id")
 	replies = relationship('Comment', back_populates = 'parent')
 	warnings = relationship('Comment', secondary = comment_warnings, back_populates = 'comments')
 

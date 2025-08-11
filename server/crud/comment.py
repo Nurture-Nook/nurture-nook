@@ -17,6 +17,7 @@ def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
     db_comment = Comment(
         content=comment.content,
         warnings=comment.warnings,
+        parent_comment_id = comment.parent_comment_id | None,
         user_id=comment.user_id,
         post_id=comment.post_id,
         temporary_username=create_alias(db, comment.user_id, comment.post_id)
