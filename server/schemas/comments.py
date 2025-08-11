@@ -6,9 +6,8 @@ if TYPE_CHECKING:
     from .warnings import ContentWarningOut
 
 class CommentCreate(OrmBase):
-    temporary_username: str
     content: str
-    warnings: List[int] = None
+    warnings: List[int]
     parent_comment_id: int = None
     user_id: int
     post_id: int
@@ -17,7 +16,7 @@ class CommentOut(OrmBase):
     id: int
     temporary_username: str
     content: str
-    warnings: List[ContentWarningOut] = None
+    warnings: List[ContentWarningOut]
     parent_comment_id: int = None
     created_at: datetime
 
@@ -26,7 +25,7 @@ class CommentPatch(OrmBase):
     warnings: List[int] = None
 
 class CommentModPatch(OrmBase):
-    warnings: Optional[List[int]] = None
+    warnings: List[int]
     flags: List[int] = None
     is_flagged: bool = None
     is_deleted: bool = None
@@ -39,4 +38,4 @@ class CommentModView(OrmBase):
     is_deleted: bool
     created_at: datetime
 
-CommentOut.update_forward_refs()
+CommentOut.model_rebuild()

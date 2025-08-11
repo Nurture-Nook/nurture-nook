@@ -1,24 +1,19 @@
-import { useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Link from 'next/link';
+import { UserPrivate } from '@/types/user';
 import { register } from "../../../adapters/authAdapters";
-import { CurrentUserContext } from "../../../contexts/current_user_context";
 
-export const Register = () => {
-    const router = useRouter();
 
-    const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
+interface RegisterProps {
+    onRegisterSuccess: (newUser: UserPrivate) => void;
+}
+
+export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
     const [errorText, setErrorText] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
-
-    useEffect(() => {
-        if (currentUser) {
-            router.push('/me');
-        }
-    }, [currentUser, router]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -37,7 +32,7 @@ export const Register = () => {
 
         if (error) return setErrorText(error.message);
 
-        setCurrentUser(user);
+        onRegisterSuccess(user);
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

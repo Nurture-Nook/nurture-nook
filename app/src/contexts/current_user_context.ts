@@ -1,8 +1,9 @@
 import { createContext } from 'react';
+import { UserPrivate } from '@/types/user';
 
 type CurrentUserContextType = {
-    currentUser: number | null;
-    setCurrentUser: (id: number | null) => void;
+    currentUser: UserPrivate | null;
+    setCurrentUser: (user: UserPrivate | null) => void;
 };
 
 export const CurrentUserContext = createContext<CurrentUserContextType>({

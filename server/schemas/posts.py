@@ -8,11 +8,10 @@ if TYPE_CHECKING:
     from .warnings import ContentWarningOut
 
 class PostCreate(OrmBase):
-    temporary_username: str
     title: str
     description: str
-    categories: Optional[List[int]] = None
-    warnings: Optional[List[int]] = None
+    categories: List[int]
+    warnings: List[int]
     user_id: int
 
 class PostOut(OrmBase):
@@ -52,4 +51,4 @@ class PostModView(OrmBase):
     is_deleted: bool
     created_at: datetime
 
-PostDetailedOut.update_forward_refs()
+PostDetailedOut.model_rebuild()

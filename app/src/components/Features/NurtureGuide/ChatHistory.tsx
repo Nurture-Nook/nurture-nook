@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
 import { getChat } from "@/adapters/chatAdapters";
 import { ChatMessage } from "./ChatMessage";
@@ -6,14 +6,19 @@ import { ChatInput } from "./ChatInput";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
 import { ChatDeleteButton } from "./ChatDeleteButton";
 import { MessageOut } from "@/types/message";
+import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export const ChatHistory = () => {
+    const { currentUser } = useContext(CurrentUserContext);
+
     const router = useRouter();
     const { chatId } = router.query;
     const [messages, setMessages] = useState<MessageOut[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
+
+    if (!currentUser) return;
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -62,7 +67,7 @@ export const ChatHistory = () => {
                     
                     <ScrollToBottomButton scrollRef={scrollRef}/>
 
-                    <ChatInput chat_id={Number(chatId)} sender="user" onNewMessage={handleNewMessage}/>
+                    <ChatInput user_id={currentUser.id} chat_id={Number(chatId)} sender="user" onNewMessage={handleNewMessage}/>
                 </div>
             </div>
         </>

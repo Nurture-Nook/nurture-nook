@@ -1,11 +1,8 @@
-import { MessageInput, MessageCreate, MessageOut } from "./message";
+import { MessageInput, MessageOut } from "./message";
 
 export interface ChatCreate {
+    user_id: number;
     message: MessageInput;
-}
-
-export interface ChatCreateAPI {
-    message: MessageCreate;
 }
 
 export interface ChatOpen {

@@ -2,6 +2,7 @@ from fastapi import Depends, Request, HTTPException
 from sqlalchemy.orm import Session
 from models import User
 from utils.auth import decode_jwt_token
+import logging
 from db import get_db
 
 logger = logging.getLogger(__name__)

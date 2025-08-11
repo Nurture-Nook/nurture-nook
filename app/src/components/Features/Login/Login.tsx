@@ -1,22 +1,16 @@
-import { useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Link from 'next/link';
+import { UserPrivate } from '@/types/user';
 import { login } from "../../../adapters/authAdapters";
-import { CurrentUserContext } from "../../../contexts/current_user_context";
 
-export const Login = () => {
-    const router = useRouter();
+interface LoginProps {
+    onLoginSuccess: (newUser: UserPrivate) => void;
+}
 
-    const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
+export const Login: React.FC<LoginProps> = ({onLoginSuccess}) => {
     const [errorText, setErrorText] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
-    useEffect(() => {
-        if (currentUser) {
-            router.push('/me');
-        }
-    }, [currentUser, router]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,7 +26,7 @@ export const Login = () => {
 
         if (error) return setErrorText(error.message);
 
-        setCurrentUser(user);
+        onLoginSuccess(user);
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

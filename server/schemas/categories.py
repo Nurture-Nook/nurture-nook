@@ -32,4 +32,4 @@ class CategoryModView(OrmBase):
     description: str
     stat: Approval
 
-CategoryWithPosts.update_forward_refs()
+CategoryWithPosts.model_rebuild()

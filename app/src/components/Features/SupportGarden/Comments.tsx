@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Router, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { getComments } from '@/adapters/commentAdapters';
 import { Comment } from './Comment';
 import { CommentOut } from '@/types/comment';
@@ -10,7 +10,7 @@ export const Comments = () => {
     const [comments, setComments] = useState<CommentOut[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const postId = router.query;
+    const postId = router.query.postId;
 
     useEffect(() => {
             const fetchComments = async () => {

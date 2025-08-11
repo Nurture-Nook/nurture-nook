@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { sendMessage } from '@/adapters/messageAdapters';
 import { MessageInput } from '@/types/message';
+import { CurrentUserContext } from '@/contexts/current_user_context';
 
 export const ChatInput: React.FC<MessageInput> = ({ chat_id, sender }) => {
+    const { currentUser } = useContext(CurrentUserContext);
+
     const [errorText, setErrorText] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
+
+    if (!currentUser) return;
+    const user_id = currentUser.id
     
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -17,7 +23,7 @@ export const ChatInput: React.FC<MessageInput> = ({ chat_id, sender }) => {
         setLoading(true);
 
         try {
-            await sendMessage({sender, content, chat_id});
+            await sendMessage({sender, content, chat_id, user_id});
         } catch (error) {
             setErrorText("Failed to Send Message");
             console.error("Failed to send message: ", error);
