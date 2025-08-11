@@ -1,8 +1,10 @@
+import Link from "next/link"
+
 export const Home = () => {
     return (
         <>
-            <button>Garden of Support</button>
-            <button>Nurture Guide</button>
+            <Link href={"/garden-of-support"}>Garden of Support</Link>
+            <Link href="/nurture-guide">Nurture Guide</Link>
         </>
     )
 }

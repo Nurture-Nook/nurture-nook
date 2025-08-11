@@ -99,7 +99,7 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
             <p>{errorText}</p>
 
             <p>
-                Already have an account with us? <Link href="/login">Log in</Link>
+                Already have an account with us? <Link href="/login">Log In</Link>
             </p>
         </>
     )

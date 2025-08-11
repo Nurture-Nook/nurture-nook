@@ -9,6 +9,7 @@ import { getPostById } from '../../../adapters/postAdapters';
 import { getCommentsByIds } from '../../../adapters/commentAdapters';
 import { CommentForm } from './CommentForm';
 import { insertComment } from '@/utils/comments';
+import Link from 'next/link';
 
 export const Post = () => {
     const router = useRouter();
@@ -73,7 +74,7 @@ export const Post = () => {
             </div>
 
             <div id="comments">
-                <h5>Comments:</h5>
+                <Link href={`/garden-of-support/posts/${postId}/comments`}><h5>Comments:</h5></Link>
                 <CommentForm postId={post.id} parentCommentId={null} onSuccess={handleCommentSuccess} />
                 <ul>
                     {comments.map(comment => (
