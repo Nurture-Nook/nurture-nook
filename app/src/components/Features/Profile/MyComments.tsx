@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { getCommentsByUser } from '../../../adapters/userAdapters';
 import { CommentOut } from '@/types/comment';
 import { Comment } from '../SupportGarden/Comment';
@@ -26,13 +27,13 @@ export const MyComments = () => {
 
     return (
         <div>
-            <h3>My Comments</h3>
+            <Link href="me/comments"><h3>My Posts</h3></Link>
             <ul>
-                {comments.map(comment => (
+                { comments.map(comment => (
                     <li key={comment.id}>
                         <Comment postId={comment.post_id} commentId={comment.id}/>
                     </li>
-                ))}
+                )) }
             </ul>
         </div>
     );

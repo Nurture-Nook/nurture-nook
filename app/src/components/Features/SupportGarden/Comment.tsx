@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import Link from 'next/link';
 import { CommentOut } from '../../../types/comment';
 import { ContentWarningBadge } from './ContentWarningBadge';
 import { getCommentById, deleteCommentById } from '../../../adapters/commentAdapters';
@@ -63,7 +64,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
 
     return (
         <>
-            <h6>{comment.temporary_username}</h6>
+            <Link href={`garden-of-support/posts/${postId}/comments/${commentId}`}><h6>{comment.temporary_username}</h6></Link>
             <h4>
                 Content Warnings:{' '}
                 {comment.content_warnings.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { PostOut } from '@/types/post';
 import { ContentWarningBadge } from './ContentWarningBadge';
 import { getPostPreviewById } from '../../../adapters/postAdapters';
@@ -35,7 +36,7 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
 
     return (
         <>
-            <h3>{ post.title }</h3>
+            <Link href={`garden-of-support/posts/${postId}`}><h3>{ post.title }</h3></Link>
             <h5>{ post.created_at }</h5>
             <br></br>
             { post.content_warnings ? <h4>Content Warnings:</h4> : <></> }

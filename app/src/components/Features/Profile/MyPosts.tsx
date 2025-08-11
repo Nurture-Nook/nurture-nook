@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { getPostsByUser } from '../../../adapters/userAdapters';
 import { PostOut } from '@/types/post';
 import { PostPreviewCard } from '../SupportGarden/PostPreviewCard';
@@ -26,7 +27,7 @@ export const MyPosts = () => {
 
     return (
         <div>
-            <h3>My Posts</h3>
+            <Link href="me/posts"><h3>My Posts</h3></Link>
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>
