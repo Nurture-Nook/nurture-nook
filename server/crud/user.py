@@ -42,7 +42,7 @@ def create_user(db: Session, user: UserCreate) -> UserPrivateOut:
 
     set_token(db, db_user, original_email, "email")
 
-    return UserPrivateOut.from_orm(db_user)
+    return UserPrivateOut.model_validate(db_user)
 
 
 # READ

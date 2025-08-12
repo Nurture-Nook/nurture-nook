@@ -25,7 +25,7 @@ def create_warning(db: Session, warning: ContentWarningCreate) -> ContentWarning
 
     logger.info(f"Content Warning {db_warning.id} created")
     
-    return ContentWarningOut.from_orm(db_warning)
+    return ContentWarningOut.model_validate(db_warning)
 
 # READ
 def get_warning_model(db: Session, warning_id: int) -> ContentWarning:
@@ -36,17 +36,17 @@ def get_warning_model(db: Session, warning_id: int) -> ContentWarning:
 
 def get_warning(db: Session, warning_id: int) -> ContentWarningOut:
     warning = get_warning_model(db, warning_id)
-    return ContentWarningOut.from_orm(warning)
+    return ContentWarningOut.model_validate(warning)
 
 def get_warning_with_posts(db: Session, warning_id: int) -> ContentWarningWithPosts:
     warning = get_warning_model(db, warning_id)
-    return ContentWarningWithPosts.from_orm(warning)
+    return ContentWarningWithPosts.model_validate(warning)
 
 def get_all_warnings(db: Session, skip: int = 0, limit: int = 100) -> List[ContentWarningOut]:
-    return [ContentWarningOut.from_orm(warning) for warning in db.query(ContentWarning).offset(skip).limit(limit).all()]
+    return [ContentWarningOut.model_validate(warning) for warning in db.query(ContentWarning).offset(skip).limit(limit).all()]
 
 def get_posts_of_warning(db: Session, warning_id: int, skip: int = 0, limit: int = 50) -> List[PostOut]:
-    return [PostOut.from_orm(post) for post in db.query(Post).filter(Post.warning_id == warning_id).offset(skip).limit(limit).all()]
+    return [PostOut.model_validate(post) for post in db.query(Post).filter(Post.warning_id == warning_id).offset(skip).limit(limit).all()]
 
 # UPDATE
 def update_warning(db: Session, warning_id: int, warning_patch: ContentWarningPatch) -> ContentWarningModView:
@@ -61,13 +61,13 @@ def update_warning(db: Session, warning_id: int, warning_patch: ContentWarningPa
 
     logger.info(f"Content Warning updated with changes: {updates}")
 
-    return ContentWarningModView.from_orm(db_warning)
+    return ContentWarningModView.model_validate(db_warning)
 
 # DELETE
 def delete_warning(db: Session, warning_id: int) -> ContentWarningOut:
     warning = get_warning_model(db, warning_id)
     
-    warning_out = ContentWarningOut.from_orm(warning)
+    warning_out = ContentWarningOut.model_validate(warning)
 
     db.delete(warning)
     db.commit()

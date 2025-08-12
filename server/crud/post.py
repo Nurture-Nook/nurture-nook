@@ -36,7 +36,7 @@ def create_post(db: Session, post: PostCreate) -> PostOut:
 
     logger.info(f"Post {db_post.id} created by user '{db_post.user_id}'")
 
-    return PostOut.model_config(db_post)
+    return PostOut.model_validate(db_post)
 
 # READ
 def get_post_model(db: Session, post_id: int) -> Post:
@@ -46,19 +46,19 @@ def get_post_model(db: Session, post_id: int) -> Post:
     return db_post
 
 def get_post(db: Session, post_id: int) -> PostOut:
-    return PostOut.model_config(get_post_model(db, post_id))
+    return PostOut.model_validate(get_post_model(db, post_id))
 
 def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
-    return PostDetailedOut.model_config(get_post_model(db, post_id))
+    return PostDetailedOut.model_validate(get_post_model(db, post_id))
 
 def get_post_as_mod(db: Session, post_id: int) -> PostModView:
-    return PostModView.model_config(get_post_model(db, post_id))
+    return PostModView.model_validate(get_post_model(db, post_id))
 
 def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> List[PostOut]:
-    return [PostOut.model_config(post) for post in db.query(Post).offset(skip).limit(limit).all()]
+    return [PostOut.model_validate(post) for post in db.query(Post).offset(skip).limit(limit).all()]
 
 def get_comments_of_post(db: Session, post_id: int, skip: int = 0, limit: int = 100) -> List[CommentOut]:
-    return [CommentOut.model_config(comment) for comment in db.query(Comment).filter(Comment.post_id == post_id).offset(skip).limit(limit).all()]
+    return [CommentOut.model_validate(comment) for comment in db.query(Comment).filter(Comment.post_id == post_id).offset(skip).limit(limit).all()]
 
 # UPDATE
 def update_post(db: Session, post_id: int, post_patch: PostPatch, current_user: User) -> PostOut:
@@ -76,7 +76,7 @@ def update_post(db: Session, post_id: int, post_patch: PostPatch, current_user: 
 
     logger.info(f"Post {post_id} updated by user {db_post.temporary_username} with changes: {updates}")
 
-    return PostOut.model_config(db_post)
+    return PostOut.model_validate(db_post)
 
 def update_post_as_mod(db: Session, post_id: int, post_patch: PostModPatch) -> PostModView:
     db_post = get_post_model(db, post_id)
@@ -90,7 +90,7 @@ def update_post_as_mod(db: Session, post_id: int, post_patch: PostModPatch) -> P
 
     logger.info(f"Post '{post_id}' updated by moderator with changes: {updates}")
 
-    return PostModView.model_config(db_post)
+    return PostModView.model_validate(db_post)
 
 # DELETE
 def delete_post(db: Session, post_id: int, current_user: User) -> PostOut:
