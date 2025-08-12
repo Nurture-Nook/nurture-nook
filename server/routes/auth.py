@@ -32,9 +32,6 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
     
     return response
 
-
-    return create_user(db, user_create)
-
 @router.post("/login")
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = authenticate_user(db, credentials.username, credentials.password)

@@ -22,7 +22,7 @@ def send_message(db: Session, chat_id: int, message_data: MessageCreate) -> Mess
 
     logger.info(f"Message {new_message.id} added to Chat {chat_id}")
 
-    return MessageOut.from_orm(new_message)
+    return MessageOut.model_validate(new_message)
 
 # READ
 def get_message_model(db: Session, message_id: int) -> Message:
@@ -32,7 +32,7 @@ def get_message_model(db: Session, message_id: int) -> Message:
     return db_message
 
 def get_message(db: Session, message_id: int) -> MessageOut:
-    return MessageOut.from_orm(get_message_model(db, message_id))
+    return MessageOut.model_validate(get_message_model(db, message_id))
 
 # UPDATE
 def edit_message(db: Session, message_id: int, message_update: MessagePatch) -> MessageOut:
@@ -50,4 +50,4 @@ def edit_message(db: Session, message_id: int, message_update: MessagePatch) -> 
 
     logger.info(f"Message {db_message.id} edited")
 
-    return MessageOut.from_orm(db_message)
+    return MessageOut.model_validate(db_message)

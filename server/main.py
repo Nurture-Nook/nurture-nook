@@ -4,7 +4,6 @@ from middleware.logging import log_requests
 from middleware.rate_limit import rate_limit_middleware
 from middleware.cors import setup_cors
 from db import Base, engine
-import models
 
 Base.metadata.create_all(bind=engine)
 

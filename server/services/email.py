@@ -1,9 +1,6 @@
 import os
 import resend
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
-from utils.auth import generate_token, hash_token
-from models import User
 
 load_dotenv()
 
@@ -21,15 +18,15 @@ def send_verification(username: str, user_email: str, purpose: str, token: str):
         message = "A request has been sent to delete your account."
 
     params: resend.Emails.SendParams = {
-        "from": "Nurture Nook <%s>" % os.getenv('SENDER_EMAIL'),
-        "to": ["%s"] % user_email,
-        "subject": "%s" % subject,
+        "from": f"Nurture Nook <{os.getenv('SENDER_EMAIL')}>",
+        "to": [user_email],
+        "subject": subject,
         "html": f"""
-            <p>Hello { username }</p>,
+            <p>Hello {username}</p>
 
-            <p>{ message }</p>
+            <p>{message}</p>
             
-            <p>Your verification code is { token }.</p>
+            <p>Your verification code is {token}.</p>
 
             <p>This code will expire in 15 minutes.</p>
 
@@ -40,4 +37,4 @@ def send_verification(username: str, user_email: str, purpose: str, token: str):
     email = resend.Emails.send(params)
 
     if not email:
-        raise Exception('Failed to send email')
+        raise Exception("Failed to send email")

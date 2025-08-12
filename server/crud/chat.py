@@ -32,7 +32,7 @@ def create_chat(db: Session, chat_data: ChatCreate) -> ChatOpen:
 
     logger.info(f"Message {message.id} added to Chat {chat.id}")
 
-    return ChatOpen.from_orm(chat)
+    return ChatOpen.model_validate(chat)
 
 # READ
 def get_chat_model(db: Session, chat_id: int) -> Chat:
@@ -42,20 +42,20 @@ def get_chat_model(db: Session, chat_id: int) -> Chat:
     return db_chat
 
 def get_chat(db: Session, chat_id: int) -> ChatOpen:
-    return ChatOpen.from_orm(get_chat_model(db, chat_id))
+    return ChatOpen.model_validate(get_chat_model(db, chat_id))
 
 def get_all_chats(db: Session, skip: int = 0, limit: int = 100) -> List[ChatOpen]:
-    return [ChatOpen.from_orm(chat) for chat in db.query(Chat).offset(skip).limit(limit).all()]
+    return [ChatOpen.model_validate(chat) for chat in db.query(Chat).offset(skip).limit(limit).all()]
 
 def get_messages_of_chat(db: Session, chat_id: int, skip: int = 0, limit: int = 100) -> List[MessageOut]:
     messages = db.query(Message).filter(Message.chat_id == chat_id).order_by(Message.created_at.desc()).offset(skip).limit(limit).all()
-    return [MessageOut.from_orm(msg) for msg in messages]
+    return [MessageOut.model_validate(msg) for msg in messages]
 
 # DELETE
 def delete_chat(db: Session, chat_id: int) -> ChatOpen:
     chat = get_chat_model(db, chat_id)
 
-    chat_out = ChatOpen.from_orm(chat)
+    chat_out = ChatOpen.model_validate(chat)
 
     db.delete(chat)
     db.commit()

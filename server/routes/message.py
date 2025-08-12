@@ -29,8 +29,8 @@ def create(message: MessageCreate, chat_id: int, db: Session = Depends(get_db)):
     ai_msg = send_message(db = db, chat_id = chat_id, message_data = ai_message)
 
     return {
-        "user": MessageOut.from_orm(user_msg),
-        "ai": MessageOut.from_orm(ai_msg)
+        "user": MessageOut.model_validate(user_msg),
+        "ai": MessageOut.model_validate(ai_msg)
     }
 
 
@@ -49,8 +49,8 @@ def edit(id: int, update: MessagePatch, db: Session = Depends(get_db)):
         ai_msg = send_message(db = db, chat_id = chat_id, message_data = ai_message)
 
         return {
-            "user": MessageOut.from_orm(updated_user_msg),
-            "ai": MessageOut.from_orm(ai_msg)
+            "user": MessageOut.model_validate(updated_user_msg),
+            "ai": MessageOut.model_validate(ai_msg)
         }
     except Exception as e:
         raise HTTPException(status_code = 500, detail = f"An error occurred while updating message: {str(e)}")
