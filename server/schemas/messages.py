@@ -11,6 +11,7 @@ class MessageOut(OrmBase):
     id: int
     sender: SenderType
     content: str
+    chat_id: int
     created_at: datetime
 
 class MessagePatch(OrmBase):
