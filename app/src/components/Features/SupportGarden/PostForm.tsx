@@ -114,6 +114,7 @@ export const PostForm  = () => {
                         { w.title }
                     </label>
                 ))}
+                <button>Post</button>
             </form>
         </>
     )

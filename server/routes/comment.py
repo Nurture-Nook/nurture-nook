@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from models import User
-from schemas.comments import CommentCreate, CommentOut, CommentPatch
+from schemas.comments import CommentOut
 from crud.post import get_all_comments
 from typing import List
 from pydantic import BaseModel

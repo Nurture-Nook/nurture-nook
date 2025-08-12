@@ -14,6 +14,7 @@ class CommentCreate(OrmBase):
 
 class CommentOut(OrmBase):
     id: int
+    user_id: int
     temporary_username: str
     content: str
     warnings: List[ContentWarningOut]

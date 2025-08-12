@@ -1,7 +1,8 @@
 import { 
     basicFetchOptions,
     fetchHandler,
-    getPostOptions
+    getPostOptions,
+    deleteOptions
 } from '../utils/fetch';
 
 const baseUrl = '/api';
@@ -23,7 +24,7 @@ export const createComment = async (
         return [null, error];
     }
 
-    return [data.comment, null];
+    return [data?.comment ?? [], null];
 }
 
 export const getCommentById = async (id: number, comment_id: number) => {
@@ -34,7 +35,7 @@ export const getCommentById = async (id: number, comment_id: number) => {
         return [null, error];
     }
 
-    return [data.comment, null];
+    return [data?.comment ?? [], null];
 }
 
 export const getComments = async (id: number) => {
@@ -48,7 +49,7 @@ export const getComments = async (id: number) => {
         return [null, error];
     }
 
-    return [data.comments, null];
+    return [data?.comments ?? [], null];
 }
 
 export const getCommentsByIds = async (postId: number, commentIds: number[]): Promise<[any[], string | null]> => {
@@ -67,3 +68,16 @@ export const getCommentsByIds = async (postId: number, commentIds: number[]): Pr
         return [[], 'Failed to Fetch Comments'];
     }
 };
+
+export const deleteCommentById = async (postId: number, commentId: number) => {
+    const [data, error] = await fetchHandler(
+        baseUrl + `/posts/${encodeURIComponent(postId)}/comments/${commentId}`, deleteOptions
+    );
+
+    if (error) {
+        console.error(error);
+        return [null, error];
+    }
+
+    return [data?.post ?? [], null];
+}

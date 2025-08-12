@@ -91,6 +91,7 @@ export const CommentForm = ({postId, parentCommentId, onSuccess}: CommentFormPro
                         { w.title }
                     </label>
                 ))}
+                <button>Comment</button>
             </form>
         </>
     )

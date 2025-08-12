@@ -99,11 +99,31 @@ def delete_post(db: Session, post_id: int, current_user: User) -> PostOut:
     if db_post.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="You are not authorized to delete this post")
 
-    post_out = PostOut.model_config(db_post)
+    db_post.title = "[deleted]"
+    db_post.description = "[deleted]"
+    db_post.is_deleted = True
+
+    db.commit()
+    db.refresh(db_post)
+
+    logger.info(f"Post {post_id} soft deleted")
+
+    return PostOut.model_validate(db_post)
+
+def delete_post_as_mod(db: Session, post_id: int, current_user: User):
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post Not Found")
+
+    if db_post.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You Are Not Authorized to Delete This Post")
+
+    db.query(Comment).filter(Comment.post_id == post_id).delete(synchronize_session=False)
 
     db.delete(db_post)
     db.commit()
 
-    logger.info(f"Post {post_id} deleted")
+    logger.info(f"Post {post_id} and its comments deleted by user {current_user.id}")
 
-    return post_out
+    return {"message": "Post and Associated Comments Deleted Successfully"}

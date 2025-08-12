@@ -9,7 +9,7 @@ const CreatePostPage = () => {
 
     useEffect(() => {
         if (currentUser === null) {
-            router.push('/login');
+            router.push('/entrance');
         }
     }, [currentUser, router]);
 

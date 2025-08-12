@@ -10,14 +10,12 @@ export const categoryPage = () => {
     const currentUser = useContext(CurrentUserContext);
 
     useEffect(() => {
-        if (!currentUser) router.push('/home');
+        if (!currentUser) router.push('/entrance');
     }, [currentUser]);
 
     return (
         <div className='support-garden-pages'>
-            <Link href="/posts/create" passHref>
-                <button type="button" className="create-post-button">Share Your Experiences</button>
-            </Link>
+            <Link href="/posts/create" passHref>Share Your Experiences</Link>
             <ExperientialCategory />
         </div>
     );

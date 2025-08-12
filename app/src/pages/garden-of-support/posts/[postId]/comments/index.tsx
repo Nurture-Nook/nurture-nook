@@ -9,7 +9,7 @@ export const commentsPage = () => {
     const currentUser = useContext(CurrentUserContext);
 
     useEffect(() => {
-        if (!currentUser) router.push('/home')
+        if (!currentUser) router.push('/entrance')
     }, [currentUser])
 
     return <div className="support-garden-pages"> <Comments/> </div>

@@ -18,8 +18,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated = "auto")
 def generate_jwt_token(user_id: int) -> str:
     payload = {
         "user_id": user_id,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-        "iat": datetime.datetime.utcnow(),
+        "exp": datetime.datetime.now() + datetime.timedelta(hours=1),
+        "iat": datetime.datetime.now(),
         "iss": "nurture_nook"
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")

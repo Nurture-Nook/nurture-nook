@@ -17,7 +17,7 @@ def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
     db_comment = Comment(
         content=comment.content,
         warnings=comment.warnings,
-        parent_comment_id = comment.parent_comment_id | None,
+        parent_comment_id = comment.parent_comment_id or None,
         user_id=comment.user_id,
         post_id=comment.post_id,
         temporary_username=create_alias(db, comment.user_id, comment.post_id)
@@ -29,7 +29,7 @@ def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
 
     logger.info(f"User {db_comment.temporary_username} successfully added comment {db_comment.id}.")
     
-    return CommentOut.from_orm(db_comment)
+    return CommentOut.model_validate(db_comment)
 
 # READ
 def get_comment_model(db: Session, comment_id: int) -> Comment:
@@ -40,14 +40,14 @@ def get_comment_model(db: Session, comment_id: int) -> Comment:
 
 def get_comment(db: Session, comment_id: int) -> CommentOut:
     comment = get_comment_model(db, comment_id)
-    return CommentOut.from_orm(comment)
+    return CommentOut.model_validate(comment)
 
 def get_comment_as_mod(db: Session, comment_id: int) -> CommentModView:
     comment = get_comment_model(db, comment_id)
-    return CommentModView.from_orm(comment)
+    return CommentModView.model_validate(comment)
 
 def get_all_comments(db: Session, skip: int = 0, limit: int = 100) -> List[CommentOut]:
-    return [CommentOut.from_orm(comment) for comment in db.query(Comment).offset(skip).limit(limit).all()]
+    return [CommentOut.model_validate(comment) for comment in db.query(Comment).offset(skip).limit(limit).all()]
 
 # UPDATE
 def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch, current_user_id: int) -> CommentOut:
@@ -65,12 +65,12 @@ def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch, cu
 
     logger.info(f"User {db_comment.temporary_username} successfully updated comment {db_comment.id} with changes: {updates}")
 
-    return CommentOut.from_orm(db_comment)
+    return CommentOut.model_validate(db_comment)
 
 def update_comment_as_mod(db: Session, comment_id: int, comment_patch: CommentModPatch) -> CommentModView:
     db_comment = get_comment_model(db, comment_id)
 
-    updates = { key: value for key, value in comment_patch.dict(exclude_unset=True, exclude_none=True).items() }
+    updates = { key: value for key, value in comment_patch.model_dump(exclude_unset=True, exclude_none=True).items() }
     for attr, value in updates.items():
         setattr(db_comment, attr, value)
 
@@ -79,16 +79,29 @@ def update_comment_as_mod(db: Session, comment_id: int, comment_patch: CommentMo
 
     logger.info(f"Moderator successfully updated comment {db_comment.id} with changes: {updates}")
 
-    return CommentModView.from_orm(db_comment)
+    return CommentModView.model_validate(db_comment)
 
-# DELETE
 def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentOut:
     db_comment = get_comment_model(db, comment_id)
 
     if db_comment.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="You are not authorized to delete this comment")
+        raise HTTPException(status_code=403, detail="You Are Not Authorized to Delete This Comment")
 
-    comment_out = CommentOut.from_orm(db_comment)
+    db_comment.content = "This comment has been deleted."
+    db_comment.is_deleted = True
+
+    db.commit()
+    db.refresh(db_comment)
+
+    logger.info(f"Comment {comment_id} soft deleted")
+
+    return CommentOut.model_validate(db_comment)
+
+# DELETE
+def delete_comment_as_mod(db: Session, comment_id: int) -> CommentOut:
+    db_comment = get_comment_model(db, comment_id)
+
+    comment_out = CommentOut.model_validate(db_comment)
 
     db.delete(db_comment)
     db.commit()

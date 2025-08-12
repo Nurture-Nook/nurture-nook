@@ -57,7 +57,7 @@ def get_user(db: Session, user_id: int) -> UserOut:
     db_user = db.query(User).filter(User.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code = 404, detail="User not Found")
-    return UserOut.from_orm(db_user)
+    return UserOut.model_validate(db_user)
 
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
     return db.query(User).filter(User.username == username).first()
@@ -68,15 +68,15 @@ def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Se
 
 def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[PostOut]:
     posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
-    return [PostOut.from_orm(post) for post in posts]
+    return [PostOut.model_validate(post) for post in posts]
 
 def get_comments_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[CommentOut]:
     comments = db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
-    return [CommentOut.from_orm(comment) for comment in comments]
+    return [CommentOut.model_validate(comment) for comment in comments]
 
 def get_chats_of_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[ChatOpen]:
     chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()
-    return [ChatOpen.from_orm(chat) for chat in chats]
+    return [ChatOpen.model_validate(chat) for chat in chats]
 
 # UPDATE
 def update_username(db: Session, user_id: int, username_update: UsernameUpdateRequest) -> Optional[User]:
@@ -145,7 +145,7 @@ def delete_user(db: Session, user_id: int) -> UserOut:
     db.delete(db_user)
     db.commit()
 
-    return UserOut.from_orm(db_user)
+    return UserOut.model_validate(db_user)
 
 def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteRequest) -> UserPrivateOut:
     if not verify_password(user_delete.password, current_user.hashed_pass):
@@ -153,11 +153,22 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
 
     validate_token(db, current_user, user_delete.token)
 
-    user_private_out = UserPrivateOut.from_orm(current_user)
+    user_private_out = UserPrivateOut.model_validate(current_user)
 
+    delete_all_content(db, user_id=current_user.id)
     db.delete(current_user)
     db.commit()
     return user_private_out
+
+def delete_all_content(db: Session, user_id: int):
+    db.query(Comment).filter(Comment.user_id == user_id).delete(synchronize_session=False)
+
+    user_posts = db.query(Post).filter(Post.user_id == user_id).all()
+    for post in user_posts:
+        db.query(Comment).filter(Comment.post_id == post.id).delete(synchronize_session=False)
+        db.delete(post)
+
+    db.commit()
 
 # Validate
 def validate_username(db: Session, username: str) -> bool:

@@ -10,7 +10,7 @@ const CommentPage = () => {
     const { postId, commentId } = router.query;
 
     useEffect(() => {
-        if (!currentUser) router.push('/home');
+        if (!currentUser) router.push('/entrance');
     }, [currentUser, router]);
 
     if (!postId || !commentId) {
