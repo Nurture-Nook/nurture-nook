@@ -18,8 +18,6 @@ export const ChatHistory = () => {
     const [error, setError] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
-    if (!currentUser) return;
-
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -45,7 +43,9 @@ export const ChatHistory = () => {
         fetchChatData();
 
         
-    }, [])
+    }, [chatId])
+
+    if (!currentUser) return null;
     
     const handleNewMessage = (newMessage: MessageOut) => {
         setMessages((prev) => [...prev, newMessage]);

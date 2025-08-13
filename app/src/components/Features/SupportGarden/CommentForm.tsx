@@ -20,9 +20,6 @@ export const CommentForm = ({postId, parentCommentId, onSuccess}: CommentFormPro
 
     const [loading, setLoading] = useState(false);
 
-    if (!currentUser) return;
-    const user_id = currentUser.id;
-
     useEffect(() => {
         const getWarnings = async () => {
             const [d, e] = await fetchWarnings();
@@ -36,6 +33,9 @@ export const CommentForm = ({postId, parentCommentId, onSuccess}: CommentFormPro
         getWarnings();
     }, [])
 
+    if (!currentUser) return;
+    const user_id = currentUser.id;
+    
     const handleWarningToggle = (id: number) => {
         setWarningsSelectedIds(prev => prev.includes(id) ? prev.filter(w => w !== id) : [...prev, id])
     }

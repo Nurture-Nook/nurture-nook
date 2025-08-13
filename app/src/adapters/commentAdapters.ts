@@ -4,6 +4,7 @@ import {
     getPostOptions,
     deleteOptions
 } from '../utils/fetch';
+import { CommentOut } from '@/types/comment';
 
 const baseUrl = '/api';
 
@@ -52,11 +53,11 @@ export const getComments = async (id: number) => {
     return [data?.comments ?? [], null];
 }
 
-export const getCommentsByIds = async (postId: number, commentIds: number[]): Promise<[any[], string | null]> => {
+export const getCommentsByIds = async (postId: number, commentIds: number[]): Promise<[CommentOut[], string | null]> => {
     try {
         const results = await Promise.all(commentIds.map(id => getCommentById(postId, id)));
 
-        const comments: any[] = [];
+        const comments: CommentOut[] = [];
         for (const [comment, error] of results) {
             if (error) return [[], error];
             if (comment) comments.push(comment);

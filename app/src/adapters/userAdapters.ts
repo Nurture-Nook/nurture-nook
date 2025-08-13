@@ -4,6 +4,7 @@ import {
     deleteOptions,
     getPatchOptions
 } from '../utils/fetch';
+import { UserPrivate } from '@/types/user';
 
 const baseUrl = '/api/me'
 
@@ -36,7 +37,7 @@ export const getCommentsByUser = async () => {
     return [data?.comments ?? [], null];
 }
 
-export async function updateProfile(data: UpdateProfilePayload): Promise<[null, string] | [any, null]> {
+export async function updateProfile(data: UpdateProfilePayload): Promise<[null, string] | [UserPrivate, null]> {
     const options = getPatchOptions(data);
 
     try {
@@ -49,8 +50,9 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<[null, 
 
         const json = await response.json();
         return [json, null];
-    } catch (err: any) {
-        return [null, err.message || "Network Error"];
+    } catch (err: Error | unknown) {
+        if (err instanceof Error) return [null, err.message];
+        return [null, "Network Error"]
     }
 }
 

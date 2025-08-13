@@ -39,7 +39,7 @@ export const EditMyProfile: React.FC = () => {
         ...(newPassword.trim() && { new_password: newPassword.trim() }),
         };
 
-        const [data, err] = await updateProfile(payload);
+        const [, err] = await updateProfile(payload);
 
         setLoading(false);
 

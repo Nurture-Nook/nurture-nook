@@ -1,6 +1,6 @@
 import { Entrance } from '../components/Features/Entrance/Entrance';
 
-export const EntrancePage = () => {
+export default function EntrancePage() {
     return (
         <div>
             <Entrance />

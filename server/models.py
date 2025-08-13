@@ -1,8 +1,9 @@
-from enum import Enum
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table, Enum
+import enum
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
-from db import Base
+from sqlalchemy.orm import relationship, declarative_base
+
+Base = declarative_base()
 
 post_categories = Table(
 	'post_categories', Base.metadata,
@@ -22,11 +23,11 @@ comment_warnings = Table(
 	Column('warning_id', ForeignKey('content_warnings.id'), primary_key = True)
 )
 
-class SenderType(Enum):
+class SenderType(enum.Enum):
 	USER = 'user'
 	BOT = 'bot'
 
-class Approval(Enum):
+class Approval(enum.Enum):
 	APPROVED = 'approved'
 	PENDING = 'pending'
 	REJECTED = 'rejected'
@@ -115,6 +116,8 @@ class Comment(Base):
 	warnings = relationship('Comment', secondary = comment_warnings, back_populates = 'comments')
 
 class TemporaryUsername(Base):
+	__tablename__ = 'temps'
+
 	id = Column(Integer, primary_key = True, index = True)
 	alias = Column(String, unique = True, nullable = False)
 

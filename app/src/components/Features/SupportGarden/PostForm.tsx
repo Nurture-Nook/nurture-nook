@@ -18,9 +18,6 @@ export const PostForm  = () => {
 
     const [loading, setLoading] = useState(false);
 
-    if (!currentUser) return;
-    const user_id = currentUser.id;
-
     useEffect(() => {
         const getCategories = async () => {
             const [d, e] = await fetchCategories();
@@ -46,6 +43,9 @@ export const PostForm  = () => {
 
         getWarnings();
     }, [])
+
+    if (!currentUser) return;
+    const user_id = currentUser.id;
 
     const handleCategoryToggle = (id: number) => {
         setCategoriesSelectedIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])

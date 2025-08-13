@@ -10,7 +10,7 @@ export default function NurtureGuidePage() {
 
     useEffect(() => {
         if (!currentUser) router.push('/entrance')
-    }, [currentUser])
+    }, [currentUser, router])
 
     return (
         <NurtureGuide/>

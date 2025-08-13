@@ -24,8 +24,6 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
     const pId = postId ?? (typeof postId === 'string' ? parseInt(postId) : undefined);
     const cId = commentId ?? (typeof commentId === 'string' ? parseInt(commentId) : undefined);
 
-    if (!pId) return null;
-
     useEffect(() => {
         if (!pId || !cId) return;
 
@@ -39,6 +37,8 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
         fetchComment();
     }, [pId, cId]);
 
+    if (!pId) return null;
+
     const handleSuccess = (newComment: CommentOut) => {
         if (!comment) return;
         const updated = insertComment([comment], newComment)[0];
@@ -49,7 +49,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
     const handleDelete = async () => {
         if (!cId) return;
         setDeleting(true);
-        const [_, deleteError] = await deleteCommentById(pId, cId);
+        const [, deleteError] = await deleteCommentById(pId, cId);
         setDeleting(false);
         if (deleteError) setError(deleteError);
         else {

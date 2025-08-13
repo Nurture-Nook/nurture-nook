@@ -66,7 +66,7 @@ export const Post = () => {
 
         if (!confirm("Are you sure you want to delete this post? This action cannot be undone.")) return;
 
-        const [_, deleteError] = await deletePostById(post.id);
+        const [, deleteError] = await deletePostById(post.id);
         
         if (deleteError) {
             setError("Failed to Delete Post");

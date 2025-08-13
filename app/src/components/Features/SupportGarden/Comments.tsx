@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { getComments } from '@/adapters/commentAdapters';
 import { Comment } from './Comment';
@@ -14,22 +14,25 @@ export const Comments = () => {
     const [loading, setLoading] = useState(true);
     const postId = Number(router.query.postId);
 
-    const fetchComments = async () => {
-        const [d, e] = await getComments(postId);
-
-        if (e) setError(e);
-        else setComments(d);
-
-        setLoading(false);
-    };
+    const fetchComments = useCallback(async () => {
+        try {
+            const res = await getComments(postId);
+            setComments(res);
+        } catch (err : Error | unknown) {
+            setError(error);
+            if (err instanceof Error) console.error(err.message);
+            else console.error("Unable to Fetch Comments")
+        }
+    }, [postId, error]);
 
     useEffect(() => {
         if (!postId) return;
         fetchComments();
-    }, [postId]);
+    }, [postId, fetchComments]);
 
     const handleSuccess = (newComment: CommentOut) => {
         setComments(prevComments => insertComment(prevComments, newComment));
+        setLoading(false);
     };
 
     if (loading) return <div>Loading comments...</div>;
@@ -46,11 +49,11 @@ export const Comments = () => {
             <h3>Comments</h3>
             <CommentForm postId={postId} parentCommentId={null} onSuccess={handleSuccess} />
             <ul>
-                {comments.map(c => (
+                { comments.map(c => (
                     <li key={c.id}>
                         <Comment postId={postId} commentId={c.id} />
                     </li>
-                ))}
+                )) }
             </ul>
         </>
     );
