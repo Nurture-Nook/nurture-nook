@@ -16,7 +16,7 @@ export default function LoginPage() {
     }, [router.isReady, setIsReady])
 
     useEffect(() => {
-        if (!currentUser) router.push('/home');
+        if (currentUser) router.push('/home');
     }, [currentUser, router])
 
     if (!isReady) return <p>Loading...</p>;
