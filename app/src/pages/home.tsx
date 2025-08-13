@@ -15,7 +15,7 @@ export default function HomePage() {
     }, [router.isReady, setIsReady])
 
     useEffect(() => {
-        if (!currentUser) router.push('/entrance')
+        if (currentUser) router.push('/entrance')
     }, [currentUser, router])
 
     if (!isReady) return <p>Loading...</p>;

@@ -81,7 +81,7 @@ class Post(Base):
 	title = Column(String, nullable = False, index = True)
 	description = Column(String, nullable = False)
 	temporary_username = Column(String, nullable = False)
-	flag_reason = Column(String, nullable = False)
+	flag_reason = Column(String, nullable = True)
 	is_flagged = Column(Boolean, default = False)
 	is_deleted = Column(Boolean, default = False)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
@@ -100,7 +100,7 @@ class Comment(Base):
 	id = Column(Integer, primary_key = True, index = True)
 	content = Column(String, nullable = False)
 	temporary_username = Column(String, nullable = False)
-	flag_reason = Column(String, nullable = False)
+	flag_reason = Column(String, nullable = True)
 	is_flagged = Column(Boolean, default = False)
 	is_deleted = Column(Boolean, default = False)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
@@ -113,7 +113,7 @@ class Comment(Base):
 	post = relationship('Post', back_populates = 'comments')
 	parent = relationship('Comment', back_populates = 'replies', remote_side = "Comment.id")
 	replies = relationship('Comment', back_populates = 'parent')
-	warnings = relationship('Comment', secondary = comment_warnings, back_populates = 'comments')
+	warnings = relationship('ContentWarning', secondary = comment_warnings, back_populates = 'comments')
 
 class TemporaryUsername(Base):
 	__tablename__ = 'temps'
@@ -129,7 +129,7 @@ class TemporaryUsername(Base):
 
 # Nurture Guide
 
-class Chat:
+class Chat(Base):
 	__tablename__ = 'chats'
 
 	id = Column(Integer, primary_key = True, index = True)
@@ -140,7 +140,7 @@ class Chat:
 	user = relationship('User', back_populates = 'chats')
 	messages = relationship('Message', back_populates = 'chat')
 
-class Message:
+class Message(Base):
 	__tablename__ = 'messages'
 
 	id = Column(Integer, primary_key = True, index = True)
@@ -149,7 +149,7 @@ class Message:
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	chat_id = Column(Integer, ForeignKey('chats.id'), nullable = False)
-	user_id = Column(Integer, ForeignKey('users.id'), nullable = True)
+	user_id = Column(Integer, ForeignKey('users.id'), nullable = False)
 	
 	user = relationship('User', back_populates = 'messages')
 	chat = relationship('Chat', back_populates = 'messages')

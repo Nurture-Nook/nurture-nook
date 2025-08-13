@@ -6,7 +6,7 @@ export const SupportGarden = () => {
         <main className="support-garden-container">
             <h2 className="page-heading">Garden of Support</h2>
             <ExperientialCategories />
-            <Link href="/posts/create" passHref>
+            <Link href="/garden-of-support/posts/create" passHref>
                 <button type="button" className="create-post-button">Share Your Experiences</button>
             </Link>
         </main>
