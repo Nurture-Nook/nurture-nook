@@ -6,7 +6,7 @@ import {
 } from '../utils/fetch';
 import { ChatCreate } from '@/types/chat';
 
-const baseUrl = '/api/chat';
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/chat`;
 
 export const createChat = async (chatData: ChatCreate) => {
     return fetchHandler(

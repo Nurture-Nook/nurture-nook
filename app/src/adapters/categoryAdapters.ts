@@ -3,7 +3,7 @@ import {
     fetchHandler,
 } from '../utils/fetch';
 
-const baseUrl = '/api/category';
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/category`;
 
 export const getCategoryByName = async (name: string) => {
     const [data, error] = await fetchHandler(baseUrl + `/categories?name=${encodeURIComponent(name)}`);

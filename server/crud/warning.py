@@ -1,13 +1,13 @@
 from fastapi import HTTPException
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import ContentWarning, Post
-from schemas.warnings import ContentWarningCreate, ContentWarningOut, ContentWarningPatch, ContentWarningModView, ContentWarningWithPosts
-from schemas.posts import PostOut
+from ..models import ContentWarning, Post
+from ..schemas.warnings import ContentWarningCreate, ContentWarningOut, ContentWarningPatch, ContentWarningModView, ContentWarningWithPosts
+from ..schemas.posts import PostOut
 from typing import List
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 # CREATE
 def create_warning(db: Session, warning: ContentWarningCreate) -> ContentWarningOut:

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from schemas.warnings import ContentWarningOut, ContentWarningWithPosts
-from schemas.posts import PostOut
-from crud.warning import get_all_warnings, get_warning_with_posts, get_posts_of_warning
-from typing import List
+from ..schemas.warnings import ContentWarningOut, ContentWarningWithPosts
+from ..schemas.posts import PostOut
+from ..crud.warning import get_all_warnings, get_warning_with_posts, get_posts_of_warning
+from typing import List, Optional
 from pydantic import BaseModel
-from db import get_db
+from ..db import get_db
 
 class MessageResponse(BaseModel):
     message: str
@@ -13,7 +13,7 @@ class MessageResponse(BaseModel):
 router = APIRouter(prefix = "/warning", tags = [ "Warning" ])
 
 @router.get("/warnings", response_model=List[ContentWarningOut])
-def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: str | None = Query(None)) -> List[ContentWarningOut]:
+def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: Optional[str] = Query(None)) -> List[ContentWarningOut]:
     warnings = get_all_warnings(db, skip = skip, limit = count)
 
     if title:

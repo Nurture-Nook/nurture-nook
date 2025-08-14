@@ -3,7 +3,7 @@ import {
     getPostOptions,
 } from '../utils/fetch';
 
-const baseUrl = '/api/auth';
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/auth`;
 
 export const register = async ({
         username,

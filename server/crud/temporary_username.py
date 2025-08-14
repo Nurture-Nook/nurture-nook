@@ -1,10 +1,10 @@
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import TemporaryUsername
-from utils.alias import generate_alias
+from ..models import TemporaryUsername
+from ..utils.alias import generate_alias
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 def create_alias(db: Session, user_id: int, post_id: int) -> str:
     existing = db.query(TemporaryUsername).filter_by(user_id = user_id, post_id = post_id).first()

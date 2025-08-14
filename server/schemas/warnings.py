@@ -1,10 +1,12 @@
-from .base import OrmBase, Approval
+from __future__ import annotations
 from datetime import datetime
-from typing import List, TYPE_CHECKING, Optional
+from typing import List, Optional, TYPE_CHECKING
+from pydantic import Field
+from .base import OrmBase, Approval
 
 if TYPE_CHECKING:
     from .posts import PostOut
-    from.comments import CommentOut
+    from .comments import CommentOut
 
 class ContentWarningCreate(OrmBase):
     title: str
@@ -24,14 +26,14 @@ class ContentWarningWithPosts(OrmBase):
     id: int
     title: str
     description: str
-    posts: List['PostOut']
+    posts: List["PostOut"]
     created_at: datetime
 
 class ContentWarningWithComments(OrmBase):
     id: int
     title: str
     description: str
-    comments: List['CommentOut']
+    comments: List["CommentOut"]
     created_at: datetime
 
 class ContentWarningModView(OrmBase):
@@ -39,6 +41,3 @@ class ContentWarningModView(OrmBase):
     title: str
     description: str
     stat: Approval
-
-ContentWarningWithPosts.model_rebuild()
-ContentWarningWithComments.model_rebuild()

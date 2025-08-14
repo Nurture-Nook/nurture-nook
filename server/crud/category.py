@@ -1,13 +1,13 @@
 from fastapi import HTTPException
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import Category, Post
-from schemas.categories import CategoryCreate, CategoryOut, CategoryWithPosts, CategoryPatch, CategoryModView
-from schemas.posts import PostOut
+from ..models import Category, Post
+from ..schemas.categories import CategoryCreate, CategoryOut, CategoryWithPosts, CategoryPatch, CategoryModView
+from ..schemas.posts import PostOut
 from typing import List
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 # CREATE
 def create_category(db: Session, category: CategoryCreate) -> CategoryOut:

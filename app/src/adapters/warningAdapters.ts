@@ -3,7 +3,7 @@ import {
     fetchHandler
 } from '../utils/fetch';
 
-const baseUrl = '/api/warning'
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/warning`
 
 export const getWarningByName = async (name: string) => {
     const [data, error] = await fetchHandler(baseUrl + `/warnings?name=${encodeURIComponent(name)}`, basicFetchOptions);

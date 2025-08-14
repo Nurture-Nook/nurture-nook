@@ -38,6 +38,7 @@ class User(Base):
 	id = Column(Integer, primary_key = True, index = True)
 	username = Column(String, unique = True, nullable = False, index = True)
 	email = Column(String, unique = True, nullable = False)
+	email_verified = Column(Boolean, default = False)
 	hashed_pass = Column(String, nullable = False)
 	hashed_token = Column(String, nullable = True)
 	token_expiry = Column(DateTime, nullable = True)

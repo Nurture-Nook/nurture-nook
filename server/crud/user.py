@@ -1,13 +1,13 @@
 from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
-from models import User, Post, Comment, Chat
-from schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
-from schemas.posts import PostOut
-from schemas.comments import CommentOut
-from schemas.chats import ChatOpen
-from services.email import send_verification
-from utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
+from ..models import User, Post, Comment, Chat
+from ..schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
+from ..schemas.posts import PostOut
+from ..schemas.comments import CommentOut
+from ..schemas.chats import ChatOpen
+from ..services.email import send_verification
+from ..utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
 from typing import List, Optional
 from datetime import datetime, timedelta
 import logging, re
@@ -23,7 +23,7 @@ email_pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$'
 def create_user(db: Session, user: UserCreate) -> UserPrivateOut:
     validate_username(db, user.username)
 
-    validate_password(db, user.password)
+    validate_password(user.password)
 
     validate_email(user.email)
 

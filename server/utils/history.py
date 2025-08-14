@@ -1,4 +1,4 @@
-from models import Message
+from ..models import Message
 
 def format_history(messages: list[Message]) -> list[dict]:
     return [

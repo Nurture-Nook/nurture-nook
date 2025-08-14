@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from schemas.categories import CategoryOut, CategoryWithPosts
-from schemas.posts import PostOut
-from crud.category import get_category_with_posts, get_all_categories, get_posts_of_category
-from typing import List
+from ..schemas.categories import CategoryOut, CategoryWithPosts
+from ..schemas.posts import PostOut
+from ..crud.category import get_category_with_posts, get_all_categories, get_posts_of_category
+from typing import List, Optional
 from pydantic import BaseModel
-from db import get_db
+from ..db import get_db
 
 class MessageResponse(BaseModel):
     message: str
@@ -13,7 +13,7 @@ class MessageResponse(BaseModel):
 router = APIRouter(prefix = "/category", tags = [ "Category" ])
 
 @router.get("/categories", response_model=List[CategoryOut])
-def get_categories(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: str | None = Query(None)) -> List[CategoryOut]:
+def get_categories(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: Optional[str] = Query(None)) -> List[CategoryOut]:
     categories = get_all_categories(db, skip = skip, limit = count)
 
     if title:

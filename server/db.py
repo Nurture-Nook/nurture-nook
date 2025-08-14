@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from models import Base
+from .models import Base
 import os
 
 load_dotenv()
@@ -18,7 +18,7 @@ print("database created")
 
 # Dependency
 def get_db():
-    db = SessionLocal
+    db = SessionLocal()
     try:
         yield db
     finally:

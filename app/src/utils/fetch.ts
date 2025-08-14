@@ -1,24 +1,36 @@
 export const basicFetchOptions: RequestInit = {
     method: "GET",
     credentials: "include",
+    headers: {
+        "Accept": "application/json"
+    }
 };
 
 export const deleteOptions: RequestInit = {
     method: "DELETE",
     credentials: "include",
+    headers: {
+        "Accept": "application/json"
+    }
 };
 
 export const getPostOptions = (body: object): RequestInit => ({
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
     body: JSON.stringify(body),
 });
 
 export const getPatchOptions = (body: object): RequestInit => ({
     method: "PATCH",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
     body: JSON.stringify(body),
 });
 

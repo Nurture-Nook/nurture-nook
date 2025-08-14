@@ -1,6 +1,6 @@
 import { fetchHandler, basicFetchOptions, getPostOptions, deleteOptions } from '../utils/fetch';
 
-const baseUrl = '/api/post'
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/post`
 
 export const createPost = async (title: string, description: string, categories: number[], warnings: number[], user_id: number, parent_comment_id: number | null = null) => {
     const [data, error] = await fetchHandler(baseUrl + '/create', getPostOptions({title, description, categories, warnings, user_id, parent_comment_id}));
