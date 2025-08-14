@@ -40,7 +40,7 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
     access_token = generate_jwt_token(user.id)
     
-    response = JSONResponse({"message": "Login successful"})
+    response = JSONResponse({"message": "Login Successful"})
     response.set_cookie(
         key="access_token", 
         value=access_token, 
