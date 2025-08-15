@@ -9,6 +9,6 @@ def authenticate_user(db: Session, username: str, password: str):
     except HTTPException:  
         return None
 
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.hashed_pass):
         return None
     return user
