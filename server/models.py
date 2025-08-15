@@ -59,6 +59,7 @@ class Category(Base):
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
 	stat = Column(Enum(Approval), default = Approval.PENDING)
+	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', secondary = post_categories, back_populates = 'categories')
 
@@ -69,6 +70,7 @@ class ContentWarning(Base):
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
 	stat = Column(Enum(Approval), default = Approval.PENDING)
+	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', secondary = post_warnings, back_populates = 'warnings')
 	comments = relationship('Comment', secondary = comment_warnings, back_populates = 'warnings')

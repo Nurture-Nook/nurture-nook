@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ..models import User
-from ..schemas.posts import PostCreate, PostOut, PostDetailedOut, PostPatch
-from ..schemas.comments import CommentCreate, CommentOut, CommentPatch
-from ..crud.post import create_post, get_post, get_detailed_post, get_comments_of_post, get_all_posts, update_post, delete_post
-from ..crud.comment import create_comment, get_comment, update_comment, delete_comment
-from ..utils.user import get_current_user
+from models import User
+from schemas.posts import PostCreate, PostOut, PostDetailedOut, PostPatch
+from schemas.comments import CommentCreate, CommentOut, CommentPatch
+from crud.post import create_post, get_post, get_detailed_post, get_comments_of_post, get_all_posts, update_post, delete_post
+from crud.comment import create_comment, get_comment, update_comment, delete_comment
+from utils.user import get_current_user
 from typing import List
 from pydantic import BaseModel
-from ..db import get_db
+from db import get_db
 
 class MessageResponse(BaseModel):
     message: str

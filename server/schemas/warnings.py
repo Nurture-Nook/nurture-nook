@@ -1,7 +1,7 @@
 from __future__ import annotations
+from pydantic import Field
 from datetime import datetime
 from typing import List, Optional, TYPE_CHECKING
-from pydantic import Field
 from .base import OrmBase, Approval
 
 if TYPE_CHECKING:
@@ -26,14 +26,14 @@ class ContentWarningWithPosts(OrmBase):
     id: int
     title: str
     description: str
-    posts: List["PostOut"]
+    posts: List["PostOut"] = Field(default_factory=list)
     created_at: datetime
 
 class ContentWarningWithComments(OrmBase):
     id: int
     title: str
     description: str
-    comments: List["CommentOut"]
+    comments: List["CommentOut"] = Field(default_factory=list)
     created_at: datetime
 
 class ContentWarningModView(OrmBase):
@@ -41,3 +41,4 @@ class ContentWarningModView(OrmBase):
     title: str
     description: str
     stat: Approval
+    created_at: datetime

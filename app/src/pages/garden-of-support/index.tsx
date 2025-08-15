@@ -6,7 +6,7 @@ import { CurrentUserContext } from '@/contexts/current_user_context';
 export default function SupportGardenPage() {
     const router = useRouter();
 
-    const currentUser = useContext(CurrentUserContext);
+    const { currentUser } = useContext(CurrentUserContext);
 
     const [isReady, setIsReady] = useState(false);
     

@@ -25,8 +25,23 @@ class PostCreate(OrmBase):
 class PostOut(OrmBase):
     id: int
     title: str
-    warnings: List[int] = Field(default_factory=list)
+    description: str
+    temporary_username: str 
+    user_id: int
+    content_warnings: list[int] = Field(default_factory=list)  
+    categories: list[int] = Field(default_factory=list)
     created_at: datetime
+    
+    model_config = {
+        "from_attributes": True,
+        "populate_by_name": True
+    }
+    
+    @property
+    def content_warnings(self) -> list[int]:
+        if hasattr(self, "warnings"):
+            return getattr(self, "warnings")
+        return []
 
 class PostPatch(OrmBase):
     title: Optional[str] = None
@@ -56,6 +71,9 @@ class PostModView(OrmBase):
     id: int
     user_id: int
     flags: List[int] = Field(default_factory=list)
+    is_flagged: bool
+    is_deleted: bool
+    created_at: datetime
     is_flagged: bool
     is_deleted: bool
     created_at: datetime

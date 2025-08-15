@@ -14,26 +14,39 @@ export const ContentWarningBadge: React.FC<WarningBadgeProps> = ({ warningId }) 
     useEffect(() => {
         if (!warningId) return;
 
-       const fetchCategory = async () => {
-            const [d, e] = await getWarningById(Number(warningId));
+       const fetchWarning = async () => {
+            try {
+                const [data, err] = await getWarningById(Number(warningId));
 
-            if (e) setError(e);
-            else setContentWarning(d);
-
-            setLoading(false);
+                if (err) {
+                    console.error("Error fetching warning:", err);
+                    setError(err.message || "Failed to load warning");
+                } else if (data) {
+                    setContentWarning(data);
+                } else {
+                    setError("Warning not found");
+                }
+            } catch (e) {
+                console.error("Exception in fetchWarning:", e);
+                setError(e instanceof Error ? e.message : "Unknown error occurred");
+            } finally {
+                setLoading(false);
+            }
         }
 
-        fetchCategory();
+        fetchWarning();
     }, [warningId])
 
     if (loading) return <div>Loading warning name...</div>
 
     if (error) {
-        console.error(error);
-        return <div>Error Loading Warning Name</div>
+        console.error("Error in ContentWarningBadge:", error);
+        return <div>Error Loading Warning</div>;
     }
 
-    if (contentWarning === null) return;
+    if (!contentWarning) {
+        return <div>Warning not found</div>;
+    }
 
     return <p>{ contentWarning.title }</p>
 }

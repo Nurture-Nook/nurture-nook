@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from ..schemas.warnings import ContentWarningOut, ContentWarningWithPosts
 from ..schemas.posts import PostOut
 from ..crud.warning import get_all_warnings, get_warning_with_posts, get_posts_of_warning
 from typing import List, Optional
@@ -12,21 +11,39 @@ class MessageResponse(BaseModel):
 
 router = APIRouter(prefix = "/warning", tags = [ "Warning" ])
 
-@router.get("/warnings", response_model=List[ContentWarningOut])
-def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: Optional[str] = Query(None)) -> List[ContentWarningOut]:
-    warnings = get_all_warnings(db, skip = skip, limit = count)
+@router.get("/warnings")
+def get_warnings(count: int = 20, skip: int = 0, db: Session = Depends(get_db), title: Optional[str] = Query(None)):
+    try:
+        print(f"GET /warning/warnings - params: count={count}, skip={skip}, title={title}")
+        
+        warnings = get_all_warnings(db, skip = skip, limit = count)
+        
+        print(f"Retrieved {len(warnings)} warnings")
 
-    if title:
-        results = [c for c in warnings if c["title"].lower() == title.lower()]
-        if not results:
-            raise HTTPException(status_code=404, detail="Category Not Found")
-        return results
+        if title:
+            results = [w for w in warnings if w.title.lower() == title.lower()]
+            if not results:
+                raise HTTPException(status_code=404, detail="Warning Not Found")
+            return {"warnings": results}
 
-    return warnings
+        return {"warnings": warnings}
+    except Exception as e:
+        print(f"Error in GET /warning/warnings: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/warnings/{id}")
-def get(id: int, db: Session = Depends(get_db)) -> ContentWarningWithPosts:
-    return get_warning_with_posts(db = db, warning_id = id)
+def get(id: int, db: Session = Depends(get_db)):
+    try:
+        print(f"GET /warning/warnings/{id}")
+        warning = get_warning_with_posts(db=db, warning_id=id)
+        return warning
+    except Exception as e:
+        print(f"Error in GET /warning/warnings/{id}: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/warnings/{id}/posts")
 def get_posts(id: int, count: int = 50, skip: int = 0, db: Session = Depends(get_db)) -> List[PostOut]:

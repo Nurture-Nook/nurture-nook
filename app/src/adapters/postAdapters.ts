@@ -3,47 +3,84 @@ import { fetchHandler, basicFetchOptions, getPostOptions, deleteOptions } from '
 const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/post`
 
 export const createPost = async (title: string, description: string, categories: number[], warnings: number[], user_id: number, parent_comment_id: number | null = null) => {
-    const [data, error] = await fetchHandler(baseUrl + '/create', getPostOptions({title, description, categories, warnings, user_id, parent_comment_id}));
+    try {
+        console.log("Creating post with data:", {
+            title, description, categories, warnings, user_id, parent_comment_id
+        });
+        
+        const [data, error] = await fetchHandler(baseUrl + '/create', getPostOptions({
+            title, 
+            description, 
+            categories, 
+            warnings, 
+            user_id, 
+            parent_comment_id
+        }));
 
-    if (error) {
-        console.error(error);
-        return [null, error];
+        if (error) {
+            console.error("Error creating post:", error);
+            return [null, error];
+        }
+
+        if (!data) {
+            console.error("Invalid response format, missing post data:", data);
+            return [null, new Error("Invalid response format from server")];
+        }
+
+        console.log("Post created successfully:", data);
+        return [data.post || data, null];
+    } catch (err) {
+        console.error("Exception in createPost adapter:", err);
+        return [null, err instanceof Error ? err : new Error("Unknown error creating post")];
     }
-
-    return [data?.post ?? [], null];
 }
 
 export const getPostPreviewById = async (postId: number) => {
     const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}/preview`, basicFetchOptions);
 
     if (error) {
-        console.error(error);
+        console.error("Error fetching post preview:", error);
         return [null, error];
     }
 
-    return [data?.post ?? [], null];
+    if (!data) {
+        console.error("Invalid response format, missing post data:", data);
+        return [null, new Error("Invalid response format from server")];
+    }
+
+    return [data.post || data, null];
 }
 
 export const getPostById = async (postId: number) => {
     const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, basicFetchOptions);
 
     if (error) {
-        console.error(error);
+        console.error("Error fetching post:", error);
         return [null, error];
     }
 
-    return [data?.post ?? [], null];
+    if (!data) {
+        console.error("Invalid response format, missing post data:", data);
+        return [null, new Error("Invalid response format from server")];
+    }
+
+    return [data.post || data, null];
 }
 
 export const deletePostById = async (postId: number) => {
     const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, deleteOptions);
 
     if (error) {
-        console.error(error);
+        console.error("Error deleting post:", error);
         return [null, error];
     }
 
-    return [data?.post ?? [], null];
+    if (!data) {
+        console.error("Invalid response format, missing deletion result:", data);
+        return [null, new Error("Invalid response format from server")];
+    }
+
+    return [data.post || data, null];
 }
 
 // export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {

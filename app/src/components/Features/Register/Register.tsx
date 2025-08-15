@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { UserPrivate } from '@/types/user';
-import { register } from "../../../adapters/authAdapters";
+import { register, getCurrentUser } from "../../../adapters/authAdapters";
 
 
 interface RegisterProps {
@@ -20,32 +20,95 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
     const [usernameFormattingIssue, setUsernameFormattingIssue] = useState(false);
     const [passwordFormattingIssue, setPasswordFormattingIssue] = useState(false);
     const [emailFormattingIssue, setEmailFormattingIssue] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log("Form submitted with data:", { email, username, password, passwordConfirm });
 
         setErrorText('');
         setUsernameFormattingIssue(false);
         setPasswordFormattingIssue(false);
         setEmailFormattingIssue(false);
+        setIsLoading(true);
 
-        if (!email || !username || !password || !passwordConfirm) return setErrorText("All Fields are Required");
+        if (!email || !username || !password || !passwordConfirm) {
+            console.log("Missing required fields");
+            setErrorText("All Fields are Required");
+            return;
+        }
 
-        if (!usernamePattern.test(username)) setUsernameFormattingIssue(true);
-        if (!passwordPattern.test(password)) setPasswordFormattingIssue(true);
-        if (!emailPattern.test(email)) setEmailFormattingIssue(true);
+        // Check all format requirements
+        let hasFormattingIssues = false;
+        
+        if (!usernamePattern.test(username)) {
+            console.log("Username format issue");
+            setUsernameFormattingIssue(true);
+            hasFormattingIssues = true;
+        }
+        
+        if (!passwordPattern.test(password)) {
+            console.log("Password format issue");
+            setPasswordFormattingIssue(true);
+            hasFormattingIssues = true;
+        }
+        
+        if (!emailPattern.test(email)) {
+            console.log("Email format issue");
+            setEmailFormattingIssue(true);
+            hasFormattingIssues = true;
+        }
+        
+        if (password != passwordConfirm) {
+            console.log("Passwords don't match");
+            setErrorText("Password Confirmation Must Match Password");
+            return;
+        }
+        
+        if (hasFormattingIssues) {
+            console.log("Formatting issues detected, stopping submission");
+            return;
+        }
+         console.log("All validations passed, proceeding with registration");
+        console.log("Attempting registration with:", { username, email });
+        
+        let registerRes, error;
+        try {
+            [registerRes, error] = await register({
+                username,
+                email,
+                password
+            });
+            
+            console.log("Registration response:", registerRes, "Error:", error);
 
-        if (password != passwordConfirm) return setErrorText("Password Confirmation Must Match Password");
+            if (error) {
+                console.error("Registration error details:", error);
+                setIsLoading(false);
+                return setErrorText(error.message || "Connection error - Is the backend server running?");
+            }
+        } catch (e) {
+            console.error("Unexpected registration error:", e);
+            setIsLoading(false);
+            return setErrorText("Connection error - Is the backend server running?");
+        }
 
-        const [user, error] = await register({
-            username,
-            email,
-            password
-        });
-
-        if (error) return setErrorText(error.message);
-
-        onRegisterSuccess(user);
+        if (registerRes && registerRes.success) {
+            console.log("Registration successful, fetching user data");
+            const [user, userError] = await getCurrentUser();
+            console.log("User data:", user, "User error:", userError);
+            
+            if (userError) return setErrorText("Could Not Fetch User Info");
+            if (user) {
+                onRegisterSuccess(user);
+            } else {
+                setIsLoading(false);
+                setErrorText("User data not available");
+            }
+        } else {
+            setIsLoading(false);
+            setErrorText("Registration failed");
+        }
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +169,9 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
                     onChange={handleChange}
                 />
 
-                <button>Register</button>
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Registering...' : 'Register'}
+                </button>
             </form>
 
             { usernameFormattingIssue ? <>

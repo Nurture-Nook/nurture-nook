@@ -1,11 +1,8 @@
 from __future__ import annotations
 from datetime import datetime
-from typing import List, TYPE_CHECKING, Optional
+from typing import List, Optional
 from pydantic import Field
 from .base import OrmBase, Approval
-
-if TYPE_CHECKING:
-    from .posts import PostOut
 
 class CategoryCreate(OrmBase):
     title: str
@@ -26,7 +23,7 @@ class CategoryWithPosts(OrmBase):
     id: int
     title: str
     description: str
-    posts: List["PostOut"] = Field(default_factory=list)
+    posts: List[int] = Field(default_factory=list)
 
 class CategoryModView(OrmBase):
     id: int
