@@ -1,13 +1,13 @@
 from fastapi import HTTPException
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import Category, Post
-from schemas.categories import CategoryCreate, CategoryOut, CategoryWithPosts, CategoryPatch, CategoryModView
-from schemas.posts import PostOut
+from ..models import Category, Post
+from ..schemas.categories import CategoryCreate, CategoryOut, CategoryWithPosts, CategoryPatch, CategoryModView
+from ..schemas.posts import PostOut
 from typing import List
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 # CREATE
 def create_category(db: Session, category: CategoryCreate) -> CategoryOut:
@@ -36,17 +36,45 @@ def get_category_model(db: Session, category_id: int) -> Category:
 
 def get_category(db: Session, category_id: int) -> CategoryOut:
     category = get_category_model(db, category_id)
-    return CategoryOut.model_validate(category)
+
+    return CategoryOut(
+        id=category.id,
+        title=category.title,
+        description=category.description,
+        created_at=category.created_at
+    )
 
 def get_category_with_posts(db: Session, category_id: int) -> CategoryWithPosts:
     category = get_category_model(db, category_id)
-    return CategoryWithPosts.model_validate(category)
+    
+    # Construct a dict with the required fields
+    category_dict = {
+        "id": category.id,
+        "title": category.title,
+        "description": category.description,
+        "created_at": category.created_at,
+
+        "posts": [post.id for post in category.posts] if category.posts else []
+    }
+    
+    # Convert to Pydantic model
+    return CategoryWithPosts(**category_dict)
 
 def get_all_categories(db: Session, skip: int = 0, limit: int = 100) -> List[CategoryOut]:
-    return [CategoryOut.model_validate(category) for category in db.query(Category).offset(skip).limit(limit).all()]
+    categories = db.query(Category).offset(skip).limit(limit).all()
+
+    return [
+        CategoryOut(
+            id=category.id,
+            title=category.title,
+            description=category.description,
+            created_at=category.created_at
+        )
+        for category in categories
+    ]
 
 def get_posts_of_category(db: Session, category_id: int, skip: int = 0, limit: int = 50) -> List[PostOut]:
-    return [PostOut.from_orm(post) for post in db.query(Post).filter(Post.category_id == category_id).offset(skip).limit(limit).all()]
+    return [PostOut.model_validate(post) for post in db.query(Post).filter(Post.category_id == category_id).offset(skip).limit(limit).all()]
 
 
 # UPDATE

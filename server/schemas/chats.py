@@ -1,4 +1,4 @@
-from base import OrmBase
+from .base import OrmBase
 from datetime import datetime
 
 class ChatCreate(OrmBase):

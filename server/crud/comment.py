@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from models import Comment, User
-from schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
-from crud.temporary_username import create_alias
+from ..models import Comment, User
+from ..schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
+from ..crud.temporary_username import create_alias
 from typing import List
 import logging
 

@@ -22,8 +22,14 @@ export const PostForm  = () => {
         const getCategories = async () => {
             const [d, e] = await fetchCategories();
 
-            if (e) setErrorText(e);
-            else setCategories(d);
+            if (e) {
+                console.error("Error fetching categories:", e);
+                setErrorText(e.message || "Error loading categories");
+            } else if (d) {
+                setCategories(d);
+            } else {
+                setErrorText("No categories found");
+            }
 
             setLoading(false);
         }
@@ -35,8 +41,14 @@ export const PostForm  = () => {
         const getWarnings = async () => {
             const [d, e] = await fetchWarnings();
 
-            if (e) setErrorText(e);
-            else setWarnings(d);
+            if (e) {
+                console.error("Error fetching warnings:", e);
+                setErrorText(e.message || "Error loading warnings");
+            } else if (d) {
+                setWarnings(d);
+            } else {
+                setErrorText("No warnings found");
+            }
 
             setLoading(false);
         }
@@ -44,8 +56,12 @@ export const PostForm  = () => {
         getWarnings();
     }, [])
 
-    if (!currentUser) return;
+    if (!currentUser) return <div>Please log in to create a post</div>;
     const user_id = currentUser.id;
+    
+    useEffect(() => {
+        console.log("Current user:", currentUser);
+    }, [currentUser]);
 
     const handleCategoryToggle = (id: number) => {
         setCategoriesSelectedIds(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])
@@ -58,15 +74,55 @@ export const PostForm  = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!title || !description || categoriesSelectedIds.length < 1) return setErrorText("Title, Description, and at Least One Category Are Required");
+        if (!title || !description || categoriesSelectedIds.length < 1) {
+            setErrorText("Title, Description, and at Least One Category Are Required");
+            return;
+        }
 
         setLoading(true);
+        setErrorText("");
 
         try {
-            await createPost(title, description, categoriesSelectedIds, warningsSelectedIds, user_id);
+            console.log("Creating post with:", {
+                title, description, 
+                categories: categoriesSelectedIds, 
+                warnings: warningsSelectedIds, 
+                userId: user_id
+            });
+            
+            const [data, error] = await createPost(
+                title, 
+                description, 
+                categoriesSelectedIds, 
+                warningsSelectedIds, 
+                user_id
+            );
+            
+            if (error) {
+                console.error("Error creating post:", error);
+                setErrorText(`Failed to create post: ${error.message}`);
+                return;
+            }
+            
+            if (!data) {
+                console.error("No data returned from post creation");
+                setErrorText("Failed to create post: No response from server");
+                return;
+            }
+            
+            // Success! Reset form or redirect
+            console.log("Post created successfully:", data);
+            setTitle("");
+            setDescription("");
+            setCategoriesSelectedIds([]);
+            setWarningsSelectedIds([]);
+            setErrorText("Post created successfully!");
+            
+            // Optionally redirect to the new post or posts list
+            // router.push('/garden-of-support');
         } catch (error) {
-            setErrorText("Failed to Create Post");
-            console.error("Failed to create post: ", error);
+            console.error("Exception creating post:", error);
+            setErrorText(error instanceof Error ? `Exception: ${error.message}` : "Unknown error occurred");
         } finally {
             setLoading(false);
         }

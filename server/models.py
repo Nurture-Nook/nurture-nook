@@ -38,6 +38,7 @@ class User(Base):
 	id = Column(Integer, primary_key = True, index = True)
 	username = Column(String, unique = True, nullable = False, index = True)
 	email = Column(String, unique = True, nullable = False)
+	email_verified = Column(Boolean, default = False)
 	hashed_pass = Column(String, nullable = False)
 	hashed_token = Column(String, nullable = True)
 	token_expiry = Column(DateTime, nullable = True)
@@ -58,6 +59,7 @@ class Category(Base):
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
 	stat = Column(Enum(Approval), default = Approval.PENDING)
+	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', secondary = post_categories, back_populates = 'categories')
 
@@ -68,6 +70,7 @@ class ContentWarning(Base):
 	title = Column(String, unique = True, nullable = False, index = True)
 	description = Column(String)
 	stat = Column(Enum(Approval), default = Approval.PENDING)
+	created_at = Column(DateTime(timezone = True), server_default = func.now())
 
 	posts = relationship('Post', secondary = post_warnings, back_populates = 'warnings')
 	comments = relationship('Comment', secondary = comment_warnings, back_populates = 'warnings')

@@ -17,22 +17,34 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
         if (!postId) return;
 
         const fetchPost = async () => {
-            const [d, e] = await getPostPreviewById(Number(postId));
+            try {
+                const [data, err] = await getPostPreviewById(Number(postId));
 
-            if (e) setError(e);
-            else setPost(d);
-
-            setLoading(false);
-        }
+                if (err) {
+                    console.error("Error fetching post preview:", err);
+                    setError(err.message || "Failed to load post preview");
+                } else if (data) {
+                    setPost(data);
+                } else {
+                    console.error("Post data is null or undefined");
+                    setError("Post not found");
+                }
+            } catch (e) {
+                console.error("Exception in fetchPost:", e);
+                setError(e instanceof Error ? e.message : "Unknown error occurred");
+            } finally {
+                setLoading(false);
+            }
+        };
 
         fetchPost();
     }, [postId])
 
     if (loading) return <div>Loading post preview...</div>;
 
-    if (error) return <div>Error Loading Post Preview</div>;
+    if (error) return <div>Error Loading Post Preview: {error}</div>;
 
-    if (post === null) return;
+    if (!post) return <div>Post not found</div>;
 
     return (
         <>
@@ -41,8 +53,8 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
             <br></br>
             { post.content_warnings ? <h4>Content Warnings:</h4> : <></> }
             <ul>
-                { post.content_warnings.length > 0 ? 
-                    post.content_warnings.map(w => <li key="w"><ContentWarningBadge warningId={w}/></li>) : <></> }
+                { post.content_warnings && post.content_warnings.length > 0 ? 
+                    post.content_warnings.map(w => <li key={w}><ContentWarningBadge warningId={w}/></li>) : <></> }
             </ul>
         </>
     )

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from schemas.messages import MessageCreate, MessagePatch, MessageOut
-from crud.message import send_message, edit_message
-from crud.chat import get_messages_of_chat
-from services.gemini import generate_reply
-from utils.history import format_history
+from ..schemas.messages import MessageCreate, MessagePatch, MessageOut
+from ..crud.message import send_message, edit_message
+from ..crud.chat import get_messages_of_chat
+from ..services.gemini import generate_reply
+from ..utils.history import format_history
 from pydantic import BaseModel
-from db import get_db
+from ..db import get_db
 
 class MessageResponse(BaseModel):
     message: str

@@ -1,13 +1,13 @@
 from fastapi import HTTPException
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import Chat, Message
-from schemas.chats import ChatCreate, ChatOpen
-from schemas.messages import MessageOut
+from ..models import Chat, Message
+from ..schemas.chats import ChatCreate, ChatOpen
+from ..schemas.messages import MessageOut
 from typing import List
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 # CREATE
 def create_chat(db: Session, chat_data: ChatCreate) -> ChatOpen:

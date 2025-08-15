@@ -1,5 +1,5 @@
 from google.generativeai import GenerativeModel
-from chatbot_instructions import SYSTEM_PROMPT
+from .chatbot_instructions import SYSTEM_PROMPT
 from typing import List, Dict
 
 model = GenerativeModel("gemini-pro")

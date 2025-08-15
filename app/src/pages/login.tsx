@@ -2,7 +2,9 @@ import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import { UserPrivate } from '@/types/user';
 import { Login } from '../components/Features/Login/Login';
+import { ServerStatus } from '../components/Features/ServerStatus/ServerStatus';
 import { CurrentUserContext } from '@/contexts/current_user_context';
+import { getCurrentUser } from '@/adapters/authAdapters';
 
 export default function LoginPage() {
     const router = useRouter()
@@ -21,15 +23,14 @@ export default function LoginPage() {
 
     if (!isReady) return <p>Loading...</p>;
 
-    
-
-    const handleLoginSuccess = async (newUser : UserPrivate) => {
-        setCurrentUser(newUser)
-        router.push('/home')
+    const handleLoginSuccess = (user: UserPrivate) => {
+        setCurrentUser(user);
+        router.push('/home');
     }
 
     return (
         <div>
+            <ServerStatus />
             <Login onLoginSuccess={handleLoginSuccess}/>
         </div>
     )

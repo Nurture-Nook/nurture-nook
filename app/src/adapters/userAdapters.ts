@@ -6,7 +6,7 @@ import {
 } from '../utils/fetch';
 import { UserPrivate } from '@/types/user';
 
-const baseUrl = '/api/me'
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/me`
 
 interface UpdateProfilePayload {
     new_username?: string;

@@ -2,8 +2,8 @@ from .base import OrmBase
 from .posts import PostOut
 from .comments import CommentOut
 from datetime import datetime
-from typing import List
 from pydantic import field_validator
+from typing import List, Optional
 
 class UserCreate(OrmBase):
     username: str
@@ -44,13 +44,13 @@ class PasswordUpdateRequest(OrmBase):
     new_password: str
 
 class ProfileUpdateRequest(OrmBase):
-    new_username: str | None = None
-    new_email: str | None = None
-    email_token: str | None = None
-    current_password: str | None = None
-    new_password: str | None = None
+    new_username: Optional[str] = None
+    new_email: Optional[str] = None
+    email_token: Optional[str] = None
+    current_password: Optional[str] = None
+    new_password: Optional[str] = None
 
-    @field_validator("*", pre=True)
+    @field_validator("*")
     def at_least_one_field(cls, v, values):
         if not any(values.values()):
             raise ValueError("At least one field must be updated")
@@ -59,5 +59,3 @@ class ProfileUpdateRequest(OrmBase):
 class UserDeleteRequest(OrmBase):
     token: str
     password: str
-
-UserWithContent.model_rebuild()

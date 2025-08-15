@@ -1,17 +1,29 @@
 import sys
 import os
+from faker import Faker
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from models import Category, ContentWarning
+from models import User, Category, ContentWarning
 from db import SessionLocal
 from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
+faker = Faker()
 db = SessionLocal()
+
+if db.query(User).count() == 0:
+    users = [
+        User(
+            username=faker.user_name(),
+            hashed_pass=faker.password(),
+            email=faker.email()
+        )
+        for _ in range(10)
+    ]
+    db.add_all(users)
+    db.commit()
 
 categories = [
     Category(

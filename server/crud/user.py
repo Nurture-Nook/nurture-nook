@@ -1,13 +1,13 @@
 from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
-from models import User, Post, Comment, Chat
-from schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
-from schemas.posts import PostOut
-from schemas.comments import CommentOut
-from schemas.chats import ChatOpen
-from services.email import send_verification
-from utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
+from ..models import User, Post, Comment, Chat
+from ..schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
+from ..schemas.posts import PostOut
+from ..schemas.comments import CommentOut
+from ..schemas.chats import ChatOpen
+from ..services.email import send_verification
+from ..utils.auth import generate_token, hash_token, hash_password, verify_password, compare_tokens
 from typing import List, Optional
 from datetime import datetime, timedelta
 import logging, re
@@ -23,7 +23,7 @@ email_pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}$'
 def create_user(db: Session, user: UserCreate) -> UserPrivateOut:
     validate_username(db, user.username)
 
-    validate_password(db, user.password)
+    validate_password(user.password)
 
     validate_email(user.email)
 
@@ -53,11 +53,11 @@ def get_db():
     finally:
         db.close()
 
-def get_user(db: Session, user_id: int) -> UserOut:
-    db_user = db.query(User).filter(User.id == user_id).first()
+def get_user(db: Session, username: str) -> User:
+    db_user = db.query(User).filter(User.username == username).first()
     if not db_user:
         raise HTTPException(status_code = 404, detail="User not Found")
-    return UserOut.model_validate(db_user)
+    return db_user
 
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
     return db.query(User).filter(User.username == username).first()
@@ -65,6 +65,12 @@ def get_user_by_username(db: Session, username: str) -> Optional[User]:
 def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
+def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
+    """Get a user by their ID"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Session = Depends(get_db)):
     return db.query(User).offset(skip).limit(limit).all()

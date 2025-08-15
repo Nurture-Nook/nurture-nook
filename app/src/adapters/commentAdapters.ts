@@ -6,7 +6,7 @@ import {
 } from '../utils/fetch';
 import { CommentOut } from '@/types/comment';
 
-const baseUrl = '/api';
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}`;
 
 export const createComment = async (
     content: string,

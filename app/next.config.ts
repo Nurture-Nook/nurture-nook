@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
     async rewrites() {
         return [
             {
-                source: '/api/:path*',
-                destination: 'https://e323iw8wd0.execute-api.us-east-1.amazonaws.com/beta'
+                source: `${process.env.NEXT_PUBLIC_API_BASE}/:path*`,
+                destination: 'http://localhost:8000/:path*',
             }
         ]
     }

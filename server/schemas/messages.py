@@ -1,4 +1,4 @@
-from base import OrmBase, SenderType
+from .base import OrmBase, SenderType
 from datetime import datetime
 
 class MessageCreate(OrmBase):

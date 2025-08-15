@@ -4,7 +4,7 @@ import {
     getPatchOptions
 } from '../utils/fetch';
 
-const baseUrl = '/api/message';
+const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/message`;
 
 export const sendMessage = async ({
     sender, content, chat_id, user_id

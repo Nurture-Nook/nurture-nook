@@ -1,13 +1,13 @@
 from fastapi import HTTPException
-from server.middleware import logging
+from server.middleware import logger_middleware
 from sqlalchemy.orm import Session
-from models import ContentWarning, Post
-from schemas.warnings import ContentWarningCreate, ContentWarningOut, ContentWarningPatch, ContentWarningModView, ContentWarningWithPosts
-from schemas.posts import PostOut
+from ..models import ContentWarning, Post
+from ..schemas.warnings import ContentWarningCreate, ContentWarningOut, ContentWarningPatch, ContentWarningModView, ContentWarningWithPosts
+from ..schemas.posts import PostOut
 from typing import List
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logger_middleware.getLogger(__name__)
+logger.setLevel(logger_middleware.INFO)
 
 # CREATE
 def create_warning(db: Session, warning: ContentWarningCreate) -> ContentWarningOut:
@@ -36,14 +36,30 @@ def get_warning_model(db: Session, warning_id: int) -> ContentWarning:
 
 def get_warning(db: Session, warning_id: int) -> ContentWarningOut:
     warning = get_warning_model(db, warning_id)
-    return ContentWarningOut.model_validate(warning)
+
+    return ContentWarningOut(
+        id=warning.id,
+        title=warning.title,
+        description=warning.description,
+        created_at=warning.created_at
+    )
 
 def get_warning_with_posts(db: Session, warning_id: int) -> ContentWarningWithPosts:
     warning = get_warning_model(db, warning_id)
     return ContentWarningWithPosts.model_validate(warning)
 
 def get_all_warnings(db: Session, skip: int = 0, limit: int = 100) -> List[ContentWarningOut]:
-    return [ContentWarningOut.model_validate(warning) for warning in db.query(ContentWarning).offset(skip).limit(limit).all()]
+    warnings = db.query(ContentWarning).offset(skip).limit(limit).all()
+
+    return [
+        ContentWarningOut(
+            id=warning.id,
+            title=warning.title,
+            description=warning.description,
+            created_at=warning.created_at
+        )
+        for warning in warnings
+    ]
 
 def get_posts_of_warning(db: Session, warning_id: int, skip: int = 0, limit: int = 50) -> List[PostOut]:
     return [PostOut.model_validate(post) for post in db.query(Post).filter(Post.warning_id == warning_id).offset(skip).limit(limit).all()]
