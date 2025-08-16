@@ -5,7 +5,8 @@ from ..utils.auth import decode_jwt_token
 
 PUBLIC_PATHS = [
     "/auth/register",
-    "/auth/login"
+    "/auth/login",
+    "/auth/test"
 ]
 
 def setup_cors(app):

@@ -1,16 +1,19 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
     reactStrictMode: true,
 
     async rewrites() {
+        console.log("Loading rewrites configuration");
         return [
             {
-                source: `${process.env.NEXT_PUBLIC_API_BASE}/:path*`,
+                source: '/api/auth/:slug',
+                destination: 'http://localhost:8000/auth/:slug',
+            },
+            {
+                source: '/api/:path*',
                 destination: 'http://localhost:8000/:path*',
             }
-        ]
+        ];
     }
 };
 
-export default nextConfig;
+module.exports = nextConfig;
