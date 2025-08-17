@@ -12,22 +12,18 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register")
 def register(user_create: UserCreate, db: Session = Depends(get_db)):
-    # Check if username exists
     if get_user_by_username(db, user_create.username):
-        raise HTTPException(status_code=400, detail="Username already registered")
+        raise HTTPException(status_code=400, detail="Username Already Registered")
     
-    # Check if email exists
     if get_user_by_email(db, user_create.email):
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
+        raise HTTPException(status_code=400, detail="Email Already Registered")
+
     user = create_user(db, user_create)
     
-    # Generate JWT token
     access_token = generate_jwt_token(user.id)
     
-    # Return token in response body
     return {
-        "message": "Registration successful",
+        "message": "Registration Successful",
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
@@ -37,20 +33,16 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
         }
     }
 
-# filepath: c:\Users\pdino\Downloads\Microsoft VS Code\nurture-nook\server\routes\auth.py
-
 @router.post("/login")
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = authenticate_user(db, credentials.username, credentials.password)
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-    
-    # Generate JWT token
+        raise HTTPException(status_code=401, detail="Invalid Username or Password")
+
     access_token = generate_jwt_token(user.id)
     
-    # Return token in response body
     return {
-        "message": "Login successful",
+        "message": "Login Successful",
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
