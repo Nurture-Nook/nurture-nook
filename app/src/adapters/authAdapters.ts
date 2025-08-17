@@ -1,3 +1,5 @@
+import { fetchHandler } from '../utils/fetch';
+
 const apiBase = '/api';  // Use the proxy path instead of direct URL
 console.log("API Base URL:", apiBase);
 const baseUrl = `${apiBase}/auth`;
@@ -10,23 +12,6 @@ const getPostOptions = (body: any) => ({
     },
     body: JSON.stringify(body)
 });
-
-// Generic fetch handler with error handling
-const fetchHandler = async (url: string, options: RequestInit) => {
-    try {
-        const response = await fetch(url, options);
-        
-        if (!response.ok) {
-            throw new Error(`Request failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return [data, null];
-    } catch (e) {
-        console.error("Fetch error:", e);
-        return [null, e];
-    }
-};
 
 export const register = async ({
         username,
