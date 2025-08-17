@@ -48,6 +48,8 @@ export const login = async ({ username, password }: { username: string; password
         }
         
         const data = await response.json();
+
+        data.success = data.message === "Login Successful";
         
         // Store token in localStorage
         if (data.access_token) {
