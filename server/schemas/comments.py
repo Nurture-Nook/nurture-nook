@@ -17,9 +17,10 @@ class CommentCreate(OrmBase):
 class CommentOut(OrmBase):
     id: int
     user_id: int
+    post_id: int
     temporary_username: str
     content: str
-    warnings: List["ContentWarningOut"]
+    warnings: List[int] = Field(default_factory=list)
     parent_comment_id: Optional[int] = None
     created_at: datetime
 

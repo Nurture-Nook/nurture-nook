@@ -25,11 +25,7 @@ class PostCreate(OrmBase):
 class PostOut(OrmBase):
     id: int
     title: str
-    description: str
-    temporary_username: str 
-    user_id: int
-    content_warnings: list[int] = Field(default_factory=list)  
-    categories: list[int] = Field(default_factory=list)
+    warnings: list[int] = Field(default_factory=list)
     created_at: datetime
     
     model_config = {
@@ -62,9 +58,9 @@ class PostDetailedOut(OrmBase):
     title: str
     description: str
     temporary_username: str
-    categories: List["CategoryOut"]
-    warnings: List["ContentWarningOut"] = Field(default_factory=list)
-    comments: List["CommentOut"] = Field(default_factory=list)
+    categories: List[int] = Field(default_factory=list)
+    warnings: List[int] = Field(default_factory=list)
+    comments: List[int] = Field(default_factory=list)
     created_at: datetime
 
 class PostModView(OrmBase):
