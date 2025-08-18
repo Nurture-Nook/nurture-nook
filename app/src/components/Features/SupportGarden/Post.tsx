@@ -28,6 +28,7 @@ export const Post = () => {
 
         const fetchPostAndComments = async () => {
             const [data, error] = await getPostById(postId);
+            console.log("fetched post")
 
             if (error) {
                 setError(error);
@@ -88,11 +89,12 @@ export const Post = () => {
                         <ExperientialCategoryBadge key={c} categoryId={c} />
                     ))}
                 </h5>
-                <h4>
-                    Content Warnings: {post.content_warnings.map(w => (
-                        <ContentWarningBadge key={w} warningId={w} />
-                    ))}
-                </h4>
+
+                {post.warnings.length === 0 ? <></> :
+                    <h4>Content Warnings: {post.warnings.map(w => (
+                        <ContentWarningBadge key={w} warningId={w} />))}
+                    </h4>
+                }
                 <h5>User: {post.temporary_username}</h5>
                 <p>{post.description}</p>
 
