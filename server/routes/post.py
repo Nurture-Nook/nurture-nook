@@ -77,7 +77,7 @@ def get(id: int, db: Session = Depends(get_db)) -> PostDetailedOut:
 def get_post_preview(id: int, db: Session = Depends(get_db)) -> PostOut:
     try:
         print(f"GET /post/posts/{id}")
-        post_data = get_post(db=db, category_id=id)
+        post_data = get_post(db=db, post_id=id)
         
         if post_data:
             post_dict = {
