@@ -22,7 +22,7 @@ class UserOut(OrmBase):
 class UserPrivateOut(OrmBase):
     id: int
     username: str
-    email: str
+    email: Optional[str] = None
     created_at: datetime
 
 class UserWithContent(OrmBase):
