@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { UserPrivate } from '@/types/user';
-import { register, getCurrentUser } from "../../../adapters/authAdapters";
+import { register } from "../../../adapters/authAdapters";
 
 
 interface RegisterProps {
@@ -24,7 +24,7 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Form submitted with data:", { email, username, password, passwordConfirm });
+        console.log("Form submitted with data:", { username });
 
         setErrorText('');
         setUsernameFormattingIssue(false);
@@ -33,48 +33,47 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
         setIsLoading(true);
 
         if (!email || !username || !password || !passwordConfirm) {
-            console.log("Missing required fields");
+            console.log("Missing Required Fields");
             setErrorText("All Fields are Required");
             setIsLoading(false);
             return;
         }
 
-        // Check all format requirements
         let hasFormattingIssues = false;
         
         if (!usernamePattern.test(username)) {
-            console.log("Username format issue");
+            console.log("Username Format Issue");
             setUsernameFormattingIssue(true);
             hasFormattingIssues = true;
         }
         
         if (!passwordPattern.test(password)) {
-            console.log("Password format issue");
+            console.log("Password Format Issue");
             setPasswordFormattingIssue(true);
             hasFormattingIssues = true;
         }
         
         if (!emailPattern.test(email)) {
-            console.log("Email format issue");
+            console.log("Email Format Issue");
             setEmailFormattingIssue(true);
             hasFormattingIssues = true;
         }
         
         if (password != passwordConfirm) {
-            console.log("Passwords don't match");
+            console.log("Passwords Don't Match");
             setErrorText("Password Confirmation Must Match Password");
             setIsLoading(false);
             return;
         }
         
         if (hasFormattingIssues) {
-            console.log("Formatting issues detected, stopping submission");
+            console.log("Formatting Issues Detected, Stopping Submission");
             setIsLoading(false);
             return;
         }
         
-        console.log("All validations passed, proceeding with registration");
-        console.log("Attempting registration with:", { username, email });
+        console.log("All Validations Passed, Proceeding with Registration");
+        console.log("Attempting registration with:", { username });
         
         let registerRes, error;
         try {
@@ -84,33 +83,33 @@ export const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) => {
                 password
             });
             
-            console.log("Registration response:", registerRes, "Error:", error);
+            console.log("Registration Response:", registerRes, "Error:", error);
 
             if (error) {
-                console.error("Registration error details:", error);
+                console.error("Registration Error Details:", error);
                 setIsLoading(false);
-                return setErrorText(error.message || "Connection error - Is the backend server running?");
+                return setErrorText(error.message || "Connection Error — Is the Backend Server Running?");
             }
 
             if (registerRes && registerRes.success) {
-                console.log("Registration successful, using returned user data");
-                
+                console.log("Registration Successful, Using Returned User Data");
+
                 if (registerRes.user) {
                     // Use the user data directly from the registration response
                     onRegisterSuccess(registerRes.user);
                 } else {
-                    console.error("User data missing in successful registration response");
+                    console.error("User Data Missing in Successful Registration Response");
                     setIsLoading(false);
-                    setErrorText("User data not available in registration response");
+                    setErrorText("User Data Not Available in Registration Response");
                 }
             } else {
                 setIsLoading(false);
-                setErrorText("Registration failed");
+                setErrorText("Registration Failed");
             }
         } catch (e) {
             console.error("Unexpected registration error:", e);
             setIsLoading(false);
-            return setErrorText("Connection error - Is the backend server running?");
+            return setErrorText("Connection Error — Is the Backend Server Running?");
         }
     }
 

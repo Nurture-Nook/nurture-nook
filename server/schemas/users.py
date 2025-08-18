@@ -7,7 +7,7 @@ from typing import List, Optional
 
 class UserCreate(OrmBase):
     username: str
-    email: str
+    email: Optional[str] = None
     password: str
 
 class UserLogin(OrmBase):
