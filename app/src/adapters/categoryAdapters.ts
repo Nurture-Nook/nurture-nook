@@ -3,7 +3,8 @@ import {
     fetchHandler,
 } from '../utils/fetch';
 
-const baseUrl = `${process.env.NEXT_PUBLIC_API_BASE}/category`;
+const apiBase = '/api';
+const baseUrl = `${apiBase}/category`;
 
 export const getCategoryByName = async (name: string) => {
     const [data, error] = await fetchHandler(baseUrl + `/categories?name=${encodeURIComponent(name)}`);
@@ -18,7 +19,6 @@ export const getCategoryByName = async (name: string) => {
         return [null, new Error("Invalid response format from server")];
     }
 
-    // The backend might return an array with a single category object
     if (Array.isArray(data) && data.length > 0) {
         return [data[0], null];
     }
@@ -43,6 +43,8 @@ export const getCategoryById = async (id: number) => {
 }
 
 export const fetchCategories = async () => {
+    console.log("Auth token:", localStorage.getItem('auth_token'));
+
     const [data, error] = await fetchHandler(baseUrl + `/categories`, basicFetchOptions);
 
     if (error) {

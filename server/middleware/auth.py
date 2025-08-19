@@ -17,6 +17,12 @@ PUBLIC_PATHS = [
     "/docs",
     "/openapi.json",
     "/redoc"
+  
+PUBLIC_PATHS = [
+    "/",
+    "/auth/register",
+    "/auth/login",
+    "/auth/test"
 ]
 
 async def auth_middleware(request: Request, call_next):
@@ -33,6 +39,7 @@ async def auth_middleware(request: Request, call_next):
     path = request.url.path
     if any(path.startswith(public_path) for public_path in PUBLIC_PATHS):
         return await call_next(request)
+
     
     # Try to get token from cookie or authorization header
     token = get_token_from_request(request)
@@ -91,7 +98,16 @@ async def auth_middleware(request: Request, call_next):
         
         print(f"Auth middleware - User found: {db_user.username} (ID: {db_user.id})")
 
-        request.state.user = db_user
-        return await call_next(request)
-    finally:
-        db.close()
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return JSONResponse({"detail": "Missing authentication token"}, status_code=401)
+
+    token = auth_header.split(" ")[1]
+
+    try:
+        payload = decode_jwt_token(token)
+        request.state.user = payload
+    except Exception as e:
+        return JSONResponse({"detail": str(e)}, status_code=401)
+
+    return await call_next(request)

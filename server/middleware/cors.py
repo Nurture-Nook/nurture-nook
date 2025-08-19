@@ -14,6 +14,7 @@ PUBLIC_PATHS = [
     "/auth-test",
     "/cors-test",
     "/cookie-test"
+    "/auth/test"
 ]
 
 def setup_cors(app):

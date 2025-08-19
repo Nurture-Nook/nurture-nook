@@ -47,4 +47,16 @@ def get(id: int, db: Session = Depends(get_db)):
 
 @router.get("/warnings/{id}/posts")
 def get_posts(id: int, count: int = 50, skip: int = 0, db: Session = Depends(get_db)) -> List[PostOut]:
-    return get_posts_of_warning(db = db, warning_id = id, skip = skip, limit = count)
+    try:
+        print(f"GET /warning/warnings/{id}/posts - params: count={count}, skip={skip}")
+
+        posts = get_posts_of_warning(db=db, warning_id=id, skip=skip, limit=count)
+
+        print(f"Retrieved {len(posts)} Posts for Warning {id}")
+
+        return {"posts": posts}
+    except Exception as e:
+        print(f"Error in GET /warning/warnings/{id}/posts: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

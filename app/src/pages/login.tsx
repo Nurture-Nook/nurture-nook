@@ -4,7 +4,6 @@ import { UserPrivate } from '@/types/user';
 import { Login } from '../components/Features/Login/Login';
 import { ServerStatus } from '../components/Features/ServerStatus/ServerStatus';
 import { CurrentUserContext } from '@/contexts/current_user_context';
-import { getCurrentUser } from '@/adapters/authAdapters';
 
 export default function LoginPage() {
     const router = useRouter()

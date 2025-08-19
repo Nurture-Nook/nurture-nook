@@ -4,7 +4,6 @@ import { UserPrivate } from '@/types/user';
 import { Register } from '../components/Features/Register/Register';
 import { ServerStatus } from '../components/Features/ServerStatus/ServerStatus';
 import { CurrentUserContext } from '@/contexts/current_user_context';
-import { getCurrentUser } from '@/adapters/authAdapters';
 
 export default function RegisterPage() {
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
