@@ -81,7 +81,22 @@ def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session 
 
 def get_comments_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[CommentOut]:
     comments = db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
-    return [CommentOut.model_validate(comment) for comment in comments]
+    result = []
+    for comment in comments:
+        result.append(CommentOut(
+            id=comment.id,
+            content=comment.content,
+            temporary_username=comment.temporary_username,
+            flag_reason=comment.flag_reason,
+            is_flagged=comment.is_flagged,
+            is_deleted=comment.is_deleted,
+            created_at=comment.created_at,
+            user_id=comment.user_id,
+            post_id=comment.post_id,
+            parent_comment_id=comment.parent_comment_id,
+            warnings=[w.id for w in comment.warnings]
+        ))
+    return result
 
 def get_chats_of_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[ChatOpen]:
     chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()

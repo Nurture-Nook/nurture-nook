@@ -43,7 +43,9 @@ export const register = async ({
             localStorage.setItem('user_data', JSON.stringify(data.user));
             console.log("Saved Token and User Data to localStorage");
         }
-        
+
+        document.cookie = `access_token=${data.access_token}; path=/; samesite=strict`;
+
         return [data, null];
     } catch (e) {
         console.error("Registration error:", e);
@@ -81,7 +83,9 @@ export const login = async ({ username, password }: { username: string; password
             localStorage.setItem('user_data', JSON.stringify(data.user));
             console.log("Saved Token and User Data to localStorage");
         }
-        
+
+        document.cookie = `access_token=${data.access_token}; path=/; samesite=strict`;
+
         return [data, null];
     } catch (e) {
         console.error("Login error:", e);
