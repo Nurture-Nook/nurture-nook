@@ -48,7 +48,10 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
 
     return (
         <>
-            <Link href={`garden-of-support/posts/${postId}`}><h3>{ post.title }</h3></Link>
+            <Link href={`garden-of-support/posts/${postId}`}>
+                <h3>{post.is_deleted ? "[deleted]" : post.title}</h3>
+            </Link>
+            <p>{post.is_deleted ? "[deleted]" : post.description}</p>
             <h5>{ post.created_at }</h5>
             <br></br>
             { post.warnings ? <h4>Content Warnings:</h4> : <></> }

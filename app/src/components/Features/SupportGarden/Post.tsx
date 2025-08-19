@@ -111,7 +111,7 @@ export const Post = () => {
                 <h5>User: {post.temporary_username}</h5>
                 <p>{post.description}</p>
 
-                {currentUser && post.user_id === currentUser.id && (
+                {currentUser && post.user_id === currentUser.id && !post.is_deleted && (
                     <button onClick={handleDelete}>
                         Delete Post
                     </button>

@@ -98,21 +98,18 @@ def create_post(db: Session, post: PostCreate) -> PostOut:
 
 # READ
 def get_post_model(db: Session, post_id: int) -> Post:
-    db_post = db.query(Post).filter(Post.id == post_id).first()
-    if not db_post:
-        raise HTTPException(status_code = 404, detail="Post not Found")
-    if db_post.is_deleted:
-        raise HTTPException(status_code = 410, detail="Post has been deleted")
-    return db_post
+    return db.query(Post).filter(Post.id == post_id).first()
 
 def get_post(db: Session, post_id: int) -> PostOut:
     post = get_post_model(db, post_id)
 
     return PostOut(
         id=post.id,
-        title=post.title,
+        title="[deleted]" if post.is_deleted else post.title,
+        description="[deleted]" if post.is_deleted else post.description,
         warnings=[w.id for w in post.warnings],
-        created_at=post.created_at
+        created_at=post.created_at,
+        is_deleted=post.is_deleted
     )
 
 def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
@@ -126,6 +123,7 @@ def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
         temporary_username=post.temporary_username,
         categories=[c.id for c in post.categories],
         warnings=[w.id for w in post.warnings],
+        is_deleted=post.is_deleted,
         comments=[c.id for c in post.comments],
         created_at=post.created_at,
     )
@@ -133,8 +131,12 @@ def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
 def get_post_as_mod(db: Session, post_id: int) -> PostModView:
     return PostModView.model_validate(get_post_model(db, post_id))
 
-def get_all_posts(db: Session, skip: int = 0, limit: int = 100) -> List[PostOut]:
-    return [PostOut.model_validate(post) for post in db.query(Post).filter(Post.is_deleted == False).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()]
+def get_all_posts(db: Session, skip: int = 0, limit: int = 100, include_deleted: bool = True) -> List[PostOut]:
+    query = db.query(Post)
+    if not include_deleted:
+        query = query.filter(Post.is_deleted == False)
+    posts = query.order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
+    return [PostOut.model_validate(post) for post in posts]
 
 def get_comments_of_post(db: Session, post_id: int, skip: int = 0, limit: int = 100) -> List[CommentOut]:
     post = get_post_model(db, post_id)  # This will check if the post exists and isn't deleted
@@ -188,7 +190,21 @@ def delete_post(db: Session, post_id: int, current_user: User) -> PostOut:
 
     logger.info(f"Post {post_id} Soft Deleted")
 
-    return PostOut.model_validate(db_post)
+    post_out_data = {
+        "id": db_post.id,
+        "title": db_post.title,
+        "description": db_post.description,
+        "temporary_username": db_post.temporary_username,
+        "flag_reason": db_post.flag_reason,
+        "is_flagged": db_post.is_flagged,
+        "is_deleted": db_post.is_deleted,
+        "created_at": db_post.created_at,
+        "user_id": db_post.user_id,
+        "categories": [c.id for c in db_post.categories],
+        "warnings": [w.id for w in db_post.warnings],
+        "comments": [c.id for c in db_post.comments]
+    }
+    return PostOut.model_validate(post_out_data)
 
 def delete_post_as_mod(db: Session, post_id: int, current_user: User):
     db_post = db.query(Post).filter(Post.id == post_id).first()
