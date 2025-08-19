@@ -41,7 +41,7 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<[null, 
     const options = getPatchOptions(data);
 
     try {
-        const response = await fetch("/api/me/update_profile", options);
+        const response = await fetch("/api/user/me/update_profile", options);
 
         if (!response.ok) {
             const errorData = await response.json();

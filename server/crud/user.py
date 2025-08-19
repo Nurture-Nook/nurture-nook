@@ -81,9 +81,11 @@ def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session 
     for post in posts:
         result.append(PostOut(
             id=post.id,
-            title=post.title,
+            title="[deleted]" if post.is_deleted else post.title,
+            description="[deleted]" if post.is_deleted else post.description,
             warnings=[w.id for w in post.warnings],
-            created_at=post.created_at
+            created_at=post.created_at,
+            is_deleted=post.is_deleted
         ))
     return result
 
