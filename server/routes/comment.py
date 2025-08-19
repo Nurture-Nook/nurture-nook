@@ -12,7 +12,7 @@ class MessageResponse(BaseModel):
 router = APIRouter(prefix = "/comment", tags = [ "Comment" ])
 
 @router.get("/comments", response_model=List[CommentOut])
-def get_comments(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) -> List[CommentOut]:
+def get_comments_route(count: int = 20, skip: int = 0, db: Session = Depends(get_db)) -> List[CommentOut]:
     try:
         print(f"GET /comment/comments - params: count={count}, skip={skip}")
 

@@ -18,17 +18,41 @@ export const register = async ({
         email,
         password
     }: { username: string; email: string; password: string }) => {
-    const [data, error] = await fetchHandler(
-        `${baseUrl}/register`,
-        getPostOptions({ username, email, password })
-    );
-    
-    if (data && data.access_token) {
-        localStorage.setItem('auth_token', data.access_token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+    try {
+        const response = await fetch(`${baseUrl}/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, email, password }),
+            credentials: "include", // Include cookies in the request
+            mode: "cors" // Explicitly request CORS mode
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Registration failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        data.success = data.message === "Registration Successful";
+        
+        // Store token in localStorage
+        if (data.access_token) {
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('user_data', JSON.stringify(data.user));
+            console.log("Saved Token and User Data to localStorage");
+        }
+        
+        return [data, null];
+    } catch (e) {
+        console.error("Registration error:", e);
+        // Check specifically for CORS errors
+        if (e instanceof TypeError && e.message.includes('Failed to fetch')) {
+            return [null, new Error("Connection error: CORS policy blocked the request. Ensure the backend server allows requests from this origin.")];
+        }
+        return [null, e];
     }
-    
-    return [data, error];
 }
 
 export const login = async ({ username, password }: { username: string; password: string }) => {
@@ -55,7 +79,7 @@ export const login = async ({ username, password }: { username: string; password
         if (data.access_token) {
             localStorage.setItem('auth_token', data.access_token);
             localStorage.setItem('user_data', JSON.stringify(data.user));
-            console.log("Saved token and user data to localStorage");
+            console.log("Saved Token and User Data to localStorage");
         }
         
         return [data, null];

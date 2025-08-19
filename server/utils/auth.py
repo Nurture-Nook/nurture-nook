@@ -2,7 +2,7 @@ import os
 import uuid
 import jwt
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any
 from passlib.context import CryptContext
 from dotenv import load_dotenv
@@ -17,7 +17,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def generate_jwt_token(user_id: int, expires_hours: int = 1) -> str:
-    now = datetime.now()
+    now = datetime.now(timezone.utc)
     payload: Dict[str, Any] = {
         "user_id": user_id,
         "exp": now + timedelta(hours=expires_hours),
@@ -55,7 +55,6 @@ def decode_jwt_token(token: str) -> Dict[str, Any]:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         return payload
     except jwt.ExpiredSignatureError:
-        raise ValueError("Token has expired")
+        raise ValueError("Token Has Expired")
     except jwt.InvalidTokenError:
-        raise ValueError("Invalid or malformed token")
-    
+        raise ValueError("Invalid or Malformed Token")

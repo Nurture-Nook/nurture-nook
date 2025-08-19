@@ -4,7 +4,7 @@ import { Post } from "@/components/Features/SupportGarden/Post";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
 export default function PostPage() {
-    const currentUser = useContext(CurrentUserContext);
+    const { currentUser } = useContext(CurrentUserContext);
     
     const router = useRouter();
 
@@ -15,10 +15,20 @@ export default function PostPage() {
     }, [router.isReady, setIsReady])
 
     useEffect(() => {
-        if (!currentUser) router.push('/entrance');
+        if (currentUser === null) router.push('/entrance');
     }, [currentUser, router])
 
     if (!isReady) return <p>Loading...</p>;
 
-    return <div className='support-garden-pages'> <Post/> </div>
+    // Ensure postId is valid before rendering Post component
+    const { postId } = router.query;
+    if (!postId || Array.isArray(postId)) {
+        return <div className='support-garden-pages'>Invalid post ID</div>;
+    }
+
+    return (
+        <div className='support-garden-pages'>
+            <Post/>
+        </div>
+    );
 }

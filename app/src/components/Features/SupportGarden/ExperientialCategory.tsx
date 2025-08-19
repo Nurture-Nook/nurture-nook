@@ -14,7 +14,6 @@ export const ExperientialCategory: React.FC<CategoryProps> = ({ categoryId }) =>
     const [experientialCategory, setExperientialCategory] = useState<CategoryWithPosts | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
-    // Use categoryId from props, or extract from router query if it exists
     const id = categoryId ?? (
         router.query.categoryId 
             ? typeof router.query.categoryId === 'string' 

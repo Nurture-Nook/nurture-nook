@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from ..models import Comment, User
+from ..models import Comment, ContentWarning, User
 from ..schemas.comments import CommentCreate, CommentOut, CommentPatch, CommentModPatch, CommentModView
 from ..crud.temporary_username import create_alias
 from typing import List
@@ -13,10 +13,14 @@ logger.setLevel(logging.INFO)
 def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
     if not comment.content:
         raise HTTPException(status_code = 400, detail = "Empty Comment Content")
+    
+    warnings=[]
+    if comment.warnings:
+        warnings = db.query(ContentWarning).filter(ContentWarning.id.in_(comment.warnings)).all()
 
     db_comment = Comment(
         content=comment.content,
-        warnings=comment.warnings,
+        warnings=warnings,
         parent_comment_id = comment.parent_comment_id or None,
         user_id=comment.user_id,
         post_id=comment.post_id,
@@ -29,7 +33,17 @@ def create_comment(db: Session, comment: CommentCreate) -> CommentOut:
 
     logger.info(f"User {db_comment.temporary_username} successfully added comment {db_comment.id}.")
     
-    return CommentOut.model_validate(db_comment)
+    return CommentOut(
+        id=db_comment.id,
+        content=db_comment.content,
+        warnings=[w.id for w in db_comment.warnings],
+        parent_comment_id=db_comment.parent_comment_id,
+        user_id=db_comment.user_id,
+        post_id=db_comment.post_id,
+        temporary_username=db_comment.temporary_username,
+        created_at=db_comment.created_at,
+        replies=[]
+    )
 
 # READ
 def get_comment_model(db: Session, comment_id: int) -> Comment:
@@ -40,7 +54,31 @@ def get_comment_model(db: Session, comment_id: int) -> Comment:
 
 def get_comment(db: Session, comment_id: int) -> CommentOut:
     comment = get_comment_model(db, comment_id)
-    return CommentOut.model_validate(comment)
+
+    return CommentOut(
+        id=comment.id,
+        content=comment.content,
+        temporary_username=comment.temporary_username,
+        user_id=comment.user_id,
+        post_id=comment.post_id,
+        parent_comment_id=comment.parent_comment_id or None,
+        warnings=[w.id for w in comment.warnings],
+        created_at=comment.created_at,
+        replies=[
+            CommentOut(
+                id=reply.id,
+                content=reply.content,
+                temporary_username=reply.temporary_username,
+                user_id=reply.user_id,
+                post_id=reply.post_id,
+                parent_comment_id=reply.parent_comment_id,
+                warnings=[w.id for w in reply.warnings],
+                created_at=reply.created_at,
+                replies=[]
+            )
+            for reply in comment.replies
+        ]
+    )
 
 def get_comment_as_mod(db: Session, comment_id: int) -> CommentModView:
     comment = get_comment_model(db, comment_id)
@@ -56,7 +94,7 @@ def update_comment(db: Session, comment_id: int, comment_patch: CommentPatch, cu
     if db_comment.user_id != current_user_id:
         raise HTTPException(status_code=403, detail="You are not authorized to update this comment")
 
-    updates = { key: value for key, value in comment_patch.dict(exclude_unset=True, exclude_none=True).items() }
+    updates = { key: value for key, value in comment_patch.model_dump(exclude_unset=True, exclude_none=True).items() }
     for attr, value in updates.items():
         setattr(db_comment, attr, value)
 
@@ -102,6 +140,9 @@ def delete_comment_as_mod(db: Session, comment_id: int) -> CommentOut:
     db_comment = get_comment_model(db, comment_id)
 
     comment_out = CommentOut.model_validate(db_comment)
+
+    for child in db_comment.replies:
+        child.parent_comment_id = None
 
     db.delete(db_comment)
     db.commit()

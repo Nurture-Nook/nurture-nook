@@ -43,8 +43,6 @@ export const getCategoryById = async (id: number) => {
 }
 
 export const fetchCategories = async () => {
-    console.log("Auth token:", localStorage.getItem('auth_token'));
-
     const [data, error] = await fetchHandler(baseUrl + `/categories`, basicFetchOptions);
 
     if (error) {

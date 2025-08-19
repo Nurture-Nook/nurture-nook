@@ -5,8 +5,10 @@ import { fetchWarnings } from '@/adapters/warningAdapters';
 import { CategoryBadge } from '@/types/category';
 import { WarningBadge } from '@/types/warning';
 import { CurrentUserContext } from '@/contexts/current_user_context';
+import { useRouter } from 'next/router';
 
 export const PostForm  = () => {
+    const router = useRouter();
     const { currentUser } = useContext(CurrentUserContext);
     const [errorText, setErrorText] = useState("");
     const [categories, setCategories] = useState<CategoryBadge[]>([]);
@@ -110,16 +112,14 @@ export const PostForm  = () => {
                 return;
             }
             
-            // Success! Reset form or redirect
-            console.log("Post created successfully:", data);
+            console.log("Post created successfully!");
             setTitle("");
             setDescription("");
             setCategoriesSelectedIds([]);
             setWarningsSelectedIds([]);
             setErrorText("Post created successfully!");
             
-            // Optionally redirect to the new post or posts list
-            // router.push('/garden-of-support');
+            router.push(`/garden-of-support/posts/${data.id}`);
         } catch (error) {
             console.error("Exception creating post:", error);
             setErrorText(error instanceof Error ? `Exception: ${error.message}` : "Unknown error occurred");

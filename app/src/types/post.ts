@@ -9,7 +9,7 @@ export interface PostCreate {
 export interface PostOut {
     id: number;
     title: string;
-    content_warnings: number[];
+    warnings: number[];
     created_at: string;
 }
 
@@ -20,7 +20,7 @@ export interface PostDetailedOut {
     description: string;
     temporary_username: string;
     categories: number[];
-    content_warnings: number[];
+    warnings: number[];
     comments: number[];
     created_at: string;
 }
