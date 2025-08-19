@@ -12,8 +12,10 @@ export const MyPosts = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             const [data, err] = await getPostsByUser();
+            console.log("data", data, "err", err)
             if (err) setError(err);
             else setPosts(data);
+            console.log("posts", posts)
 
             setLoading(false);
         };
@@ -27,11 +29,11 @@ export const MyPosts = () => {
 
     return (
         <div>
-            <Link href="me/posts"><h3>My Posts</h3></Link>
+            <h3>My Posts</h3>
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>
-                        <li key={post.id}>{ <PostPreviewCard postId={post.id}/> }</li>
+                        { <PostPreviewCard postOut={post}/> }
                     </li>
                 ))}
             </ul>

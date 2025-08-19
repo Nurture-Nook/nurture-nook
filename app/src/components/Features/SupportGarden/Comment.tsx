@@ -8,23 +8,29 @@ import { insertComment } from '@/utils/comments';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 
 interface CommentProps {
-    postId: number;
-    commentId: number;
+    postId?: number;
+    commentId?: number;
+    comment?: CommentOut;
 }
 
-export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
+export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: commentProp }) => {
     const { currentUser } = useContext(CurrentUserContext);
-    const [comment, setComment] = useState<CommentOut | null>(null);
+    const [comment, setComment] = useState<CommentOut | null>(commentProp ?? null);
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!commentProp);
     const [deleting, setDeleting] = useState(false);
-    const [confirmDelete, setConfirmDelete] = useState(false);  // Added confirmation state
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const pId = postId ?? (typeof postId === 'string' ? parseInt(postId) : undefined);
     const cId = commentId ?? (typeof commentId === 'string' ? parseInt(commentId) : undefined);
 
     useEffect(() => {
+        if (commentProp) {
+            setComment(commentProp);
+            setLoading(false);
+            return;
+        }
         if (!pId || !cId) return;
 
         const fetchComment = async () => {
@@ -35,7 +41,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
         };
 
         fetchComment();
-    }, [pId, cId]);
+    }, [pId, cId, commentProp]);
 
     if (!pId) return null;
 
@@ -66,7 +72,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
         return (
             <div className="deleted-comment">
                 <p><em>{comment.content}</em></p>
-                {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} />))}
+                {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} comment={reply} />))}
             </div>
         );
     }
@@ -116,7 +122,6 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
                 {showReplyForm ? 'Cancel' : 'Reply'}
             </button>
             {showReplyForm && (<CommentForm postId={pId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
-            {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} />))}
+            {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} comment={reply} />))}
         </>
-    );
-};
+    )}

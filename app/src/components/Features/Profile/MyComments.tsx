@@ -27,11 +27,11 @@ export const MyComments = () => {
 
     return (
         <div>
-            <Link href="me/comments"><h3>My Posts</h3></Link>
+            <h3>My Comments</h3>
             <ul>
                 { comments.map(comment => (
                     <li key={comment.id}>
-                        <Comment postId={comment.post_id} commentId={comment.id}/>
+                        <Comment comment={comment}/>
                     </li>
                 )) }
             </ul>

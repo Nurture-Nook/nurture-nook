@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 import { MyPosts } from '@/components/Features/Profile/MyPosts';
 import { MyComments } from '@/components/Features/Profile/MyComments';
@@ -50,19 +51,21 @@ export default function PersonalProfile() {
 
             <div className="profile-actions">
                 <button onClick={handleEditProfile}>Edit Profile</button>
-                <button onClick={handleDeleteProfile}>
-                Delete Profile
-                </button>
+                <br></br>
+                <button onClick={handleDeleteProfile}>Delete Profile</button>
+                <br></br>
                 <button onClick={handleLogout}>Log Out</button>
+                <br></br>
+                <Link href="/home">Home</Link>
             </div>
 
             <section className="my-posts-section">
-                <h3>My Posts</h3>
+                <Link href="me/posts"><h3>My Posts</h3></Link>
                 <MyPosts />
             </section>
 
             <section className="my-comments-section">
-                <h3>My Comments</h3>
+                <Link href="me/comments"><h3>My Comments</h3></Link>
                 <MyComments />
             </section>
         </div>
