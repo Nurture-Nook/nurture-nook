@@ -64,9 +64,9 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
         }
     };
 
-    if (loading) return <div>Loading comment...</div>;
+    if (loading) return <div>Loading Comment...</div>;
     if (error) return <div>Error Loading Comment: {error}</div>;
-    if (comment === null) return <div>Comment deleted or not found.</div>;
+    if (comment === null) return <div>Comment Deleted or Not Found.</div>;
 
     if (comment.is_deleted) {
         return (
@@ -122,6 +122,6 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                 {showReplyForm ? 'Cancel' : 'Reply'}
             </button>
             {showReplyForm && (<CommentForm postId={pId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
-            {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} comment={reply} />))}
+            {comment.replies?.map((reply) => (<Comment key={reply.id} comment={reply} />))}
         </>
     )}

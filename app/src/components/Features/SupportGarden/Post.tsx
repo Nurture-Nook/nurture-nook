@@ -126,7 +126,7 @@ export const Post = () => {
                 <ul>
                     {comments.map(comment => (
                         <li key={comment.id}>
-                            <Comment postId={post.id} commentId={comment.id} />
+                            <Comment comment={comment} />
                         </li>
                     ))}
                 </ul>
