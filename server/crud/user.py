@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends, Query, Response
+from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
 from ..models import User, Post, Comment, Chat
@@ -77,7 +77,15 @@ def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Se
 
 def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[PostOut]:
     posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
-    return [PostOut.model_validate(post) for post in posts]
+    result = []
+    for post in posts:
+        result.append(PostOut(
+            id=post.id,
+            title=post.title,
+            warnings=[w.id for w in post.warnings],
+            created_at=post.created_at
+        ))
+    return result
 
 def get_comments_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[CommentOut]:
     comments = db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
