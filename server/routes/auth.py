@@ -12,6 +12,9 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register")
 def register(user_create: UserCreate, db: Session = Depends(get_db)):
+    if not user_create.email or user_create.email.strip() == "":
+        raise HTTPException(status_code=400, detail="Email Cannot Be Empty")
+        
     if get_user_by_username(db, user_create.username):
         raise HTTPException(status_code=400, detail="Username Already Registered")
     

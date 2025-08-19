@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table, Enum
+from sqlalchemy import Column, Index, Integer, String, Boolean, DateTime, ForeignKey, Table, Enum
 import enum
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
+import sqlalchemy as sa
 
 Base = declarative_base()
 
@@ -37,12 +39,25 @@ class User(Base):
 
 	id = Column(Integer, primary_key = True, index = True)
 	username = Column(String, unique = True, nullable = False, index = True)
-	email = Column(String, unique = True, nullable = False)
+	_email = Column("email", String, nullable = True)
 	email_verified = Column(Boolean, default = False)
 	hashed_pass = Column(String, nullable = False)
 	hashed_token = Column(String, nullable = True)
 	token_expiry = Column(DateTime, nullable = True)
 	created_at = Column(DateTime(timezone = True), server_default = func.now())
+
+	@hybrid_property
+	def email(self):
+		return self._email
+
+	@email.setter
+	def email(self, value):
+		self._email = value if value != "" else None
+
+	__table_args__ = (
+    	Index('ix_users_email_unique', 'email', unique=True, 
+        	postgresql_where=sa.text('email IS NOT NULL')),
+	)
 
 	posts = relationship('Post', back_populates = 'user')
 	comments = relationship('Comment', back_populates = 'user')
