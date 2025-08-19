@@ -10,8 +10,9 @@ export interface CommentOut {
     id: number;
     user_id: number;
     temporary_username: string;
+    is_deleted: boolean;
     content: string;
-    content_warnings: number[];
+    warnings: number[];
     replies: CommentOut[];
     parent_comment_id: number | null;
     post_id: number;

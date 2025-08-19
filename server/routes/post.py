@@ -20,7 +20,7 @@ def create(post: PostCreate, db: Session = Depends(get_db)):
     return create_post(db, post)
 
 @router.post("/posts/{id}/comments/create", response_model=CommentOut)
-def create_comment(comment: CommentCreate, db: Session = Depends(get_db)):
+def create_comment_route(comment: CommentCreate, db: Session = Depends(get_db)):
     return create_comment(db, comment)
 
 @router.get("/posts", response_model=List[PostOut])
@@ -84,7 +84,7 @@ def get_post_preview(id: int, db: Session = Depends(get_db)) -> PostOut:
 @router.get("/posts/{id}/comments", response_model=List[CommentOut])
 def get_comments(id: int, count: int = 50, skip: int = 0, db: Session = Depends(get_db)) -> List[CommentOut]:
     try:
-        print(f"GET /post/{id}/comments - params: count={count}, skip={skip}")
+        print(f"GET /post/posts/{id}/comments - params: count={count}, skip={skip}")
 
         comments = get_comments_of_post(db, post_id=id, skip=skip, limit=count)
 
@@ -92,31 +92,22 @@ def get_comments(id: int, count: int = 50, skip: int = 0, db: Session = Depends(
 
         return { "comments": comments }
     except Exception as e:
-        print(f"Error in GET /post/{id}/comments: {str(e)}")
+        print(f"Error in GET /post/post/{id}/comments: {str(e)}")
         import traceback
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @router.get("/posts/{id}/comments/{comment_id}", response_model=CommentOut)
-def get_comment(comment_id: int, db: Session = Depends(get_db)) -> CommentOut:
+def get_comment_route(comment_id: int, db: Session = Depends(get_db)) -> CommentOut:
     try:
-        print(f"GET /post/{id}/comments/{comment_id}")
         comment_data = get_comment(db=db, comment_id=comment_id)
+        if not comment_data:
+            raise HTTPException(status_code=404, detail="Comment Not Found")
 
-        if comment_data:
-            comment_dict = {
-                "id": comment_data.id if hasattr(comment_data, "id") else comment_id,
-                "user_id": comment_data.user_id if hasattr(comment_data, "user_id") else None,
-                "post_id": comment_data.post_id if hasattr(comment_data, "post_id") else id,
-                "temporary_username": comment_data.temporary_username if hasattr(comment_data, "temporary_username") else None,
-                "content": comment_data.content if hasattr(comment_data, "content") else "",
-                "warnings": comment_data.warnings if hasattr(comment_data, "warnings") else [],
-                "parent_comment_id": comment_data.parent_comment_id if hasattr(comment_data, "parent_comment_id") else None,
-                "created_at": comment_data.created_at if hasattr(comment_data, "created_at") else None
-            }
-            return comment_dict
-        else:
-            raise HTTPException(status_code=404, detail="Comment not Found")
+        return CommentOut.model_validate(comment_data)
+
+    except HTTPException:
+        raise HTTPException(status_code=404, detail="Comment Not Found")
     except Exception as e:
         print(f"Error in GET /post/posts/{id}/comments/{comment_id}: {str(e)}")
         import traceback
@@ -137,7 +128,7 @@ def update(id: int, post_update: PostPatch, current_user: User = Depends(get_cur
         raise HTTPException(status_code=500, detail=f"An error occurred while updating post: {str(e)}")
     
 @router.put("/posts/{id}/comments/{comment_id}")
-def update_comment(comment_id: int, comment_update: CommentPatch, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def update_comment_route(comment_id: int, comment_update: CommentPatch, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     try:
         updated_comment = update_comment(db=db, comment_id=comment_id, comment_patch=comment_update, current_user_id=current_user.id)
         

@@ -52,19 +52,32 @@ export const getPostPreviewById = async (postId: number) => {
 }
 
 export const getPostById = async (postId: number) => {
-    const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, basicFetchOptions);
+    try {
+        if (!postId || isNaN(postId)) {
+            console.error("Invalid postId:", postId);
+            return [null, new Error("Invalid post ID")];
+        }
+        
+        const [data, error] = await fetchHandler(baseUrl + `/posts/${encodeURIComponent(postId)}`, basicFetchOptions);
 
-    if (error) {
-        console.error("Error fetching post:", error);
-        return [null, error];
+        if (error) {
+            console.error("Error fetching post:", error);
+            return [null, error];
+        }
+
+        if (!data) {
+            console.error("Invalid response format, missing post data");
+            return [null, new Error("Invalid response format from server")];
+        }
+
+        // Handle both direct response and nested response format
+        const postData = data.post || data;
+        console.log("Received post data:", postData);
+        return [postData, null];
+    } catch (err) {
+        console.error("Exception in getPostById:", err);
+        return [null, err instanceof Error ? err : new Error("Unknown error fetching post")];
     }
-
-    if (!data) {
-        console.error("Invalid response format, missing post data:", data);
-        return [null, new Error("Invalid response format from server")];
-    }
-
-    return [data.post || data, null];
 }
 
 export const deletePostById = async (postId: number) => {

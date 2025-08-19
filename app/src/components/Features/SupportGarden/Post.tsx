@@ -27,32 +27,45 @@ export const Post = () => {
         if (!postId) return;
 
         const fetchPostAndComments = async () => {
-            const [data, error] = await getPostById(postId);
-            console.log("fetched post")
+            try {
+                const [data, error] = await getPostById(postId);
+                console.log("fetched post:", data);
 
-            if (error) {
-                setError(error);
-                setLoading(false);
-                return;
-            }
-
-            setPost(data);
-
-            if (data.comments.length > 0) {
-                const [commentsData, commentsError] = await getCommentsByIds(data.id, data.comments);
-
-                if (commentsError) {
-                    setError(commentsError);
+                if (error) {
+                    console.error("Error fetching post:", error);
+                    setError(error.message || "Failed to fetch post");
                     setLoading(false);
                     return;
                 }
 
-                setComments(commentsData);
-            } else {
-                setComments([]);
-            }
+                if (!data) {
+                    setError("No post data returned");
+                    setLoading(false);
+                    return;
+                }
 
-            setLoading(false);
+                setPost(data);
+
+                if (data.comments && data.comments.length > 0) {
+                    const [commentsData, commentsError] = await getCommentsByIds(data.id, data.comments);
+
+                    if (commentsError) {
+                        console.error("Error fetching comments:", commentsError);
+                        setError(commentsError || "Failed to fetch comments");
+                        setLoading(false);
+                        return;
+                    }
+
+                    setComments(commentsData || []);
+                } else {
+                    setComments([]);
+                }
+            } catch (err) {
+                console.error("Exception in fetchPostAndComments:", err);
+                setError(err instanceof Error ? err.message : "Unknown error occurred");
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchPostAndComments();
@@ -106,11 +119,15 @@ export const Post = () => {
             </div>
 
             <div id="comments">
-                <Link href={`/garden-of-support/posts/${postId}/comments`}><h5>Comments:</h5></Link>
+                <Link href={`/garden-of-support/posts/${postId}/comments`} passHref>
+                    <h5>Comments:</h5>
+                </Link>
                 <CommentForm postId={post.id} parentCommentId={null} onSuccess={handleCommentSuccess} />
                 <ul>
                     {comments.map(comment => (
-                        <Comment key={comment.id} postId={post.id} commentId={comment.id} />
+                        <li key={comment.id}>
+                            <Comment postId={post.id} commentId={comment.id} />
+                        </li>
                     ))}
                 </ul>
             </div>

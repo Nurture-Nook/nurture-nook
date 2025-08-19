@@ -51,10 +51,10 @@ export const PostPreviewCard: React.FC<PostPreviewProps> = ({ postId }) => {
             <Link href={`garden-of-support/posts/${postId}`}><h3>{ post.title }</h3></Link>
             <h5>{ post.created_at }</h5>
             <br></br>
-            { post.content_warnings ? <h4>Content Warnings:</h4> : <></> }
+            { post.warnings ? <h4>Content Warnings:</h4> : <></> }
             <ul>
-                { post.content_warnings && post.content_warnings.length > 0 ? 
-                    post.content_warnings.map(w => <li key={w}><ContentWarningBadge warningId={w}/></li>) : <></> }
+                { post.warnings && post.warnings.length > 0 ? 
+                    post.warnings.map(w => <li key={w}><ContentWarningBadge warningId={w}/></li>) : <></> }
             </ul>
         </>
     )

@@ -16,7 +16,7 @@ export const createComment = async (
     parent_comment_id: number | null = null
 ) => {
     const [data, error] = await fetchHandler(
-        baseUrl + `/post/${post_id}/comments/create`, 
+        baseUrl + `/post/posts/${post_id}/comments/create`, 
         getPostOptions({content, warnings, user_id, post_id, parent_comment_id})
     );
 
