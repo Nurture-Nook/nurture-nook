@@ -20,6 +20,8 @@ app.middleware("http")(rate_limit_middleware)
 def root():
     return {"message": "Server is running!"}
 
+import server.schemas.model_rebuild
+
 app.include_router(auth.router)
 app.include_router(category.router)
 app.include_router(chat.router)
