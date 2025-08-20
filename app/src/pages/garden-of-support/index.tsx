@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { SupportGarden } from '../../components/Features/SupportGarden/SupportGarden';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 
@@ -20,5 +21,13 @@ export default function SupportGardenPage() {
 
     if (!isReady) return <p>Loading...</p>;
 
-    return <div className='support-garden-pages'> <SupportGarden /> </div>
+    return (
+        <div className='support-garden-pages'>
+            <>
+                <Link href="/home">Return Home</Link>
+                <br></br>
+                <SupportGarden />
+            </>
+        </div>
+    )
 }

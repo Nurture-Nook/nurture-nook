@@ -23,7 +23,10 @@ export default function CategoryPage() {
 
     return (
         <div className='support-garden-pages'>
+            <Link href='/garden-of-support'><a>Return to Garden of Support</a></Link>
+            <br></br>
             <Link href="/posts/create" passHref>Share Your Experiences</Link>
+            <br></br>
             <ExperientialCategory />
         </div>
     );

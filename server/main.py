@@ -11,8 +11,7 @@ from .routes import auth, category, chat, comment, message, post, user, warning
 from .db import Base, engine
 import os
 
-from routes import auth, users  # Import your existing routes
-from routes.debug import router as debug_router  # Import the debug router
+from .routes.debug import router as debug_router  # Import the debug router
 
 Base.metadata.create_all(bind=engine)
 
@@ -32,7 +31,7 @@ app.middleware("http")(rate_limit_middleware)
 
 # Register your routers
 app.include_router(auth.router)
-app.include_router(users.router)
+app.include_router(user.router)
 app.include_router(debug_router)  # Add the debug router
 
 # Add a root endpoint for testing
@@ -214,4 +213,5 @@ async def cors_debug(request: Request):
     
     return response
 
+app.include_router(warning.router)
 app.include_router(warning.router)

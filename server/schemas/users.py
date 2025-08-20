@@ -57,5 +57,5 @@ class ProfileUpdateRequest(OrmBase):
         return v
 
 class UserDeleteRequest(OrmBase):
-    token: str
+    password: str
     password: str

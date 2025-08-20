@@ -7,7 +7,9 @@ from typing import Dict, Any
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
-load_dotenv()
+# Explicitly load .env from the server directory
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+load_dotenv(dotenv_path)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
@@ -90,6 +92,3 @@ def get_token_from_request(request):
     print(f"Token source: {'cookie' if token and token == request.cookies.get('access_token') else 'header' if token else 'none'}")
 
     return token
-        raise ValueError("Token Has Expired")
-    except jwt.InvalidTokenError:
-        raise ValueError("Invalid or Malformed Token")

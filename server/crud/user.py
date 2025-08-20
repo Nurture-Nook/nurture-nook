@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, Query
 from server.db import SessionLocal
 from sqlalchemy.orm import Session
-from ..models import User, Post, Comment, Chat
+from ..models import User, Post, Comment, Chat, TemporaryUsername
 from ..schemas.users import UserCreate, UserOut, UserPrivateOut, EmailVerificationRequest, UsernameUpdateRequest, PasswordUpdateRequest, UserDeleteRequest
 from ..schemas.posts import PostOut
 from ..schemas.comments import CommentOut
@@ -11,6 +11,7 @@ from ..utils.auth import generate_token, hash_token, hash_password, verify_passw
 from typing import List, Optional
 from datetime import datetime, timedelta
 import logging, re
+from sqlalchemy import text
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -185,7 +186,6 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
     if not verify_password(user_delete.password, current_user.hashed_pass):
         raise HTTPException(status_code = 403, detail = "Incorrect Password")
 
-    validate_token(db, current_user, user_delete.token)
 
     user_private_out = UserPrivateOut.model_validate(current_user)
 
@@ -195,11 +195,28 @@ def delete_own_account(db: Session, current_user: User, user_delete: UserDeleteR
     return user_private_out
 
 def delete_all_content(db: Session, user_id: int):
+    # Remove comment_warnings for user's comments
+    user_comment_ids = [c.id for c in db.query(Comment).filter(Comment.user_id == user_id).all()]
+    if user_comment_ids:
+        db.execute(
+            text("DELETE FROM comment_warnings WHERE comment_id = ANY(:ids)"),
+            {"ids": user_comment_ids}
+        )
+
     db.query(Comment).filter(Comment.user_id == user_id).delete(synchronize_session=False)
 
     user_posts = db.query(Post).filter(Post.user_id == user_id).all()
     for post in user_posts:
+        # Remove comment_warnings for comments on user's posts
+        post_comment_ids = [c.id for c in db.query(Comment).filter(Comment.post_id == post.id).all()]
+        if post_comment_ids:
+            db.execute(
+                text("DELETE FROM comment_warnings WHERE comment_id = ANY(:ids)"),
+                {"ids": post_comment_ids}
+            )
         db.query(Comment).filter(Comment.post_id == post.id).delete(synchronize_session=False)
+        # Delete temps for this post before deleting the post
+        db.query(TemporaryUsername).filter(TemporaryUsername.post_id == post.id).delete(synchronize_session=False)
         db.delete(post)
 
     db.commit()
@@ -248,4 +265,5 @@ def validate_token(db: Session, user: User, submitted_token: str) -> bool:
     user.hashed_token = None
     user.token_expiry = None
     db.commit()
+    return True
     return True

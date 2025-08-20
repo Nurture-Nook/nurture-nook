@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Post } from "@/components/Features/SupportGarden/Post";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
@@ -28,6 +29,8 @@ export default function PostPage() {
 
     return (
         <div className='support-garden-pages'>
+            <Link href={`/garden-of-support`}>Return to Garden of Support</Link>
+            <br></br>
             <Post/>
         </div>
     );

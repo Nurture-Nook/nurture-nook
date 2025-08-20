@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Comments } from "@/components/Features/SupportGarden/Comments";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
@@ -20,5 +21,11 @@ export default function CommentsPage() {
 
     if (!isReady) return <p>Loading...</p>;
 
-    return <div className="support-garden-pages"> <Comments/> </div>
+    const postId = Number(router.query.postId);
+
+    return <div className="support-garden-pages"> (<>
+        <Link href={`/garden-of-support/posts/${postId}`}>Return to Post</Link>
+        <br></br>
+        <Comments/></>
+    ) </div>
 }
