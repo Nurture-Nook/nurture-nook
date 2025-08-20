@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Comment } from "@/components/Features/SupportGarden/Comment";
 import { CurrentUserContext } from "@/contexts/current_user_context";
 
@@ -28,6 +29,7 @@ export default function CommentPage() {
 
     return (
         <div className="support-garden-pages">
+            <Link href={`/garden-of-support/posts/${postId}`}>Back to Post</Link>
             <Comment postId={Number(postId)} commentId={Number(commentId)}/>
         </div>
     );

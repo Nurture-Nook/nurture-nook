@@ -133,7 +133,33 @@ def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentO
 
     logger.info(f"Comment {comment_id} soft deleted")
 
-    return CommentOut.model_validate(db_comment)
+    # Fix: Ensure warnings is a list of ints, not ContentWarning objects
+    return CommentOut(
+        id=db_comment.id,
+        content=db_comment.content,
+        temporary_username=db_comment.temporary_username,
+        user_id=db_comment.user_id,
+        post_id=db_comment.post_id,
+        parent_comment_id=db_comment.parent_comment_id or None,
+        warnings=[w.id for w in db_comment.warnings],
+        created_at=db_comment.created_at,
+        is_deleted=db_comment.is_deleted,
+        replies=[
+            CommentOut(
+                id=reply.id,
+                content=reply.content,
+                temporary_username=reply.temporary_username,
+                user_id=reply.user_id,
+                post_id=reply.post_id,
+                parent_comment_id=reply.parent_comment_id,
+                warnings=[w.id for w in reply.warnings],
+                created_at=reply.created_at,
+                is_deleted=reply.is_deleted,
+                replies=[]
+            )
+            for reply in db_comment.replies
+        ]
+    )
 
 # DELETE
 def delete_comment_as_mod(db: Session, comment_id: int) -> CommentOut:

@@ -149,7 +149,7 @@ def delete(id: int, current_user: User = Depends(get_current_user), db: Session 
     return MessageResponse(message="Post Deleted Successfully")
 
 @router.delete("/posts/{id}/comments/{comment_id}")
-def delete_comment(comment_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    delete_comment(db = db, comment_id = comment_id, current_user_id = current_user.id)
+def delete_comment_route(comment_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    delete_comment(db = db, comment_id = comment_id, current_user = current_user)
 
     return MessageResponse(message="Comment Deleted Successfully")
