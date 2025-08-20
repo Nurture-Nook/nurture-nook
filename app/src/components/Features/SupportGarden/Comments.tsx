@@ -51,7 +51,7 @@ export const Comments = () => {
             <ul>
                 { comments.map(c => (
                     <li key={c.id}>
-                        <Comment postId={postId} commentId={c.id} />
+                        <Comment postId={postId} commentId={c.id} comment={c} />
                     </li>
                 )) }
             </ul>

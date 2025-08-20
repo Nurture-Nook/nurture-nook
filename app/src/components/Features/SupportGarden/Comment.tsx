@@ -9,7 +9,7 @@ import { CurrentUserContext } from '@/contexts/current_user_context';
 
 interface CommentProps {
     postId: number;
-    commentId?: number;
+    commentId: number;
     comment?: CommentOut;
 }
 
@@ -43,7 +43,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
         fetchComment();
     }, [pId, cId, commentProp]);
 
-    if (!pId) return null;
+    if (!pId || !cId) return null;
 
     const handleSuccess = (newComment: CommentOut) => {
         if (!comment) return;
@@ -77,13 +77,15 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
         );
     }
 
+    const warnings = comment.warnings ?? [];
+
     return (
         <>
             <Link href={`garden-of-support/posts/${postId}/comments/${commentId}`}><h6>{comment.temporary_username}</h6></Link>
-                {comment.warnings.length === 0 ? <h4>No Content Warnings</h4> : (
+                {warnings.length === 0 ? <h4>No Content Warnings</h4> : (
                     <h4>
                         Content Warnings:{' '}
-                        {comment.warnings.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
+                        {warnings.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
                     </h4>
                 )}
             <p>{comment.content}</p>

@@ -30,7 +30,7 @@ export const MyComments = () => {
             <ul>
                 { comments.map(comment => (
                     <li key={comment.id}>
-                        <Comment postId={comment.post_id} comment={comment}/>
+                        <Comment postId={comment.post_id} commentId={comment.id} comment={comment}/>
                     </li>
                 )) }
             </ul>
