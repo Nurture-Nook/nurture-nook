@@ -62,13 +62,24 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId }) => {
     if (error) return <div>Error Loading Comment: {error}</div>;
     if (comment === null) return <div>Comment deleted or not found.</div>;
 
+    if (comment.is_deleted) {
+        return (
+            <div className="deleted-comment">
+                <p><em>{comment.content}</em></p>
+                {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} />))}
+            </div>
+        );
+    }
+
     return (
         <>
             <Link href={`garden-of-support/posts/${postId}/comments/${commentId}`}><h6>{comment.temporary_username}</h6></Link>
-            <h4>
-                Content Warnings:{' '}
-                {comment.content_warnings.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
-            </h4>
+                {comment.warnings.length === 0 ? <h4>No Content Warnings</h4> : (
+                    <h4>
+                        Content Warnings:{' '}
+                        {comment.warnings.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
+                    </h4>
+                )}
             <p>{comment.content}</p>
 
             {currentUser?.id === comment.user_id && (

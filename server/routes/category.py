@@ -31,7 +31,7 @@ def get_categories(count: int = 20, skip: int = 0, db: Session = Depends(get_db)
         print(f"Error in GET /category/categories: {str(e)}")
         import traceback
         print(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @router.get("/categories/{id}")
 def get(id: int, db: Session = Depends(get_db)):
@@ -39,9 +39,7 @@ def get(id: int, db: Session = Depends(get_db)):
         print(f"GET /category/categories/{id}")
         category_data = get_category_with_posts(db=db, category_id=id)
         
-        # Convert to dict to avoid Pydantic validation issues
         if category_data:
-            # Ensure all necessary fields are present
             category_dict = {
                 "id": category_data.id if hasattr(category_data, "id") else id,
                 "title": category_data.title if hasattr(category_data, "title") else "",
@@ -59,4 +57,16 @@ def get(id: int, db: Session = Depends(get_db)):
 
 @router.get("/categories/{id}/posts")
 def get_posts(id: int, count: int = 50, skip: int = 0, db: Session = Depends(get_db)) -> List[PostOut]:
-    return get_posts_of_category(db = db, category_id = id, skip = skip, limit = count)
+    try:
+        print(f"GET /category/categories/{id}/posts - params: count={count}, skip={skip}")
+        
+        posts = get_posts_of_category(db=db, category_id=id, skip=skip, limit=count)
+        
+        print(f"Retrieved {len(posts)} Posts for Category {id}")
+        
+        return {"posts": posts}
+    except Exception as e:
+        print(f"Error in GET /category/categories/{id}/posts: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

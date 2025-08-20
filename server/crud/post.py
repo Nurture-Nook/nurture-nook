@@ -106,10 +106,29 @@ def get_post_model(db: Session, post_id: int) -> Post:
     return db_post
 
 def get_post(db: Session, post_id: int) -> PostOut:
-    return PostOut.model_validate(get_post_model(db, post_id))
+    post = get_post_model(db, post_id)
+
+    return PostOut(
+        id=post.id,
+        title=post.title,
+        warnings=[w.id for w in post.warnings],
+        created_at=post.created_at
+    )
 
 def get_detailed_post(db: Session, post_id: int) -> PostDetailedOut:
-    return PostDetailedOut.model_validate(get_post_model(db, post_id))
+    post = get_post_model(db, post_id)
+
+    return PostDetailedOut(
+        id=post.id,
+        user_id=post.user_id,
+        title=post.title,
+        description=post.description,
+        temporary_username=post.temporary_username,
+        categories=[c.id for c in post.categories],
+        warnings=[w.id for w in post.warnings],
+        comments=[c.id for c in post.comments],
+        created_at=post.created_at,
+    )
 
 def get_post_as_mod(db: Session, post_id: int) -> PostModView:
     return PostModView.model_validate(get_post_model(db, post_id))
