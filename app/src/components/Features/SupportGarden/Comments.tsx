@@ -43,12 +43,6 @@ export const Comments = () => {
         setLoading(false);
     };
 
-    // Check if current route matches /garden-of-support/posts/[postId]/comments/[commentId]
-    const showBackButton = (
-        router.pathname === '/garden-of-support/posts/[postId]/comments/[commentId]' &&
-        typeof postId === 'number' && !isNaN(postId)
-    );
-
     if (loading) return <div>Loading comments...</div>;
 
     if (error) {
@@ -69,7 +63,6 @@ export const Comments = () => {
                         <Comment postId={postId} commentId={c.id} comment={c} nesting={0} />
                     </li>
                 )) }
-                <br></br>
             </ul>
         </>
     );

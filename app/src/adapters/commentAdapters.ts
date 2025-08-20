@@ -72,7 +72,7 @@ export const getCommentsByIds = async (postId: number, commentIds: number[]): Pr
 
 export const deleteCommentById = async (postId: number, commentId: number) => {
     const [data, error] = await fetchHandler(
-        baseUrl + `/post/posts/${encodeURIComponent(postId)}/comments/${commentId}`, deleteOptions
+        baseUrl + `/posts/${encodeURIComponent(postId)}/comments/${commentId}`, deleteOptions
     );
 
     if (error) {

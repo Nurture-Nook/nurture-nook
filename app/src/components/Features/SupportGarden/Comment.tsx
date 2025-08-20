@@ -31,8 +31,8 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
     // Detect if we're on the comment page by comparing query param
     const isCommentPage = String(router.query.commentId) === String(commentId);
 
-    // Always start with replies hidden, so the button is always available
-    const [showReplies, setShowReplies] = useState(false);
+    // Show replies by default if on comment page
+    const [showReplies, setShowReplies] = useState(isCommentPage);
 
     useEffect(() => {
         if (commentProp) {
@@ -52,13 +52,20 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
         fetchComment();
     }, [pId, cId, commentProp]);
 
+    // Update showReplies if the route changes to a different comment page
+    useEffect(() => {
+        setShowReplies(isCommentPage);
+    }, [isCommentPage]);
+
+    if (!pId || !cId) return null;
+
     const handleSuccess = (newComment: CommentOut) => {
         if (!comment) return;
         const updated = insertComment([comment], newComment)[0];
         setComment(updated);
         setShowReplyForm(false);
     };
-    
+
     const handleDelete = async () => {
         if (!cId) return;
         setDeleting(true);
@@ -71,18 +78,9 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
         }
     };
 
-    if (loading) return <div>Loading comment...</div>;
+    if (loading) return <div>Loading Comment...</div>;
     if (error) return <div>Error Loading Comment: {error}</div>;
     if (comment === null) return <div>Comment Deleted or Not Found.</div>;
-
-    if (comment.is_deleted) {
-        return (
-            <div className="deleted-comment">
-                <p><em>{comment.content}</em></p>
-                {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} />))}
-            </div>
-        );
-    }
 
     return (
         <>
@@ -126,23 +124,27 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                     )}
                 </>
             )}
-            {/* Always open comment form when clicking reply */}
-            <button onClick={() => setShowReplyForm(true)}>
-                Reply
+
+            <button onClick={() => setShowReplyForm(!showReplyForm)}>
+                {showReplyForm ? 'Cancel' : 'Reply'}
             </button>
-            {showReplyForm && (
-                <CommentForm postId={postId} parentCommentId={comment.id} onSuccess={handleSuccess} />
+            {showReplyForm && (<CommentForm postId={postId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
+            {/* Show "Back to Parent Thread" if this comment has a parent */}
+            {comment.parent_comment_id && (
+                <Link href={`/garden-of-support/posts/${postId}/comments/${comment.parent_comment_id}`}>
+                    <button style={{ margin: '8px 0' }}>Back to Parent Thread</button>
+                </Link>
             )}
             {/* Always show replies button if there are replies */}
             {comment.replies && comment.replies.length > 0 && (
                 <>
-                    {/* Always render the button, even on commentId page */}
                     <button onClick={() => setShowReplies(!showReplies)}>
                         {showReplies ? "Hide Replies" : `Show Replies (${comment.replies.length})`}
                     </button>
                     {showReplies && (
                         comment.replies.map((reply) => (
                             <div key={reply.id} style={{ marginLeft: 24 }}>
+                                {/* If nesting is 1 or more, link to reply's page instead of showing inline */}
                                 {nesting < 1 ? (
                                     <Comment postId={postId} commentId={reply.id} comment={reply} nesting={nesting + 1} />
                                 ) : (
@@ -154,12 +156,6 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                         ))
                     )}
                 </>
-            )}
-            {/* Show "Back to Parent Thread" only on commentId page */}
-            {isCommentPage && comment.parent_comment_id && (
-                <Link href={`/garden-of-support/posts/${postId}/comments/${comment.parent_comment_id}`}>
-                    <button style={{ margin: '8px 0' }}>Back to Parent Thread</button>
-                </Link>
             )}
         </>
     )
