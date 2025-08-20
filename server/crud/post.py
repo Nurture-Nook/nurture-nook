@@ -139,8 +139,21 @@ def get_all_posts(db: Session, skip: int = 0, limit: int = 100, include_deleted:
     return [PostOut.model_validate(post) for post in posts]
 
 def get_comments_of_post(db: Session, post_id: int, skip: int = 0, limit: int = 100) -> List[CommentOut]:
-    post = get_post_model(db, post_id)  # This will check if the post exists and isn't deleted
-    return [CommentOut.model_validate(comment) for comment in db.query(Comment).filter(Comment.post_id == post_id).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()]
+    comments = db.query(Comment).filter(Comment.post_id == post_id).offset(skip).limit(limit).all()
+    return [
+        CommentOut(
+            id=comment.id,
+            user_id=comment.user_id,
+            post_id=comment.post_id,
+            temporary_username=comment.temporary_username,
+            content=comment.content,
+            warnings=[w.id for w in comment.warnings],
+            parent_comment_id=comment.parent_comment_id,
+            is_deleted=comment.is_deleted,
+            created_at=comment.created_at,
+        )
+        for comment in comments
+    ]
 
 # UPDATE
 def update_post(db: Session, post_id: int, post_patch: PostPatch, current_user: User) -> PostOut:

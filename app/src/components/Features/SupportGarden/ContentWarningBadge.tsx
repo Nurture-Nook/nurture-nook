@@ -45,7 +45,7 @@ export const ContentWarningBadge: React.FC<WarningBadgeProps> = ({ warningId }) 
     }
 
     if (!contentWarning) {
-        return <div>Warning not found</div>;
+        return <div>Warning not Found</div>;
     }
 
     return <p>{ contentWarning.title }</p>

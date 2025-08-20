@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getCommentsByUser } from '../../../adapters/userAdapters';
 import { CommentOut } from '@/types/comment';
 import { Comment } from '../SupportGarden/Comment';
+import { buildCommentTree } from '@/utils/comments';
 
 export const MyComments = () => {
     const [comments, setComments] = useState<CommentOut[] | null>(null);
@@ -24,13 +25,15 @@ export const MyComments = () => {
     if (error) return <div>Error loading comments: {error}</div>;
     if (!comments || comments.length === 0) return <div>No Comments Found</div>;
 
+    const commentTree = buildCommentTree(comments);
+
     return (
         <div>
             <h3>My Comments</h3>
             <ul>
-                { comments.map(comment => (
+                { commentTree.map(comment => (
                     <li key={comment.id}>
-                        <Comment postId={comment.post_id} commentId={comment.id} comment={comment}/>
+                        <Comment postId={comment.post_id} commentId={comment.id} comment={comment} nesting={0}/>
                     </li>
                 )) }
             </ul>

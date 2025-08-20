@@ -27,7 +27,7 @@ export const createPost = async (title: string, description: string, categories:
         }
 
         console.log("Post Created Successfully");
-        return [data.post || data, null];
+        return [data || [], null];
     } catch (err) {
         console.error("Exception in createPost Adapter:", err);
         return [null, err instanceof Error ? err : new Error("Unknown error creating post")];
@@ -47,7 +47,7 @@ export const getPostPreviewById = async (postId: number) => {
         return [null, new Error("Invalid Response Format from Server")];
     }
 
-    return [data.post || data, null];
+    return [data || [], null];
 }
 
 export const getPostById = async (postId: number) => {
@@ -69,10 +69,8 @@ export const getPostById = async (postId: number) => {
             return [null, new Error("Invalid Response Format from Server")];
         }
 
-        // Handle both direct response and nested response format
-        const postData = data.post || data;
         console.log("Received Post Data");
-        return [postData, null];
+        return [data || [], null];
     } catch (err) {
         console.error("Exception in getPostById:", err);
         return [null, err instanceof Error ? err : new Error("Unknown Error Fetching Post")];
@@ -92,7 +90,7 @@ export const deletePostById = async (postId: number) => {
         return [null, new Error("Invalid Response Format from Server")];
     }
 
-    return [data.post || data, null];
+    return [data || [], null];
 }
 
 // export const getPostsBySearch = async (searchTerm: string, category = null, exclude = []) => {
