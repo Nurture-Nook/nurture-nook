@@ -25,7 +25,7 @@ export const createComment = async (
         return [null, error];
     }
 
-    return [data?.comment ?? [], null];
+    return [data || [], null];
 }
 
 export const getCommentById = async (id: number, comment_id: number) => {
@@ -36,7 +36,7 @@ export const getCommentById = async (id: number, comment_id: number) => {
         return [null, error];
     }
 
-    return [data?.comment ?? [], null];
+    return [data ? data : null, null];
 }
 
 export const getComments = async (id: number) => {
@@ -50,7 +50,7 @@ export const getComments = async (id: number) => {
         return [null, error];
     }
 
-    return [data?.comments ?? [], null];
+    return [data || [], null];
 }
 
 export const getCommentsByIds = async (postId: number, commentIds: number[]): Promise<[CommentOut[], string | null]> => {
@@ -80,5 +80,5 @@ export const deleteCommentById = async (postId: number, commentId: number) => {
         return [null, error];
     }
 
-    return [data?.post ?? [], null];
+    return [data || [], null];
 }

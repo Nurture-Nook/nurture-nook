@@ -25,8 +25,10 @@ class PostCreate(OrmBase):
 class PostOut(OrmBase):
     id: int
     title: str
+    description: str
     warnings: list[int] = Field(default_factory=list)
     created_at: datetime
+    is_deleted: bool = False
     
     model_config = {
         "from_attributes": True,
@@ -60,6 +62,7 @@ class PostDetailedOut(OrmBase):
     temporary_username: str
     categories: List[int] = Field(default_factory=list)
     warnings: List[int] = Field(default_factory=list)
+    is_deleted: bool = False
     comments: List[int] = Field(default_factory=list)
     created_at: datetime
 

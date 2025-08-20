@@ -40,6 +40,16 @@ app.include_router(debug_router)  # Add the debug router
 def read_root():
     return {"message": "Welcome to Nurture Nook API", "status": "online"}
 
+import server.schemas.model_rebuild
+
+app.include_router(auth.router)
+app.include_router(category.router)
+app.include_router(chat.router)
+app.include_router(comment.router)
+app.include_router(message.router)
+app.include_router(post.router)
+app.include_router(user.router)
+
 @app.get("/auth-test")
 def auth_test(request: Request):
     """Debug endpoint to check what the server receives in the request."""
@@ -203,4 +213,5 @@ async def cors_debug(request: Request):
     )
     
     return response
+
 app.include_router(warning.router)

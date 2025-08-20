@@ -1,11 +1,12 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 import { MyPosts } from '@/components/Features/Profile/MyPosts';
 import { MyComments } from '@/components/Features/Profile/MyComments';
 
 export default function PersonalProfile() {
-    const { currentUser } = useContext(CurrentUserContext);
+    const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
     
     const router = useRouter();
 
@@ -15,19 +16,34 @@ export default function PersonalProfile() {
         if (router.isReady) setIsReady(true);
     }, [router.isReady, setIsReady])
 
-    if (!isReady) return <p>Loading...</p>;
-
-    if (!currentUser) {
-        router.push('/entrance')
-    }
-
     const handleEditProfile = () => router.push('/me/edit');
-
     const handleDeleteProfile = () => {
         if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) router.push('/enter');
     };
 
-    if (currentUser === null) return;
+    const handleLogout = useCallback(async () => {
+        try {
+            await fetch("http://localhost:8000/auth/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem("auth_token") ? `Bearer ${localStorage.getItem("auth_token")}` : ""
+                }
+            });
+            localStorage.removeItem("auth_token");
+        } catch (e) {
+            localStorage.removeItem("auth_token");
+        }
+        setCurrentUser(null);
+        router.push("/entrance");
+    }, [setCurrentUser, router]);
+
+    if (!isReady) return <p>Loading...</p>;
+
+    if (!currentUser) {
+        router.push('/entrance');
+        return null;
+    }
 
     return (
         <div className="personal-profile-container">
@@ -35,18 +51,21 @@ export default function PersonalProfile() {
 
             <div className="profile-actions">
                 <button onClick={handleEditProfile}>Edit Profile</button>
-                <button onClick={handleDeleteProfile}>
-                Delete Profile
-                </button>
+                <br></br>
+                <button onClick={handleDeleteProfile}>Delete Profile</button>
+                <br></br>
+                <button onClick={handleLogout}>Log Out</button>
+                <br></br>
+                <Link href="/home">Home</Link>
             </div>
 
             <section className="my-posts-section">
-                <h3>My Posts</h3>
+                <Link href="me/posts"><h3>My Posts</h3></Link>
                 <MyPosts />
             </section>
 
             <section className="my-comments-section">
-                <h3>My Comments</h3>
+                <Link href="me/comments"><h3>My Comments</h3></Link>
                 <MyComments />
             </section>
         </div>

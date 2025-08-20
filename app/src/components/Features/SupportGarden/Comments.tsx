@@ -4,7 +4,7 @@ import { getComments } from '@/adapters/commentAdapters';
 import { Comment } from './Comment';
 import { CommentOut } from '@/types/comment';
 import { CommentForm } from './CommentForm';
-import { insertComment } from '@/utils/comments';
+import { insertComment, buildCommentTree } from '@/utils/comments';
 
 export const Comments = () => {
     const router = useRouter();
@@ -16,19 +16,27 @@ export const Comments = () => {
 
     const fetchComments = useCallback(async () => {
         try {
-            const res = await getComments(postId);
-            setComments(res);
+            const [data, error] = await getComments(postId);
+            if (error) {
+                setError(error);
+                setComments([]);
+            } else {
+                setComments(data || []);
+            }
         } catch (err : Error | unknown) {
-            setError(error);
-            if (err instanceof Error) console.error(err.message);
-            else console.error("Unable to Fetch Comments")
+            setError(err instanceof Error ? err.message : "Unable to Fetch Comments");
+            setComments([]);
+        } finally {
+            setLoading(false);
         }
-    }, [postId, error]);
+    }, [postId]);
 
     useEffect(() => {
         if (!postId) return;
         fetchComments();
     }, [postId, fetchComments]);
+
+    const commentTree = buildCommentTree(comments);
 
     const handleSuccess = (newComment: CommentOut) => {
         setComments(prevComments => insertComment(prevComments, newComment));
@@ -42,6 +50,7 @@ export const Comments = () => {
         return <div>Error Loading Comments</div>;
     }
 
+    console.log("c", comments)
     if (!comments) return null;
 
     return (
@@ -49,9 +58,9 @@ export const Comments = () => {
             <h3>Comments</h3>
             <CommentForm postId={postId} parentCommentId={null} onSuccess={handleSuccess} />
             <ul>
-                { comments.map(c => (
+                { commentTree.map(c => (
                     <li key={c.id}>
-                        <Comment postId={postId} commentId={c.id} />
+                        <Comment postId={postId} commentId={c.id} comment={c} nesting={0} />
                     </li>
                 )) }
             </ul>

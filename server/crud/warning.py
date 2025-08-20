@@ -34,19 +34,29 @@ def get_warning_model(db: Session, warning_id: int) -> ContentWarning:
         raise HTTPException(status_code = 404, detail="Content Warning not Found")
     return db_warning
 
-def get_warning(db: Session, warning_id: int) -> ContentWarningOut:
+def get_warning_with_posts(db: Session, warning_id: int) -> ContentWarningWithPosts:
     warning = get_warning_model(db, warning_id)
-
-    return ContentWarningOut(
+    # Build posts list with correct warnings serialization
+    posts = [
+        PostOut(
+            id=post.id,
+            title=post.title,
+            description=post.description,
+            temporary_username=post.temporary_username,
+            user_id=post.user_id,
+            warnings=[w.id for w in post.warnings],  # <-- Fix here!
+            categories=[c.id for c in post.categories],
+            created_at=post.created_at
+        )
+        for post in warning.posts
+    ]
+    return ContentWarningWithPosts(
         id=warning.id,
         title=warning.title,
         description=warning.description,
+        posts=posts,
         created_at=warning.created_at
     )
-
-def get_warning_with_posts(db: Session, warning_id: int) -> ContentWarningWithPosts:
-    warning = get_warning_model(db, warning_id)
-    return ContentWarningWithPosts.model_validate(warning)
 
 def get_all_warnings(db: Session, skip: int = 0, limit: int = 100) -> List[ContentWarningOut]:
     warnings = db.query(ContentWarning).offset(skip).limit(limit).all()

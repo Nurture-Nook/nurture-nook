@@ -22,6 +22,7 @@ class CommentOut(OrmBase):
     content: str
     warnings: List[int] = Field(default_factory=list)
     parent_comment_id: Optional[int] = None
+    is_deleted: bool = False
     created_at: datetime
 
 class CommentPatch(OrmBase):

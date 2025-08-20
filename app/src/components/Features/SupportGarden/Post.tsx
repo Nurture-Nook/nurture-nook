@@ -8,9 +8,10 @@ import { Comment } from './Comment';
 import { getPostById, deletePostById } from '../../../adapters/postAdapters';
 import { getCommentsByIds } from '../../../adapters/commentAdapters';
 import { CommentForm } from './CommentForm';
-import { insertComment } from '@/utils/comments';
+import { insertComment, buildCommentTree } from '@/utils/comments';
 import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
+import { Comments } from './Comments';
 
 export const Post = () => {
     const router = useRouter();
@@ -93,6 +94,8 @@ export const Post = () => {
     if (error) return <div>Error Loading Post: {error}</div>;
     if (!post) return <div>No post found</div>;
 
+    const commentTree = buildCommentTree(comments);
+
     return (
         <>
             <div id="post-body">
@@ -111,7 +114,7 @@ export const Post = () => {
                 <h5>User: {post.temporary_username}</h5>
                 <p>{post.description}</p>
 
-                {currentUser && post.user_id === currentUser.id && (
+                {currentUser && post.user_id === currentUser.id && !post.is_deleted && (
                     <button onClick={handleDelete}>
                         Delete Post
                     </button>
@@ -124,9 +127,9 @@ export const Post = () => {
                 </Link>
                 <CommentForm postId={post.id} parentCommentId={null} onSuccess={handleCommentSuccess} />
                 <ul>
-                    {comments.map(comment => (
-                        <li key={comment.id}>
-                            <Comment postId={post.id} commentId={comment.id} />
+                    {commentTree.map(c => (
+                        <li key={c.id}>
+                            <Comment postId={post.id} commentId={c.id} comment={c} />
                         </li>
                     ))}
                 </ul>

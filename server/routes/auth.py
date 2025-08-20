@@ -83,6 +83,11 @@ def get_current_user(
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
+@router.post("/logout")
+def logout():
+    # JWT is stateless, so just instruct frontend to remove token
+    return {"message": "Logout Successful"}
+
 @router.get("/test")
 def test_endpoint():
     return {"message": "Auth API is working!"}

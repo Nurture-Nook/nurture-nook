@@ -77,11 +77,36 @@ def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, le=100), db: Se
 
 def get_posts_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[PostOut]:
     posts = db.query(Post).filter(Post.user_id == user_id).offset(skip).limit(limit).all()
-    return [PostOut.model_validate(post) for post in posts]
+    result = []
+    for post in posts:
+        result.append(PostOut(
+            id=post.id,
+            title="[deleted]" if post.is_deleted else post.title,
+            description="[deleted]" if post.is_deleted else post.description,
+            warnings=[w.id for w in post.warnings],
+            created_at=post.created_at,
+            is_deleted=post.is_deleted
+        ))
+    return result
 
 def get_comments_by_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[CommentOut]:
     comments = db.query(Comment).filter(Comment.user_id == user_id).offset(skip).limit(limit).all()
-    return [CommentOut.model_validate(comment) for comment in comments]
+    result = []
+    for comment in comments:
+        result.append(CommentOut(
+            id=comment.id,
+            content=comment.content,
+            temporary_username=comment.temporary_username,
+            flag_reason=comment.flag_reason,
+            is_flagged=comment.is_flagged,
+            is_deleted=comment.is_deleted,
+            created_at=comment.created_at,
+            user_id=comment.user_id,
+            post_id=comment.post_id,
+            parent_comment_id=comment.parent_comment_id,
+            warnings=[w.id for w in comment.warnings]
+        ))
+    return result
 
 def get_chats_of_user(user_id: int, skip: int = 0, limit: int = 50, db: Session = Depends(get_db)) -> List[ChatOpen]:
     chats = db.query(Chat).filter(Chat.user_id == user_id).offset(skip).limit(limit).all()

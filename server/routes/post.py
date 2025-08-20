@@ -38,8 +38,8 @@ def get_posts(count: int = 20, skip: int = 0, db: Session = Depends(get_db), tit
             if not results:
                 raise HTTPException(status_code=404, detail="Post Not Found")
             
-            return {"posts": results}
-        return { "posts": posts }
+            return results
+        return posts
     except Exception as e:
         print(f"Error in GET /post/posts: {str(e)}")
         import traceback
@@ -90,7 +90,7 @@ def get_comments(id: int, count: int = 50, skip: int = 0, db: Session = Depends(
 
         print(f"Retrieved {len(comments)} comments")
 
-        return { "comments": comments }
+        return comments
     except Exception as e:
         print(f"Error in GET /post/post/{id}/comments: {str(e)}")
         import traceback
