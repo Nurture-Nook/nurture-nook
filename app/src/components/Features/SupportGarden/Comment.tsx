@@ -8,7 +8,7 @@ import { insertComment } from '@/utils/comments';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 
 interface CommentProps {
-    postId?: number;
+    postId: number;
     commentId?: number;
     comment?: CommentOut;
 }
@@ -122,6 +122,6 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                 {showReplyForm ? 'Cancel' : 'Reply'}
             </button>
             {showReplyForm && (<CommentForm postId={pId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
-            {comment.replies?.map((reply) => (<Comment key={reply.id} comment={reply} />))}
+            {comment.replies?.map((reply) => (<Comment key={reply.id} postId={pId} commentId={reply.id} comment={reply} />))}
         </>
     )}

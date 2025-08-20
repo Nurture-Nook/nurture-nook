@@ -12,10 +12,9 @@ export const MyPosts = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             const [data, err] = await getPostsByUser();
-            console.log("data", data, "err", err)
+
             if (err) setError(err);
             else setPosts(data);
-            console.log("posts", posts)
 
             setLoading(false);
         };

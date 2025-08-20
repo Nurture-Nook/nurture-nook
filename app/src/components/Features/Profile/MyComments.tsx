@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { getCommentsByUser } from '../../../adapters/userAdapters';
 import { CommentOut } from '@/types/comment';
 import { Comment } from '../SupportGarden/Comment';
 
 export const MyComments = () => {
     const [comments, setComments] = useState<CommentOut[] | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -31,7 +30,7 @@ export const MyComments = () => {
             <ul>
                 { comments.map(comment => (
                     <li key={comment.id}>
-                        <Comment comment={comment}/>
+                        <Comment postId={comment.post_id} comment={comment}/>
                     </li>
                 )) }
             </ul>
