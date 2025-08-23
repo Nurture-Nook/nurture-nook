@@ -1,8 +1,6 @@
 import {
     basicFetchOptions,
     fetchHandler,
-    getPostOptions,
-    getPatchOptions,
     deleteOptions // <-- import deleteOptions
 } from '../utils/fetch';
 import { UserPrivate } from '@/types/user';
@@ -39,23 +37,29 @@ export const getCommentsByUser = async () => {
 }
 
 export async function updateProfile(data: UpdateProfilePayload): Promise<[null, string] | [UserPrivate, null]> {
-    // Use PUT instead of PATCH
-    const options = {
+    const token = localStorage.getItem('auth_token');
+
+    const options: RequestInit = {
         method: "PUT",
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(data)
     };
 
     try {
-        const response = await fetch("/api/user/me/update_profile", options);
+        const response = await fetch(`${baseUrl}/update_profile`, options);
 
         if (!response.ok) {
             const errorData = await response.json();
-            return [null, errorData.detail || "Failed to Update Profile"];
+            
+            const errorMsg = Array.isArray(errorData.detail)
+                ? errorData.detail.map((e: any) => e.msg).join(", ")
+                : errorData.detail || "Failed to Update Profile";
+        return [null, errorMsg];
         }
 
         const json = await response.json();
