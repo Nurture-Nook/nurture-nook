@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 import { MyPosts } from '@/components/Features/Profile/MyPosts';
 import { MyComments } from '@/components/Features/Profile/MyComments';
+import { deleteProfile } from '@/adapters/userAdapters';
 
 export default function PersonalProfile() {
     const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
@@ -17,8 +18,19 @@ export default function PersonalProfile() {
     }, [router.isReady, setIsReady])
 
     const handleEditProfile = () => router.push('/me/edit');
-    const handleDeleteProfile = () => {
-        if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) router.push('/enter');
+    const handleDeleteProfile = async () => {
+        const password = prompt('Please enter your password to confirm deletion:');
+        if (!password) return;
+        if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+            const [res, err] = await deleteProfile({ password });
+            if (err) {
+                alert(`Failed to delete profile: ${err}`);
+                return;
+            }
+            localStorage.removeItem("auth_token");
+            setCurrentUser(null);
+            router.push('/entrance');
+        }
     };
 
     const handleLogout = useCallback(async () => {
@@ -56,8 +68,11 @@ export default function PersonalProfile() {
                 <br></br>
                 <button onClick={handleLogout}>Log Out</button>
                 <br></br>
-                <Link href="/home">Home</Link>
+                <Link href="/home">Return Home</Link>
+                
             </div>
+
+            <br></br>
 
             <section className="my-posts-section">
                 <Link href="me/posts"><h3>My Posts</h3></Link>

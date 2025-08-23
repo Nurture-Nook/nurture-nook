@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from ..models import User
 from ..schemas.users import UserPrivateOut, ProfileUpdateRequest, UsernameUpdateRequest, EmailVerificationRequest, PasswordUpdateRequest, UserDeleteRequest
@@ -32,7 +32,7 @@ def get_my_comments(skip: int = 0, limit: int = 50, current_user: User = Depends
 def get_my_chats(skip: int = 0, limit: int = 50, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> List[ChatOpen]:
     return get_chats_of_user(skip = skip, limit = limit, user_id = current_user.id, db = db)
 
-@router.put("/update_profile", response_model = MessageResponse)
+@router.put("/me/update_profile", response_model = MessageResponse)
 def update_profile(profile_update: ProfileUpdateRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> MessageResponse:
     try:
         if profile_update.new_username:
@@ -48,8 +48,22 @@ def update_profile(profile_update: ProfileUpdateRequest, current_user: User = De
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred while updating profile: {str(e)}")
 
-@router.delete("/delete_account", response_model = MessageResponse)
-def delete_account(user_delete: UserDeleteRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> MessageResponse:
-    delete_own_account(db, current_user, user_delete)
-
+@router.delete("/me/delete_account", response_model = MessageResponse)  # <-- change route to /me/delete_account
+def delete_account(
+    user_delete: UserDeleteRequest = Body(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> MessageResponse:
+    # Token requirement removed for now
+    # delete_own_account(db, current_user, user_delete)
+    # Instead, just verify password
+    from fastapi import HTTPException
+    from ..utils.auth import verify_password
+    if not verify_password(user_delete.password, current_user.hashed_pass):
+        raise HTTPException(status_code=403, detail="Incorrect Password")
+    # Proceed with deletion
+    from ..crud.user import delete_all_content
+    delete_all_content(db, user_id=current_user.id)
+    db.delete(current_user)
+    db.commit()
     return MessageResponse(message="Profile deleted successfully")

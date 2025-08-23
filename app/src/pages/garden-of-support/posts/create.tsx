@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
 import { PostForm } from '@/components/Features/SupportGarden/PostForm';
 
@@ -28,6 +29,7 @@ const CreatePostPage = () => {
 
     return (
         <div className='support-garden-pages'>
+            <Link href='/garden-of-support'>Return to Garden of Support</Link>
             <h2>Create a New Post</h2>
             <PostForm />
         </div>

@@ -1,8 +1,7 @@
 import {
     basicFetchOptions,
     fetchHandler,
-    deleteOptions,
-    getPatchOptions
+    deleteOptions // <-- import deleteOptions
 } from '../utils/fetch';
 import { UserPrivate } from '@/types/user';
 
@@ -38,14 +37,29 @@ export const getCommentsByUser = async () => {
 }
 
 export async function updateProfile(data: UpdateProfilePayload): Promise<[null, string] | [UserPrivate, null]> {
-    const options = getPatchOptions(data);
+    const token = localStorage.getItem('auth_token');
+
+    const options: RequestInit = {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    };
 
     try {
-        const response = await fetch("/api/user/me/update_profile", options);
+        const response = await fetch(`${baseUrl}/update_profile`, options);
 
         if (!response.ok) {
             const errorData = await response.json();
-            return [null, errorData.detail || "Failed to Update Profile"];
+            
+            const errorMsg = Array.isArray(errorData.detail)
+                ? errorData.detail.map((e: any) => e.msg).join(", ")
+                : errorData.detail || "Failed to Update Profile";
+        return [null, errorMsg];
         }
 
         const json = await response.json();
@@ -56,12 +70,20 @@ export async function updateProfile(data: UpdateProfilePayload): Promise<[null, 
     }
 }
 
-export const deleteProfile = async () => {
-    const [data, error] = await fetchHandler(`${baseUrl}/delete_account`, deleteOptions);
-    
+export const deleteProfile = async (payload: { password: string }) => {
+    const options = {
+        ...deleteOptions,
+        headers: {
+            ...deleteOptions.headers,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    };
+    const [data, error] = await fetchHandler(
+        `${baseUrl}/delete_account`,
+        options
+    );
     if (error) return [null, error];
-    
-    if (!data?.success) return [null, "Account Deletion Failed"];
-    
+    if (!data?.message) return [null, "Account Deletion Failed"];
     return [data, null];
 };

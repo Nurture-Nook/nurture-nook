@@ -50,7 +50,6 @@ export const EditMyProfile: React.FC = () => {
             setNewEmail("");
             setCurrentPassword("");
             setNewPassword("");
-            router.reload();
             router.push("/me")
         }
     };

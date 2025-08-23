@@ -28,7 +28,6 @@ export const MyPosts = () => {
 
     return (
         <div>
-            <h3>My Posts</h3>
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>

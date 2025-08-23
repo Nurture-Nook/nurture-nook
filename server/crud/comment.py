@@ -131,9 +131,19 @@ def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentO
     db.commit()
     db.refresh(db_comment)
 
-    logger.info(f"Comment {comment_id} soft deleted")
+    logger.info(f"Comment {comment_id} Soft Deleted")
 
-    return CommentOut.model_validate(db_comment)
+    return CommentOut(
+        id=db_comment.id,
+        user_id=db_comment.user_id,
+        post_id=db_comment.post_id,
+        temporary_username=db_comment.temporary_username,
+        content=db_comment.content,
+        warnings=[w.id for w in db_comment.warnings],
+        parent_comment_id=db_comment.parent_comment_id or None,
+        is_deleted=db_comment.is_deleted,
+        created_at=db_comment.created_at,
+    )
 
 # DELETE
 def delete_comment_as_mod(db: Session, comment_id: int) -> CommentOut:

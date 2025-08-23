@@ -21,6 +21,7 @@ export default function PostsPage() {
 
     return <>
         <Link href="/me">Return to Profile</Link>
+        <h3>My Posts</h3>
         <MyPosts/>
     </>
 }
