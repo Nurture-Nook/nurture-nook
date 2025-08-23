@@ -29,7 +29,6 @@ export const MyComments = () => {
 
     return (
         <div>
-            <h3>My Comments</h3>
             <ul>
                 { commentTree.map(comment => (
                     <li key={comment.id}>

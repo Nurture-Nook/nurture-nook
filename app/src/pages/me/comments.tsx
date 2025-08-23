@@ -21,6 +21,7 @@ export default function CommentsPage() {
 
     return <>
         <Link href="/me">Return to Profile</Link>
+        <h3>My Comments</h3>
         <MyComments/>
     </>
 }
