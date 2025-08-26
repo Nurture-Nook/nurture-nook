@@ -143,6 +143,7 @@ def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentO
         parent_comment_id=db_comment.parent_comment_id or None,
         is_deleted=db_comment.is_deleted,
         created_at=db_comment.created_at,
+        replies=[CommentOut.model_validate(reply) for reply in db_comment.replies]
     )
 
 # DELETE

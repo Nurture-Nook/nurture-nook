@@ -23,9 +23,11 @@ export default function CommentsPage() {
 
     const postId = Number(router.query.postId);
 
-    return <div className="support-garden-pages"> (<>
-        <Link href={`/garden-of-support/posts/${postId}`}>Return to Post</Link>
-        <br></br>
-        <Comments/></>
-    ) </div>
+    return <div className="support-garden-pages">
+        <>
+            <Link href={`/garden-of-support/posts/${postId}`}>Return to Post</Link>
+            <br></br>
+            <Comments/>
+        </>
+     </div>
 }

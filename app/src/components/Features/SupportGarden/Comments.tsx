@@ -38,6 +38,12 @@ export const Comments = () => {
 
     const commentTree = buildCommentTree(comments);
 
+    const handleCommentDelete = (deletedComment: CommentOut) => {
+        setComments(prev =>
+            prev.map(c => c.id === deletedComment.id ? deletedComment : c)
+        );
+    };
+
     const handleSuccess = (newComment: CommentOut) => {
         setComments(prevComments => insertComment(prevComments, newComment));
         setLoading(false);
@@ -60,7 +66,7 @@ export const Comments = () => {
             <ul>
                 { commentTree.map(c => (
                     <li key={c.id}>
-                        <Comment postId={postId} commentId={c.id} comment={c} nesting={0} />
+                        <Comment postId={postId} commentId={c.id} comment={c} nesting={0} onDelete={handleCommentDelete} />
                     </li>
                 )) }
             </ul>

@@ -13,9 +13,10 @@ interface CommentProps {
     commentId: number;
     comment?: CommentOut;
     nesting?: number;
+    onDelete?: (deletedComment: CommentOut) => void;
 }
 
-export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: commentProp, nesting = 0 }) => {
+export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: commentProp, nesting = 0, onDelete }) => {
     const { currentUser } = useContext(CurrentUserContext);
     const [comment, setComment] = useState<CommentOut | null>(commentProp ?? null);
     const [showReplyForm, setShowReplyForm] = useState(false);
@@ -69,12 +70,16 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
     const handleDelete = async () => {
         if (!cId) return;
         setDeleting(true);
-        const [, deleteError] = await deleteCommentById(pId, cId);
+        const [deletedComment, deleteError] = await deleteCommentById(pId, cId);
         setDeleting(false);
         if (deleteError) setError(deleteError);
         else {
-            setComment(null);
+            setComment({ ...deletedComment, is_deleted: true });
             setConfirmDelete(false);
+            if (onDelete) onDelete({ ...deletedComment, is_deleted: true });
+
+            const [latestComment] = await getCommentById(pId, cId);
+            if (latestComment) setComment(latestComment);
         }
     };
 
@@ -87,15 +92,22 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
             <Link href={`/garden-of-support/posts/${postId}/comments/${commentId}`}>
                 <h6 style={{ cursor: 'pointer', textDecoration: 'underline' }}>{comment.temporary_username}</h6>
             </Link>
-            {comment.warnings && comment.warnings.length === 0 ? <h4>No Content Warnings</h4> : (
-                <h4>
-                    Content Warnings:{' '}
-                    {comment.warnings?.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
-                </h4>
+            {comment.is_deleted ? (
+                <p style={{ color: 'gray', fontStyle: 'italic' }}>This comment has been deleted.</p>
+            ) : (
+                <>
+                    {comment.warnings && comment.warnings.length === 0 ? <h4>No Content Warnings</h4> : (
+                        <h4>
+                            Content Warnings:{' '}
+                            {comment.warnings?.map((w) => (<ContentWarningBadge key={w} warningId={w} />))}
+                        </h4>
+                    )}
+                    <p>{comment.content}</p>
+                </>
             )}
-            <p>{comment.content}</p>
 
-            {currentUser?.id === comment.user_id && (
+            {/* Delete button: only if not deleted and user owns the comment */}
+            {currentUser?.id === comment.user_id && !comment.is_deleted && (
                 <>
                     {!confirmDelete ? (
                         <button
@@ -125,10 +137,12 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                 </>
             )}
 
+            {/* Reply button: always show, even if deleted */}
             <button onClick={() => setShowReplyForm(!showReplyForm)}>
                 {showReplyForm ? 'Cancel' : 'Reply'}
             </button>
             {showReplyForm && (<CommentForm postId={postId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
+
             {/* Show "Back to Parent Thread" if this comment has a parent */}
             {comment.parent_comment_id && (
                 <Link href={`/garden-of-support/posts/${postId}/comments/${comment.parent_comment_id}`}>
@@ -144,9 +158,25 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
                     {showReplies && (
                         comment.replies.map((reply) => (
                             <div key={reply.id} style={{ marginLeft: 24 }}>
-                                {/* If nesting is 1 or more, link to reply's page instead of showing inline */}
                                 {nesting < 1 ? (
-                                    <Comment postId={postId} commentId={reply.id} comment={reply} nesting={nesting + 1} />
+                                    <Comment
+                                        postId={postId}
+                                        commentId={reply.id}
+                                        comment={reply}
+                                        nesting={nesting + 1}
+                                        onDelete={(deletedReply) => {
+                                            // Update the replies array in parent comment
+                                            setComment((prev) => {
+                                                if (!prev) return prev;
+                                                return {
+                                                    ...prev,
+                                                    replies: prev.replies.map(r =>
+                                                        r.id === deletedReply.id ? deletedReply : r
+                                                    )
+                                                };
+                                            });
+                                        }}
+                                    />
                                 ) : (
                                     <Link href={`/garden-of-support/posts/${postId}/comments/${reply.id}`}>
                                         <button>View Reply</button>

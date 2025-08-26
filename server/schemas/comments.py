@@ -24,6 +24,7 @@ class CommentOut(OrmBase):
     parent_comment_id: Optional[int] = None
     is_deleted: bool = False
     created_at: datetime
+    replies: List["CommentOut"] = Field(default_factory=list)
 
 class CommentPatch(OrmBase):
     content: Optional[str] = None
