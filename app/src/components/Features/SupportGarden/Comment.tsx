@@ -28,6 +28,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
 
     const pId = postId ?? (typeof postId === 'string' ? parseInt(postId) : undefined);
     const cId = commentId ?? (typeof commentId === 'string' ? parseInt(commentId) : undefined);
+    const commentIdNum = router.query.commentId ? Number(router.query.commentId) : undefined;
 
     // Detect if we're on the comment page by comparing query param
     const isCommentPage = String(router.query.commentId) === String(commentId);
@@ -145,7 +146,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
             {showReplyForm && (<CommentForm postId={postId} parentCommentId={comment.id} onSuccess={handleSuccess} />)}
 
             {/* Show "Back to Parent Thread" if this comment has a parent */}
-            {comment.parent_comment_id && (
+            {commentIdNum && commentIdNum === comment.id && comment.parent_comment_id && (
                 <Link href={`/garden-of-support/posts/${postId}/comments/${comment.parent_comment_id}`}>
                     <button style={{ margin: '8px 0' }}>Back to Parent Thread</button>
                 </Link>
