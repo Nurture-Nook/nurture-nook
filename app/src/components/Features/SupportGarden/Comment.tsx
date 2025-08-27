@@ -61,10 +61,11 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
 
     if (!pId || !cId) return null;
 
-    const handleSuccess = (newComment: CommentOut) => {
-        if (!comment) return;
-        const updated = insertComment([comment], newComment)[0];
-        setComment(updated);
+    const handleSuccess = async () => {
+        const [updatedParent, error] = await getCommentById(postId, commentId);
+        if (!error && updatedParent) {
+            setComment(updatedParent);
+        }
         setShowReplyForm(false);
     };
 
