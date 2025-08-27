@@ -38,10 +38,13 @@ export const Comments = () => {
 
     const commentTree = buildCommentTree(comments);
 
-    const handleCommentDelete = (deletedComment: CommentOut) => {
-        setComments(prev =>
-            prev.map(c => c.id === deletedComment.id ? deletedComment : c)
-        );
+    const handleCommentDelete = async () => {
+        setLoading(true);
+        await new Promise(res => setTimeout(res, 200));
+        const [data, err] = await getComments(postId);
+        if (err) setError(err);
+        else setComments(data);
+        setLoading(false);
     };
 
     const handleSuccess = (newComment: CommentOut) => {

@@ -11,7 +11,6 @@ import { CommentForm } from './CommentForm';
 import { insertComment, buildCommentTree } from '@/utils/comments';
 import Link from 'next/link';
 import { CurrentUserContext } from '@/contexts/current_user_context';
-import { Comments } from './Comments';
 
 export const Post = () => {
     const router = useRouter();

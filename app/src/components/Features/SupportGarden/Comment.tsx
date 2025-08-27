@@ -109,6 +109,7 @@ export const Comment: React.FC<CommentProps> = ({ postId, commentId, comment: co
             {/* Delete button: only if not deleted and user owns the comment */}
             {currentUser?.id === comment.user_id && !comment.is_deleted && (
                 <>
+                    {console.log("Parent comment prop:", comment)}
                     {!confirmDelete ? (
                         <button
                             onClick={() => setConfirmDelete(true)}

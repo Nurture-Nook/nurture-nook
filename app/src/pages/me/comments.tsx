@@ -11,9 +11,9 @@ export default function CommentsPage() {
 
     const [isReady, setIsReady] = useState(false)
     
-        useEffect(() => {
-            if (router.isReady) setIsReady(true);
-        }, [router.isReady, setIsReady])
+    useEffect(() => {
+        if (router.isReady) setIsReady(true);
+    }, [router.isReady, setIsReady])
 
     if (!isReady) return <p>Loading...</p>;
     

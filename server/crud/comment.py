@@ -63,6 +63,7 @@ def get_comment(db: Session, comment_id: int) -> CommentOut:
         post_id=comment.post_id,
         parent_comment_id=comment.parent_comment_id or None,
         warnings=[w.id for w in comment.warnings],
+        is_deleted=comment.is_deleted,
         created_at=comment.created_at,
         replies=[
             CommentOut(
@@ -73,6 +74,7 @@ def get_comment(db: Session, comment_id: int) -> CommentOut:
                 post_id=reply.post_id,
                 parent_comment_id=reply.parent_comment_id,
                 warnings=[w.id for w in reply.warnings],
+                is_deleted=reply.is_deleted,
                 created_at=reply.created_at,
                 replies=[]
             )
@@ -132,6 +134,9 @@ def delete_comment(db: Session, comment_id: int, current_user: User) -> CommentO
     db.refresh(db_comment)
 
     logger.info(f"Comment {comment_id} Soft Deleted")
+
+    for reply in db_comment.replies:
+        db.refresh(reply)
 
     return CommentOut(
         id=db_comment.id,
