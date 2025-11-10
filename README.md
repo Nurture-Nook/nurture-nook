@@ -29,3 +29,7 @@
 View the project roadmap [here](https://excalidraw.com/#json=sswv1beznofMnUrdmFjxo,KnRzCtuwlgu2N-J9UgTy2A).
 
 View the MVP wireframe [here](https://www.figma.com/design/UdVndDNNLVdY5LfT4KX897/Nurture-Nook-MVP?node-id=0-1&p=f&t=BDIOOIj95YLUzUJD-0).
+
+## Rationale
+
+Learn more about the inspiration for Nurture Nook in this [op-ed on artificial intelligence in the context of mental wellness](https://docs.google.com/document/d/1EYq1Rza9GJ__DB2n68aAlHdnSijKE83LXAsVIGLHpZQ/edit?usp=drivesdk).
