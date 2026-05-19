@@ -35,7 +35,7 @@ View the MVP wireframe [here](https://www.figma.com/design/UdVndDNNLVdY5LfT4KX89
 
 View the ELLA Presentation with the Sadie Nash Leadership Project [here](https://drive.google.com/file/d/1bZC0p75XvPdoStb4Ud0sKro1BZPT5hrO/view?usp=drivesdk).
 
-View the slideshow from my Capstone project with the Marcy Lab School [here](https://docs.google.com/presentation/d/1seoDA9pfGOn0dgej5E6NoLBPDJpRd3pkqbKHuSMS6xk/edit?usp=drivesdk).
+View the slideshow from my Capstone project with The Marcy Lab School [here](https://docs.google.com/presentation/d/1seoDA9pfGOn0dgej5E6NoLBPDJpRd3pkqbKHuSMS6xk/edit?usp=drivesdk).
 
 ## Rationale
 
